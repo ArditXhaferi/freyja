@@ -1,0 +1,46 @@
+created:
+    - database/factories/UserFactory.php
+    - database/factories/RoadmapFactory.php
+    - database/factories/VoiceSessionFactory.php
+    - database/factories/ResourceFactory.php
+    - database/factories/MeetingPrepFactory.php
+    - database/factories/AdvisorNoteFactory.php
+    - database/factories/UserProgressFactory.php
+    - database/factories/AchievementFactory.php
+    - database/factories/UserAchievementFactory.php
+    - database/factories/InvestorFactory.php
+    - database/factories/InvestorInterestFactory.php
+    - database/migrations/2025_11_14_211659_create_users_table.php
+    - database/migrations/2025_11_14_211700_create_roadmaps_table.php
+    - database/migrations/2025_11_14_211701_create_voice_sessions_table.php
+    - database/migrations/2025_11_14_211702_create_resources_table.php
+    - database/migrations/2025_11_14_211703_create_meeting_preps_table.php
+    - database/migrations/2025_11_14_211704_create_advisor_notes_table.php
+    - database/migrations/2025_11_14_211705_create_user_progress_table.php
+    - database/migrations/2025_11_14_211706_create_achievements_table.php
+    - database/migrations/2025_11_14_211707_create_user_achievements_table.php
+    - database/migrations/2025_11_14_211708_create_investors_table.php
+    - database/migrations/2025_11_14_211709_create_investor_interests_table.php
+    - app/Models/User.php
+    - app/Models/Roadmap.php
+    - app/Models/VoiceSession.php
+    - app/Models/Resource.php
+    - app/Models/MeetingPrep.php
+    - app/Models/AdvisorNote.php
+    - app/Models/UserProgress.php
+    - app/Models/Achievement.php
+    - app/Models/UserAchievement.php
+    - app/Models/Investor.php
+    - app/Models/InvestorInterest.php
+models:
+    User: { name: string, email: 'string unique', password: string, role: 'enum:client,advisor,investor default:client', language: 'string default:en', country_of_origin: 'nullable string', has_business_experience: boolean, onboarding_completed_at: 'nullable timestamp', email_verified_at: 'nullable timestamp', remember_token: 'string:100', timestamps: timestamps }
+    Roadmap: { user_id: 'id foreign', title: string, roadmap_json: json, updated_by_ai_at: 'nullable timestamp', is_locked: 'boolean default:false', timestamps: timestamps }
+    VoiceSession: { user_id: 'id foreign', transcript: text, ai_message: text, audio_path: 'nullable string', model: 'string default:gpt-4o', status: 'enum:pending,complete,failed default:pending', started_at: timestamp, completed_at: 'nullable timestamp', timestamps: timestamps }
+    Resource: { title: string, slug: 'string unique', description: text, category: string, link: string, language: 'string default:en', published_at: 'nullable timestamp', timestamps: timestamps }
+    MeetingPrep: { user_id: 'id foreign', business_summary: text, target_customers: text, questions_for_advisor: text, business_stage: 'enum:idea,planning,launched', generated_pdf_path: 'nullable string', submitted_at: 'nullable timestamp', timestamps: timestamps }
+    AdvisorNote: { user_id: 'id foreign', advisor_id: 'id foreign', meeting_prep_id: 'id foreign', notes: text, follow_up_required: 'boolean default:false', timestamps: timestamps }
+    UserProgress: { user_id: 'id foreign', xp: 'integer default:0', level: 'integer default:1', last_activity_at: timestamp, timestamps: timestamps }
+    Achievement: { name: string, description: text, icon: string, xp_value: 'integer default:0', timestamps: timestamps }
+    UserAchievement: { user_id: 'id foreign', achievement_id: 'id foreign', earned_at: timestamp, timestamps: timestamps }
+    Investor: { name: string, email: 'string unique', company: string, bio: text, linkedin_url: 'nullable string', focus_areas: json, accepting_pitches: 'boolean default:false', timestamps: timestamps }
+    InvestorInterest: { user_id: 'id foreign', investor_id: 'id foreign', message: 'nullable text', status: 'enum:pending,accepted,rejected default:pending', timestamps: timestamps }

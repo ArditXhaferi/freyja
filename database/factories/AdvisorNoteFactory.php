@@ -1,0 +1,34 @@
+<?php
+
+namespace Database\Factories;
+
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
+use App\Models\Advisor;
+use App\Models\AdvisorNote;
+use App\Models\MeetingPrep;
+use App\Models\User;
+
+class AdvisorNoteFactory extends Factory
+{
+    /**
+     * The name of the factory's corresponding model.
+     *
+     * @var string
+     */
+    protected $model = AdvisorNote::class;
+
+    /**
+     * Define the model's default state.
+     */
+    public function definition(): array
+    {
+        return [
+            'user_id' => User::factory(),
+            'advisor_id' => Advisor::factory(),
+            'meeting_prep_id' => MeetingPrep::factory(),
+            'notes' => fake()->text(),
+            'follow_up_required' => fake()->boolean(),
+        ];
+    }
+}
