@@ -13,6 +13,23 @@
                         </p>
                     </div>
 
+                    <!-- Beer + tooltip -->
+                    <div class="flex items-center gap-4">
+                        <img src="/storage/beer.gif" alt="Cheers" class="h-[13.5rem] w-[13.5rem] rounded-2xl object-cover" />
+                        <div class="relative">
+                            <div
+                                class="max-w-[260px] rounded-2xl px-5 py-4 text-sm font-medium text-white/95 backdrop-blur-sm"
+                                style="background-color: rgba(255, 255, 255, 0.16);"
+                            >
+                                Be ready to learn a lot together about the process of opening a business
+                            </div>
+                            <span
+                                class="absolute left-0 top-1/2 -translate-x-2 -translate-y-1/2 h-4 w-4 rotate-45"
+                                style="background-color: rgba(255, 255, 255, 0.16);"
+                            ></span>
+                        </div>
+                    </div>
+
                     <!-- Bottom feature/checklist card -->
                     <div class="grid gap-4 rounded-3xl border border-white/20 bg-white/10 p-5 backdrop-blur-sm">
                         <div>
@@ -133,16 +150,24 @@
 
                         <div>
                             <label for="role" class="text-xs font-semibold uppercase tracking-widest text-slate-400">Role</label>
-                            <div class="mt-2 rounded-2xl border border-slate-200 bg-[#f6f9ff] px-4 py-2.5 text-sm focus-within:border-[#205274]">
+                            <div
+                                class="mt-2 rounded-2xl px-4 py-2.5 text-sm focus-within:border-[#205274]"
+                                :class="googleRoleError ? 'border border-rose-300 bg-rose-50/70' : 'border border-slate-200 bg-[#f6f9ff]'"
+                            >
                                 <select
                                     id="role"
                                     v-model="form.role"
+                                    required
                                     class="w-full bg-transparent text-slate-600 focus:outline-none"
                                 >
+                                    <option value="" disabled>Select your role</option>
                                     <option value="entrepreneur">Entrepreneur</option>
                                     <option value="advisor">Advisor</option>
                                 </select>
                             </div>
+                            <p v-if="googleRoleError" class="mt-1 text-xs font-medium text-rose-500">
+                                {{ googleRoleError }}
+                            </p>
                         </div>
 
                         <div>
@@ -188,6 +213,27 @@
                         </span>
                     </label>
 
+                    <div
+                        class="flex items-start gap-3 rounded-2xl p-4 text-sm"
+                        :class="termsFieldError ? 'border border-rose-300 bg-rose-50/70 text-rose-600' : 'border border-slate-200 bg-[#f6f9ff] text-slate-600'"
+                    >
+                        <input
+                            id="accepted_terms"
+                            v-model="form.accepted_terms"
+                            type="checkbox"
+                            :aria-invalid="!!termsFieldError"
+                            class="mt-1 h-4 w-4 rounded border-slate-300 text-[#205274] focus:ring-[#205274]"
+                            required
+                        />
+                        <span>
+                            By creating an account you confirm you agree to our terms and conditions and
+                            <Link href="/privacy-policy" class="font-semibold text-[#205274] underline-offset-2 hover:underline">Privacy Policy</Link>.
+                        </span>
+                    </div>
+                    <p v-if="termsFieldError" class="text-xs font-medium text-rose-500">
+                        {{ termsFieldError }}
+                    </p>
+
                     <button
                         type="submit"
                         :disabled="form.processing"
@@ -207,6 +253,7 @@
 </template>
 
 <script setup>
+import { computed, ref, watch } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const form = useForm({
@@ -214,18 +261,59 @@ const form = useForm({
     email: '',
     password: '',
     password_confirmation: '',
-    role: 'entrepreneur',
+    role: '',
     language: 'en',
     country_of_origin: '',
-    has_business_experience: false
+    has_business_experience: false,
+    accepted_terms: false,
 });
+
+const googleRoleError = ref('');
+const googleTermsError = ref('');
 
 const submit = () => {
     form.post('/register');
 };
 
 const continueWithGoogle = () => {
-    const role = form.role || 'entrepreneur';
-    window.location.href = `/auth/google/redirect?role=${role}`;
+    let hasErrors = false;
+
+    if (!form.role) {
+        googleRoleError.value = 'Choose whether you are an entrepreneur or advisor.';
+        hasErrors = true;
+    }
+
+    if (!form.accepted_terms) {
+        googleTermsError.value = 'Please agree to the terms and privacy policy before using Google sign-in.';
+        hasErrors = true;
+    }
+
+    if (hasErrors) {
+        return;
+    }
+
+    googleRoleError.value = '';
+    googleTermsError.value = '';
+    window.location.href = `/auth/google/redirect?role=${form.role}`;
 };
+
+watch(
+    () => form.role,
+    (newVal) => {
+        if (newVal) {
+            googleRoleError.value = '';
+        }
+    }
+);
+
+watch(
+    () => form.accepted_terms,
+    (checked) => {
+        if (checked) {
+            googleTermsError.value = '';
+        }
+    }
+);
+
+const termsFieldError = computed(() => form.errors.accepted_terms || googleTermsError.value);
 </script>

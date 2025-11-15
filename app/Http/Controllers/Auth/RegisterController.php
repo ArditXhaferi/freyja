@@ -38,6 +38,7 @@ class RegisterController extends Controller
             'language' => ['sometimes', 'string', 'max:10'],
             'country_of_origin' => ['nullable', 'string', 'max:255'],
             'has_business_experience' => ['sometimes', 'boolean'],
+            'accepted_terms' => ['accepted'],
         ]);
 
         $user = User::create([
