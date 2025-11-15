@@ -8,8 +8,8 @@
                     :class="[
                         'px-4 py-2 rounded-lg font-semibold transition-all',
                         currentView === 'discover'
-                            ? 'bg-white text-[#012169]'
-                            : 'bg-white/10 text-white/70 hover:text-white'
+                            ? 'bg-[#5cc094] text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     ]"
                 >
                     Discover
@@ -19,8 +19,8 @@
                     :class="[
                         'px-4 py-2 rounded-lg font-semibold transition-all relative',
                         currentView === 'matches'
-                            ? 'bg-white text-[#012169]'
-                            : 'bg-white/10 text-white/70 hover:text-white'
+                            ? 'bg-[#5cc094] text-white'
+                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                     ]"
                 >
                     Matches
@@ -36,15 +36,15 @@
         <div v-if="currentView === 'discover'" class="flex-1 flex flex-col items-center justify-center">
             <!-- Loading State -->
             <div v-if="loading" class="text-center py-12">
-                <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
-                <p class="text-white/80">Loading companies...</p>
+                <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#5cc094] mb-4"></div>
+                <p class="text-gray-600">Loading companies...</p>
             </div>
 
             <!-- Empty State -->
             <div v-else-if="companies.length === 0" class="text-center py-12 px-4">
-                <i class="fa-solid fa-building text-6xl text-white/40 mb-4"></i>
-                <h3 class="text-xl font-bold text-white mb-2">No More Companies</h3>
-                <p class="text-white/70">You've swiped through all available companies. Check back later!</p>
+                <i class="fa-solid fa-building text-6xl text-gray-300 mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">No More Companies</h3>
+                <p class="text-gray-600">You've swiped through all available companies. Check back later!</p>
             </div>
 
             <!-- Swipe Cards -->
@@ -60,7 +60,7 @@
                             opacity: index === 0 ? 1 : 0,
                             zIndex: displayedCompanies.length - index
                         }"
-                        class="absolute inset-0 bg-[#012169] rounded-2xl shadow-2xl border border-white/20 overflow-hidden cursor-grab active:cursor-grabbing transition-transform duration-150"
+                        class="absolute inset-0 bg-[#5cc094] rounded-2xl border border-[#5cc094] overflow-hidden cursor-grab active:cursor-grabbing transition-transform duration-150"
                         @touchstart="startSwipe($event, company)"
                         @touchmove="moveSwipe($event)"
                         @touchend="endSwipe(company)"
@@ -136,11 +136,11 @@
                             <div v-if="showSwipeIndicator" 
                                  :class="[
                                      'absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity',
-                                     swipeDirection === 'right' ? 'bg-green-500/20' : 'bg-red-500/20'
+                                     swipeDirection === 'right' ? 'bg-[#5cc094]/20' : 'bg-red-500/20'
                                  ]">
                                 <div :class="[
                                     'text-6xl font-bold',
-                                    swipeDirection === 'right' ? 'text-green-400' : 'text-red-400'
+                                    swipeDirection === 'right' ? 'text-white' : 'text-red-400'
                                 ]">
                                     {{ swipeDirection === 'right' ? 'LIKE' : 'PASS' }}
                                 </div>
@@ -154,19 +154,19 @@
             <div v-if="!loading && companies.length > 0" class="flex items-center justify-center gap-6 mt-6">
                 <button
                     @click="swipe('pass')"
-                    class="w-16 h-16 rounded-full bg-red-500 text-white shadow-lg hover:bg-red-600 transition-all hover:scale-110 flex items-center justify-center"
+                    class="w-16 h-16 rounded-full bg-red-500 text-white hover:bg-red-600 transition-all hover:scale-110 flex items-center justify-center"
                 >
                     <i class="fa-solid fa-times text-2xl"></i>
                 </button>
                 <button
                     @click="swipe('super_like')"
-                    class="w-16 h-16 rounded-full bg-blue-500 text-white shadow-lg hover:bg-blue-600 transition-all hover:scale-110 flex items-center justify-center"
+                    class="w-16 h-16 rounded-full bg-[#5cc094] text-white hover:bg-[#4a9d7a] transition-all hover:scale-110 flex items-center justify-center"
                 >
                     <i class="fa-solid fa-star text-2xl"></i>
                 </button>
                 <button
                     @click="swipe('like')"
-                    class="w-16 h-16 rounded-full bg-green-500 text-white shadow-lg hover:bg-green-600 transition-all hover:scale-110 flex items-center justify-center"
+                    class="w-16 h-16 rounded-full bg-[#5cc094] text-white hover:bg-[#4a9d7a] transition-all hover:scale-110 flex items-center justify-center"
                 >
                     <i class="fa-solid fa-heart text-2xl"></i>
                 </button>
@@ -177,15 +177,15 @@
         <div v-if="currentView === 'matches'" class="flex-1 overflow-y-auto">
             <!-- Loading State -->
             <div v-if="loadingMatches" class="text-center py-12">
-                <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-white mb-4"></div>
-                <p class="text-white/80">Loading matches...</p>
+                <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#5cc094] mb-4"></div>
+                <p class="text-gray-600">Loading matches...</p>
             </div>
 
             <!-- Empty State -->
             <div v-else-if="matches.length === 0" class="text-center py-12 px-4">
-                <i class="fa-solid fa-heart text-6xl text-white/40 mb-4"></i>
-                <h3 class="text-xl font-bold text-white mb-2">No Likes Yet</h3>
-                <p class="text-white/70">Start swiping to like companies and find potential business partners!</p>
+                <i class="fa-solid fa-heart text-6xl text-gray-300 mb-4"></i>
+                <h3 class="text-xl font-bold text-gray-900 mb-2">No Likes Yet</h3>
+                <p class="text-gray-600">Start swiping to like companies and find potential business partners!</p>
             </div>
 
             <!-- Matches List -->
@@ -193,22 +193,22 @@
                 <div
                     v-for="match in matches"
                     :key="match.id"
-                    class="bg-[#012169] rounded-lg p-5 border border-white/20 hover:bg-[#011135] transition-all"
+                    class="group bg-[#5cc094] rounded-lg p-5 border border-[#5cc094] hover:bg-[#4a9d7a] transition-all"
                 >
                     <div class="flex items-start gap-4">
-                        <div class="flex-shrink-0 w-16 h-16 bg-white/20 rounded-full flex items-center justify-center text-white text-2xl font-bold border border-white/20">
+                        <div class="flex-shrink-0 w-16 h-16 bg-[#4a9d7a] rounded-full flex items-center justify-center text-white text-2xl font-bold border border-white/30">
                             {{ match.company.business_name.charAt(0).toUpperCase() }}
                         </div>
                         <div class="flex-1">
                             <div class="flex items-start justify-between mb-2">
                                 <div>
-                                    <h3 class="text-xl font-bold text-white">{{ match.company.business_name }}</h3>
-                                    <p class="text-white/70 text-sm">{{ match.company.name }}</p>
+                                    <h3 class="text-xl font-bold text-white transition-colors">{{ match.company.business_name }}</h3>
+                                    <p class="text-white/90 text-sm transition-colors">{{ match.company.name }}</p>
                                 </div>
-                                <span v-if="match.is_mutual" class="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-xs font-semibold border border-green-500/30">
+                                <span v-if="match.is_mutual" class="px-3 py-1 bg-white/20 text-white rounded-full text-xs font-semibold border border-white/30">
                                     MATCH! 🎉
                                 </span>
-                                <span v-else class="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-xs font-semibold border border-blue-500/30">
+                                <span v-else class="px-3 py-1 bg-white/20 text-white rounded-full text-xs font-semibold border border-white/30">
                                     LIKED
                                 </span>
                             </div>
@@ -221,10 +221,10 @@
                                     {{ match.company.specialization }}
                                 </span>
                             </div>
-                            <p v-if="match.company.business_idea" class="text-white/90 text-sm mb-3 line-clamp-2">
+                            <p v-if="match.company.business_idea" class="text-white/90 text-sm mb-3 line-clamp-2 transition-colors">
                                 {{ match.company.business_idea }}
                             </p>
-                            <div class="flex items-center gap-3 text-sm text-white/70">
+                            <div class="flex items-center gap-3 text-sm text-white/80">
                                 <div v-if="match.company.address" class="flex items-center">
                                     <i class="fa-solid fa-location-dot mr-1"></i>
                                     <span>{{ match.company.postal_district || 'Helsinki' }}</span>
@@ -233,7 +233,7 @@
                                     <i class="fa-solid fa-globe mr-1"></i>
                                     <a :href="'https://' + match.company.internet_address" 
                                        target="_blank" 
-                                       class="text-blue-300 hover:underline">
+                                       class="text-white hover:underline">
                                         Visit Website
                                     </a>
                                 </div>

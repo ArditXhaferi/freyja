@@ -324,7 +324,7 @@ export default function useChatAgent({
 
             // Build first message
             const buildFirstMessage = (businessPlan, roadmap, userName) => {
-                let message = "Hi! I'm Eppu the Bear, your AI startup coach! 🐻\n\n";
+                let message = "Hi! I'm Opa the Bear, your AI startup coach! 🐻\n\n";
                 
                 if (userName) {
                     message += `Nice to meet you, ${userName}!\n\n`;

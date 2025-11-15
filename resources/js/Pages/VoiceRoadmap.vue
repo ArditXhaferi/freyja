@@ -1,4 +1,5 @@
 <template>
+<<<<<<< Updated upstream
     <Head title="Eppu the Bear" />
     <div class="min-h-screen bg-gradient-to-b from-[#0b1f30] via-[#102c40] to-[#020b16] py-6 px-4 pb-24">
         <div class="max-w-6xl mx-auto">
@@ -29,16 +30,52 @@
                         </div>
                         <h1 class="text-3xl font-bold text-white mt-4 mb-2">
                             Eppu the Bear
-                        </h1>
-                        <p class="text-sm font-medium text-white/80 mb-4">
-                            Your AI Startup Coach
-                        </p>
+=======
+    <Head title="Opa the Bear" />
+    <!-- Top Navigation -->
+    <TopNavigation 
+        :active-tab="activeTab"
+        @navigate="handleNavigation"
+    />
+    <div class="min-h-screen bg-[#fff5f5] pt-12 md:pt-24 pb-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
-                        <!-- Mode Toggle -->
-                        <div class="flex items-center justify-center gap-3">
+            <!-- Opa Animation Section -->
+            <div class="mb-8 sm:mb-12 md:mb-16">
+                <div class="flex flex-col sm:flex-row items-center sm:items-center gap-6 sm:gap-8 md:gap-12 lg:gap-16 mb-8 sm:mb-12">
+                    
+                    <!-- Bear Animation -->
+                    <img
+                        :src="isTalking ? '/images/video6.gif' : '/images/video5.gif'"
+                        alt="Opa the Bear animation"
+                        class="w-48 h-auto sm:w-56 md:w-64 lg:w-72 object-contain flex-shrink-0"
+                        style="max-height: 250px;"
+                    />
+
+                    <!-- Text Block -->
+                    <div class="flex flex-col flex-1 w-full sm:w-auto text-center sm:text-left">
+                        <h1 class="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-3 sm:mb-4 md:mb-5">
+                            One bear.<br />Every language.
+>>>>>>> Stashed changes
+                        </h1>
+
+                        <p class="text-[11px] sm:text-xs md:text-sm lg:text-base font-medium text-gray-600 max-w-full sm:max-w-xl md:max-w-2xl lg:max-w-3xl leading-relaxed mx-auto sm:mx-0">
+                            Opa the Bear is your voice-powered startup coach, guiding you from idea to action with 
+                            smart, friendly support. Start your journey today and build something real.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Input Mode Interface -->
+            <div class="space-y-4">
+                <Transition name="mode-switch" mode="out-in">
+                    <div v-if="interactionMode === 'voice'" key="voice" class="flex justify-center">
+                        <div class="flex flex-col items-center">
                             <button
-                                @click="handleCallMode"
+                                @click="handleMicClick"
                                 :class="[
+<<<<<<< Updated upstream
                                     'px-6 py-3 rounded-lg text-base font-semibold transition-all flex items-center gap-2 border',
                                     interactionMode === 'voice'
                                         ? 'bg-[#205274] text-white border-[#5cc094] shadow-lg shadow-[#205274]/40'
@@ -60,9 +97,77 @@
                             >
                                 <i class="fa-solid fa-comments"></i>
                                 <span>Text</span>
+=======
+                                    'w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center transition-all',
+                                    isListening || isSessionActive
+                                        ? 'bg-[#5cc094] shadow-lg shadow-[#5cc094]/50 scale-110'
+                                        : 'bg-[#5cc094] hover:bg-[#4a9d7a] hover:scale-105 shadow-lg'
+                                ]"
+                            >
+                                <template v-if="isListening || isSessionActive">
+                                    <svg 
+                                        :class="[
+                                            'w-4 h-4 md:w-5 md:h-5 text-white mx-auto',
+                                            isListening ? 'phone-shake' : ''
+                                        ]"
+                                        fill="none" 
+                                        stroke="currentColor" 
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                    </svg>
+                                </template>
+                                <template v-else>
+                                    <svg class="w-4 h-4 md:w-5 md:h-5 text-white mx-auto phone-hanging" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                    </svg>
+                                </template>
+>>>>>>> Stashed changes
                             </button>
+                            <p class="text-[#2E3A45]/70 mt-2 text-sm text-center">
+                                {{ isListening ? 'Listening...' : 'Tap to call' }}
+                            </p>
                         </div>
                     </div>
+                    <div v-else key="chat" class="w-full max-w-2xl mx-auto">
+                        <!-- <input
+                            v-model="chatInput"
+                            @keyup.enter="sendChatMessage"
+                            type="text"
+                            placeholder="Type your answer here..."
+                            class="flex-1 min-w-0 py-3 px-4 text-base bg-white text-gray-900 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#5cc094]"
+                            :disabled="isLoadingChat"
+                        />
+                        <button
+                            @click="sendChatMessage"
+                            :disabled="!chatInput.trim() || isLoadingChat"
+                            class="px-6 py-3 bg-[#5cc094] hover:bg-[#4a9d7a] text-white rounded-lg font-semibold transition-all disabled:opacity-50 disabled:cursor-not-allowed text-base flex-shrink-0"
+                        >
+                            Send
+                        </button> -->
+                    </div>
+                </Transition>
+                <!-- Toggle Input Mode -->
+                <div class="flex justify-center mt-6">
+                    <button
+                        @click="interactionMode = interactionMode === 'voice' ? 'chat' : 'voice'"
+                        class="flex items-center gap-2 text-[#5cc094] hover:text-[#4a9d7a] transition-colors"
+                    >
+                        <template v-if="interactionMode === 'voice'">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                            </svg>
+                            <span>Switch to typing</span>
+                        </template>
+                        <template v-else>
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                            </svg>
+                            <span>Switch to voice</span>
+                        </template>
+                    </button>
+                </div>
+            </div>
 
             <!-- Error Display -->
             <div v-if="error" class="mb-4 bg-red-900/80 border border-red-600 rounded-lg p-4 shadow-lg">
@@ -86,19 +191,23 @@
             </div>
 
             <!-- Voice Interface (Full Screen) -->
+<<<<<<< Updated upstream
             <div
                 v-if="interactionMode === 'voice' && activeTab === 'roadmap'"
                 class="bg-[#205274] rounded-3xl shadow-xl shadow-black/30 border border-[#5cc094] p-6 mb-6 min-h-[600px] flex flex-col"
             >
+=======
+            <div v-if="interactionMode === 'voice' && activeTab === 'roadmap'" class="bg-white rounded-lg shadow-lg border border-gray-200 mb-6 min-h-[600px] flex flex-col mt-8">
+>>>>>>> Stashed changes
                 <!-- Call Status -->
-                <div class="flex items-center gap-4 mb-6 pb-4 border-b border-white/20">
+                <div class="flex items-center gap-4 px-6 pt-6 pb-4 border-b border-gray-300">
                     <div :class="[
                         'w-3 h-3 rounded-full',
-                        connectionStatus === 'connected' ? 'bg-green-500' : '',
+                        connectionStatus === 'connected' ? 'bg-[#5cc094]' : '',
                         connectionStatus === 'connecting' ? 'bg-yellow-500 animate-pulse' : '',
                         connectionStatus === 'disconnected' ? 'bg-gray-400' : ''
                     ]"></div>
-                    <span class="text-white font-medium">
+                    <span class="text-gray-900 font-medium">
                         {{ connectionStatus === 'connected' ? 'Connected' : '' }}
                         {{ connectionStatus === 'connecting' ? 'Connecting...' : '' }}
                         {{ connectionStatus === 'disconnected' ? 'Ready to call' : '' }}
@@ -125,27 +234,32 @@
                         <span>Speaking...</span>
                     </span>
                     <button
-                        v-if="isConnected"
-                        @click.stop="toggleMute"
+                        v-if="isConnected || isSessionActive"
+                        @click.stop.prevent="toggleMute"
                         type="button"
                         :class="[
-                            'ml-auto px-5 py-3 rounded-full text-base font-semibold transition-all flex items-center gap-2 shadow-lg cursor-pointer',
+                            'ml-auto px-5 py-3 rounded-full text-base font-semibold transition-all flex items-center gap-2 shadow-lg cursor-pointer border-2 bg-white hover:scale-105 active:scale-95',
                             isMuted
+<<<<<<< Updated upstream
                                 ? 'bg-red-600 text-white hover:bg-red-700 hover:scale-105 active:scale-95 animate-pulse shadow-red-500/50'
                                 : 'bg-white/10 text-white hover:bg-white/20 border border-white/30 hover:scale-105 active:scale-95'
+=======
+                                ? 'border-red-600 text-red-600 hover:border-red-700 hover:text-red-700'
+                                : 'border-gray-400 text-gray-600 hover:border-gray-500 hover:text-gray-700'
+>>>>>>> Stashed changes
                         ]"
                         :title="isMuted ? 'Click to unmute microphone' : 'Click to mute microphone'"
                     >
-                        <i v-if="isMuted" class="fa-solid fa-microphone-slash text-xl"></i>
-                        <i v-else class="fa-solid fa-microphone text-xl"></i>
+                        <i v-if="isMuted" class="fa-solid fa-microphone-slash text-xl text-red-600"></i>
+                        <i v-else class="fa-solid fa-microphone text-xl text-gray-600"></i>
                         <span>{{ isMuted ? 'Unmute' : 'Mute' }}</span>
                     </button>
                 </div>
 
                 <!-- Transcript Display (Full Screen) -->
-                <div ref="transcriptContainer" class="flex-1 overflow-y-auto space-y-4 pb-4">
+                <div class="flex-1 overflow-y-auto space-y-4 pt-6 px-6 pb-4">
                     <div v-if="transcripts.length === 0" class="flex items-center justify-center h-full">
-                        <p class="text-white/60 text-lg">Start a conversation with Eppu to see your chat here...</p>
+                        <p class="text-gray-500 text-lg">Start a conversation with Opa to see your chat here...</p>
                     </div>
                     <div
                         v-for="(transcript, index) in transcripts"
@@ -153,27 +267,54 @@
                         :class="[
                             'p-4 rounded-2xl text-base shadow-sm',
                             transcript.type === 'user' 
+<<<<<<< Updated upstream
                                 ? 'bg-[#205274] text-white ml-12 border border-[#5cc094]'
                                 : 'bg-white/5 text-white mr-12 border border-[#5cc094]/40'
+=======
+                                ? 'bg-[#e4f0ff] text-gray-900 ml-12 border border-gray-300' 
+                                : 'bg-gray-100 text-gray-900 mr-12 border border-gray-300'
+>>>>>>> Stashed changes
                         ]"
                     >
                         <span class="font-medium text-lg">
-                            {{ transcript.type === 'user' ? 'You: ' : 'Eppu: ' }}
+                            {{ transcript.type === 'user' ? 'You: ' : 'Opa: ' }}
                         </span>
-                        <span class="text-white/90">{{ transcript.text }}</span>
+                        <span class="text-gray-800">{{ transcript.text }}</span>
                     </div>
                 </div>
             </div>
 
             <!-- Chat Interface (Full Screen) -->
+<<<<<<< Updated upstream
             <div
                 v-if="interactionMode === 'chat' && activeTab === 'roadmap'"
                 class="bg-[#205274] rounded-3xl shadow-xl shadow-black/30 border border-[#5cc094] p-6 mb-6 min-h-[600px] flex flex-col"
             >
+=======
+            <div v-if="interactionMode === 'chat' && activeTab === 'roadmap'" class="bg-white rounded-xl shadow-xl border border-gray-200 mb-6 min-h-[600px] flex flex-col overflow-hidden">
+                <!-- Chat Status -->
+                <div class="flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
+                    <div :class="[
+                        'w-2.5 h-2.5 rounded-full shadow-sm',
+                        connectionStatus === 'connected' ? 'bg-[#5cc094] ring-2 ring-[#5cc094]/20' : '',
+                        connectionStatus === 'connecting' ? 'bg-yellow-500 animate-pulse ring-2 ring-yellow-500/20' : '',
+                        connectionStatus === 'disconnected' ? 'bg-gray-400 ring-2 ring-gray-400/20' : ''
+                    ]"></div>
+                    <span class="text-gray-700 font-medium text-sm">
+                        {{ connectionStatus === 'connected' ? 'Connected' : '' }}
+                        {{ connectionStatus === 'connecting' ? 'Connecting...' : '' }}
+                        {{ connectionStatus === 'disconnected' ? 'Ready to call' : '' }}
+                    </span>
+                </div>
+>>>>>>> Stashed changes
                 <!-- Chat Messages -->
-                <div class="flex-1 overflow-y-auto space-y-4 mb-6 pb-4" ref="chatMessagesContainer">
-                    <div v-if="chatMessages.length === 0" class="flex items-center justify-center h-full">
-                        <p class="text-white/60 text-lg">Start chatting with Eppu...</p>
+                <div class="flex-1 overflow-y-auto space-y-4 pt-8 px-6 pb-6 bg-gray-50/30" ref="chatMessagesContainer">
+                    <div v-if="chatMessages.length === 0" class="flex flex-col items-center justify-center h-full min-h-[400px]">
+                        <div class="bg-white rounded-full p-6 mb-4 shadow-md border border-gray-200">
+                            <i class="fa-solid fa-comments text-4xl text-gray-300"></i>
+                        </div>
+                        <p class="text-gray-500 text-base font-medium">Start a conversation with Opa to see your chat here...</p>
+                        <p class="text-gray-400 text-sm mt-2">Ask questions, get advice, or start building your roadmap</p>
                     </div>
                     <div
                         v-for="(message, index) in chatMessages"
@@ -185,51 +326,78 @@
                     >
                         <div
                             :class="[
+<<<<<<< Updated upstream
                                 'max-w-[75%] rounded-2xl p-4 text-base shadow-sm',
                                 message.type === 'user'
                                     ? 'bg-[#205274] text-white border border-[#5cc094]'
                                     : 'bg-white/5 text-white border border-[#5cc094]/40'
+=======
+                                'max-w-[80%] md:max-w-[70%] rounded-2xl px-5 py-3.5 text-base shadow-sm',
+                                message.type === 'user'
+                                    ? 'bg-[#5cc094] text-white rounded-br-md'
+                                    : 'bg-white text-gray-900 border border-gray-200 rounded-bl-md'
+>>>>>>> Stashed changes
                             ]"
                         >
-                            <p class="whitespace-pre-wrap">{{ message.text }}</p>
+                            <p class="whitespace-pre-wrap leading-relaxed">{{ message.text }}</p>
                         </div>
                     </div>
                     <div v-if="isLoadingChat" class="flex justify-start">
+<<<<<<< Updated upstream
                         <div class="bg-white/5 text-white border border-[#5cc094]/40 rounded-2xl p-4 text-base">
                             <div class="flex items-center gap-2">
                                 <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                                 <span>Eppu is thinking...</span>
+=======
+                        <div class="bg-white text-gray-900 border border-gray-200 rounded-2xl rounded-bl-md px-5 py-3.5 shadow-sm">
+                            <div class="flex items-center gap-3">
+                                <div class="flex gap-1">
+                                    <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+                                    <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+                                    <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+                                </div>
+                                <span class="text-sm text-gray-600">Opa is thinking...</span>
+>>>>>>> Stashed changes
                             </div>
                         </div>
                     </div>
                 </div>
                 
                 <!-- Chat Input -->
-                <div class="flex gap-3 border-t border-white/20 pt-4">
+                <div class="flex gap-3 border-t border-gray-200 bg-white px-6 py-4">
                     <input
                         v-model="chatInput"
                         @keyup.enter="sendChatMessage"
                         type="text"
+<<<<<<< Updated upstream
                         placeholder="Type your message to Eppu..."
                         class="flex-1 bg-white/5 text-white border border-[#205274] rounded-2xl px-5 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#5cc094]"
+=======
+                        placeholder="Type your message to Opa..."
+                        class="flex-1 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl px-5 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#5cc094]/50 focus:border-[#5cc094] transition-all placeholder:text-gray-400"
+>>>>>>> Stashed changes
                         :disabled="isLoadingChat"
                     />
                     <button
                         @click="sendChatMessage"
                         :disabled="!chatInput.trim() || isLoadingChat"
+<<<<<<< Updated upstream
                         class="px-8 py-3 bg-[#205274] text-white rounded-2xl border border-[#5cc094] hover:bg-[#5cc094] hover:text-[#205274] transition-all font-semibold shadow-lg shadow-[#205274]/40 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-lg"
+=======
+                        class="px-6 py-3 bg-[#5cc094] text-white rounded-xl hover:bg-[#4a9d7a] transition-all font-semibold shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-base disabled:hover:shadow-md"
+>>>>>>> Stashed changes
                     >
-                        <i class="fa-solid fa-paper-plane"></i>
-                        <span>Send</span>
+                        <i class="fa-solid fa-paper-plane text-sm"></i>
+                        <span class="hidden sm:inline">Send</span>
                     </button>
                 </div>
             </div>
 
 
             <!-- Document Requests Section (shown in business tab) -->
-            <div v-if="pendingDocuments.length > 0 && activeTab === 'business'" class="mt-4 bg-[#012169] rounded-lg shadow-lg border border-white/20 p-5">
+            <div v-if="pendingDocuments.length > 0 && activeTab === 'business'" class="mt-4 bg-gray-50 rounded-lg shadow-lg border border-gray-200 p-5">
                 <div class="flex items-center gap-3 mb-4">
-                    <h3 class="text-lg font-bold text-white">Document Requests</h3>
+                    <h3 class="text-lg font-bold text-gray-900">Document Requests</h3>
                 </div>
                 <div class="space-y-3">
                     <DocumentRequestCard
@@ -296,10 +464,10 @@
         <div v-if="activeTab === 'business'" 
              class="fixed inset-0 z-40 flex items-end drawer-overlay"
              @click.self="activeTab = 'roadmap'">
-            <div class="bg-[#012169] rounded-t-lg shadow-2xl w-full max-h-[85vh] overflow-y-auto drawer-content">
-                <div class="sticky top-0 bg-[#011135] p-5 flex items-center justify-between rounded-t-lg shadow-md z-10 border-b border-white/20">
-                    <h2 class="text-xl font-bold text-white">Business Information</h2>
-                    <button @click="activeTab = 'roadmap'" class="text-white/80 hover:text-white transition-colors">
+            <div class="bg-gray-50 rounded-t-lg w-full max-h-[85vh] overflow-y-auto drawer-content">
+                <div class="sticky top-0 bg-white p-5 flex items-center justify-between rounded-t-lg z-10 border-b border-gray-200">
+                    <h2 class="text-xl font-bold text-gray-900">Business Information</h2>
+                    <button @click="activeTab = 'roadmap'" class="text-gray-600 hover:text-gray-900 transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -307,8 +475,8 @@
                 </div>
                 <div class="p-6 pb-24 space-y-6">
                     <!-- Contextual Information Section -->
-                    <div class="bg-[#011135] rounded-lg shadow-lg border border-white/20 p-5">
-                        <h3 class="text-lg font-bold text-white mb-4">
+                    <div class="bg-white rounded-lg border border-gray-200 p-5">
+                        <h3 class="text-lg font-bold text-gray-900 mb-4">
                             Your Background Information
                         </h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -317,15 +485,16 @@
                                 :ref="el => setContextualFieldRef('country_of_origin', el)"
                                 :id="'contextual-field-country_of_origin'"
                                 :class="[
-                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all cursor-pointer hover:bg-[#011135]',
-                                    fieldToHighlight === 'country_of_origin' ? 'field-highlight' : '',
-                                    editingContextualField === 'country_of_origin' ? 'border-white/50' : ''
+                                    'bg-white rounded-lg p-3 border transition-all cursor-pointer hover:bg-gray-50',
+                                    isContextualFieldCompleted('country_of_origin') ? 'border-[#5cc094]' : 'border-gray-200',
+                                    fieldToHighlight === 'country_of_origin' ? 'field-highlight border-[#5cc094]' : '',
+                                    editingContextualField === 'country_of_origin' ? 'border-[#5cc094]' : ''
                                 ]"
                                 @click="startEditingContextual('country_of_origin')"
                             >
-                                <p class="text-xs font-semibold text-white/70 mb-1 flex items-center justify-between">
+                                <p class="text-xs font-semibold text-gray-600 mb-1 flex items-center justify-between">
                                     <span>Country of Origin</span>
-                                    <i class="fa-solid fa-pen text-[8px] text-white/50"></i>
+                                    <i class="fa-solid fa-pen text-[8px] text-gray-400"></i>
                                 </p>
                                 <input
                                     v-if="editingContextualField === 'country_of_origin'"
@@ -335,10 +504,10 @@
                                     @keydown.esc="cancelEditingContextual"
                                     @click.stop
                                     type="text"
-                                    class="w-full bg-[#011135] text-white text-sm p-2 rounded border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    class="w-full bg-gray-50 text-gray-900 text-sm p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#5cc094]"
                                     ref="contextualEditInput"
                                 />
-                                <p v-else class="text-sm font-bold text-white">{{ businessPlanData?.country_of_origin || 'Not provided - Click to edit' }}</p>
+                                <p v-else :class="['text-sm font-bold', isContextualFieldCompleted('country_of_origin') ? 'text-[#5cc094]' : 'text-gray-900']">{{ businessPlanData?.country_of_origin || 'Not provided - Click to edit' }}</p>
                             </div>
                             
                             <!-- EU Resident -->
@@ -346,15 +515,16 @@
                                 :ref="el => setContextualFieldRef('is_eu_resident', el)"
                                 :id="'contextual-field-is_eu_resident'"
                                 :class="[
-                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all cursor-pointer hover:bg-[#011135]',
-                                    fieldToHighlight === 'is_eu_resident' ? 'field-highlight' : '',
-                                    editingContextualField === 'is_eu_resident' ? 'border-white/50' : ''
+                                    'bg-white rounded-lg p-3 border transition-all cursor-pointer hover:bg-gray-50',
+                                    isContextualFieldCompleted('is_eu_resident') ? 'border-[#5cc094]' : 'border-gray-200',
+                                    fieldToHighlight === 'is_eu_resident' ? 'field-highlight border-[#5cc094]' : '',
+                                    editingContextualField === 'is_eu_resident' ? 'border-[#5cc094]' : ''
                                 ]"
                                 @click="startEditingContextual('is_eu_resident')"
                             >
-                                <p class="text-xs font-semibold text-white/70 mb-1 flex items-center justify-between">
+                                <p class="text-xs font-semibold text-gray-600 mb-1 flex items-center justify-between">
                                     <span>EU Resident</span>
-                                    <i class="fa-solid fa-pen text-[8px] text-white/50"></i>
+                                    <i class="fa-solid fa-pen text-[8px] text-gray-400"></i>
                                 </p>
                                 <select
                                     v-if="editingContextualField === 'is_eu_resident'"
@@ -362,17 +532,17 @@
                                     @blur="saveContextualField('is_eu_resident')"
                                     @change="saveContextualField('is_eu_resident')"
                                     @click.stop
-                                    class="w-full bg-[#011135] text-white text-sm p-2 rounded border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    class="w-full bg-gray-50 text-gray-900 text-sm p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#5cc094]"
                                     ref="contextualEditInput"
                                 >
                                     <option value="">Not provided</option>
                                     <option value="true">Yes</option>
                                     <option value="false">No</option>
                                 </select>
-                                <p v-else class="text-sm font-bold text-white">
-                                    <span v-if="businessPlanData?.is_eu_resident === true" class="text-green-400">Yes</span>
-                                    <span v-else-if="businessPlanData?.is_eu_resident === false" class="text-red-400">No</span>
-                                    <span v-else class="text-white/50">Not provided - Click to edit</span>
+                                <p v-else class="text-sm font-bold">
+                                    <span v-if="businessPlanData?.is_eu_resident === true" class="text-[#5cc094]">Yes</span>
+                                    <span v-else-if="businessPlanData?.is_eu_resident === false" class="text-red-500">No</span>
+                                    <span v-else class="text-gray-500">Not provided - Click to edit</span>
                                 </p>
                             </div>
                             
@@ -381,15 +551,16 @@
                                 :ref="el => setContextualFieldRef('is_newcomer_to_finland', el)"
                                 :id="'contextual-field-is_newcomer_to_finland'"
                                 :class="[
-                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all cursor-pointer hover:bg-[#011135]',
-                                    fieldToHighlight === 'is_newcomer_to_finland' ? 'field-highlight' : '',
-                                    editingContextualField === 'is_newcomer_to_finland' ? 'border-white/50' : ''
+                                    'bg-white rounded-lg p-3 border transition-all cursor-pointer hover:bg-gray-50',
+                                    isContextualFieldCompleted('is_newcomer_to_finland') ? 'border-[#5cc094]' : 'border-gray-200',
+                                    fieldToHighlight === 'is_newcomer_to_finland' ? 'field-highlight border-[#5cc094]' : '',
+                                    editingContextualField === 'is_newcomer_to_finland' ? 'border-[#5cc094]' : ''
                                 ]"
                                 @click="startEditingContextual('is_newcomer_to_finland')"
                             >
-                                <p class="text-xs font-semibold text-white/70 mb-1 flex items-center justify-between">
+                                <p class="text-xs font-semibold text-gray-600 mb-1 flex items-center justify-between">
                                     <span>Newcomer to Finland</span>
-                                    <i class="fa-solid fa-pen text-[8px] text-white/50"></i>
+                                    <i class="fa-solid fa-pen text-[8px] text-gray-400"></i>
                                 </p>
                                 <select
                                     v-if="editingContextualField === 'is_newcomer_to_finland'"
@@ -397,17 +568,17 @@
                                     @blur="saveContextualField('is_newcomer_to_finland')"
                                     @change="saveContextualField('is_newcomer_to_finland')"
                                     @click.stop
-                                    class="w-full bg-[#011135] text-white text-sm p-2 rounded border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    class="w-full bg-gray-50 text-gray-900 text-sm p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#5cc094]"
                                     ref="contextualEditInput"
                                 >
                                     <option value="">Not provided</option>
                                     <option value="true">Yes</option>
                                     <option value="false">No</option>
                                 </select>
-                                <p v-else class="text-sm font-bold text-white">
-                                    <span v-if="businessPlanData?.is_newcomer_to_finland === true" class="text-green-400">Yes</span>
-                                    <span v-else-if="businessPlanData?.is_newcomer_to_finland === false" class="text-gray-400">No</span>
-                                    <span v-else class="text-white/50">Not provided - Click to edit</span>
+                                <p v-else class="text-sm font-bold">
+                                    <span v-if="businessPlanData?.is_newcomer_to_finland === true" class="text-[#5cc094]">Yes</span>
+                                    <span v-else-if="businessPlanData?.is_newcomer_to_finland === false" class="text-gray-500">No</span>
+                                    <span v-else class="text-gray-500">Not provided - Click to edit</span>
                                 </p>
                             </div>
                             
@@ -416,15 +587,16 @@
                                 :ref="el => setContextualFieldRef('has_residence_permit', el)"
                                 :id="'contextual-field-has_residence_permit'"
                                 :class="[
-                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all cursor-pointer hover:bg-[#011135]',
-                                    fieldToHighlight === 'has_residence_permit' ? 'field-highlight' : '',
-                                    editingContextualField === 'has_residence_permit' ? 'border-white/50' : ''
+                                    'bg-white rounded-lg p-3 border transition-all cursor-pointer hover:bg-gray-50',
+                                    isContextualFieldCompleted('has_residence_permit') ? 'border-[#5cc094]' : 'border-gray-200',
+                                    fieldToHighlight === 'has_residence_permit' ? 'field-highlight border-[#5cc094]' : '',
+                                    editingContextualField === 'has_residence_permit' ? 'border-[#5cc094]' : ''
                                 ]"
                                 @click="startEditingContextual('has_residence_permit')"
                             >
-                                <p class="text-xs font-semibold text-white/70 mb-1 flex items-center justify-between">
+                                <p class="text-xs font-semibold text-gray-600 mb-1 flex items-center justify-between">
                                     <span>Residence Permit</span>
-                                    <i class="fa-solid fa-pen text-[8px] text-white/50"></i>
+                                    <i class="fa-solid fa-pen text-[8px] text-gray-400"></i>
                                 </p>
                                 <select
                                     v-if="editingContextualField === 'has_residence_permit'"
@@ -432,17 +604,17 @@
                                     @blur="saveContextualField('has_residence_permit')"
                                     @change="saveContextualField('has_residence_permit')"
                                     @click.stop
-                                    class="w-full bg-[#011135] text-white text-sm p-2 rounded border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    class="w-full bg-gray-50 text-gray-900 text-sm p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#5cc094]"
                                     ref="contextualEditInput"
                                 >
                                     <option value="">Not provided</option>
                                     <option value="true">Yes</option>
                                     <option value="false">No</option>
                                 </select>
-                                <p v-else class="text-sm font-bold text-white">
-                                    <span v-if="businessPlanData?.has_residence_permit === true" class="text-green-400">Yes</span>
-                                    <span v-else-if="businessPlanData?.has_residence_permit === false" class="text-red-400">No</span>
-                                    <span v-else class="text-white/50">Not provided - Click to edit</span>
+                                <p v-else class="text-sm font-bold">
+                                    <span v-if="businessPlanData?.has_residence_permit === true" class="text-[#5cc094]">Yes</span>
+                                    <span v-else-if="businessPlanData?.has_residence_permit === false" class="text-red-500">No</span>
+                                    <span v-else class="text-gray-500">Not provided - Click to edit</span>
                                 </p>
                             </div>
                             
@@ -451,15 +623,16 @@
                                 :ref="el => setContextualFieldRef('residence_permit_type', el)"
                                 :id="'contextual-field-residence_permit_type'"
                                 :class="[
-                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all cursor-pointer hover:bg-[#011135]',
-                                    fieldToHighlight === 'residence_permit_type' ? 'field-highlight' : '',
-                                    editingContextualField === 'residence_permit_type' ? 'border-white/50' : ''
+                                    'bg-white rounded-lg p-3 border transition-all cursor-pointer hover:bg-gray-50',
+                                    isContextualFieldCompleted('residence_permit_type') ? 'border-[#5cc094]' : 'border-gray-200',
+                                    fieldToHighlight === 'residence_permit_type' ? 'field-highlight border-[#5cc094]' : '',
+                                    editingContextualField === 'residence_permit_type' ? 'border-[#5cc094]' : ''
                                 ]"
                                 @click="startEditingContextual('residence_permit_type')"
                             >
-                                <p class="text-xs font-semibold text-white/70 mb-1 flex items-center justify-between">
+                                <p class="text-xs font-semibold text-gray-600 mb-1 flex items-center justify-between">
                                     <span>Residence Permit Type</span>
-                                    <i class="fa-solid fa-pen text-[8px] text-white/50"></i>
+                                    <i class="fa-solid fa-pen text-[8px] text-gray-400"></i>
                                 </p>
                                 <input
                                     v-if="editingContextualField === 'residence_permit_type'"
@@ -469,10 +642,10 @@
                                     @keydown.esc="cancelEditingContextual"
                                     @click.stop
                                     type="text"
-                                    class="w-full bg-[#011135] text-white text-sm p-2 rounded border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    class="w-full bg-gray-50 text-gray-900 text-sm p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#5cc094]"
                                     ref="contextualEditInput"
                                 />
-                                <p v-else class="text-sm font-bold text-white">{{ businessPlanData?.residence_permit_type || 'Not provided - Click to edit' }}</p>
+                                <p v-else :class="['text-sm font-bold', isContextualFieldCompleted('residence_permit_type') ? 'text-[#5cc094]' : 'text-gray-900']">{{ businessPlanData?.residence_permit_type || 'Not provided - Click to edit' }}</p>
                             </div>
                             
                             <!-- Years in Finland -->
@@ -480,15 +653,16 @@
                                 :ref="el => setContextualFieldRef('years_in_finland', el)"
                                 :id="'contextual-field-years_in_finland'"
                                 :class="[
-                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all cursor-pointer hover:bg-[#011135]',
-                                    fieldToHighlight === 'years_in_finland' ? 'field-highlight' : '',
-                                    editingContextualField === 'years_in_finland' ? 'border-white/50' : ''
+                                    'bg-white rounded-lg p-3 border transition-all cursor-pointer hover:bg-gray-50',
+                                    isContextualFieldCompleted('years_in_finland') ? 'border-[#5cc094]' : 'border-gray-200',
+                                    fieldToHighlight === 'years_in_finland' ? 'field-highlight border-[#5cc094]' : '',
+                                    editingContextualField === 'years_in_finland' ? 'border-[#5cc094]' : ''
                                 ]"
                                 @click="startEditingContextual('years_in_finland')"
                             >
-                                <p class="text-xs font-semibold text-white/70 mb-1 flex items-center justify-between">
+                                <p class="text-xs font-semibold text-gray-600 mb-1 flex items-center justify-between">
                                     <span>Years in Finland</span>
-                                    <i class="fa-solid fa-pen text-[8px] text-white/50"></i>
+                                    <i class="fa-solid fa-pen text-[8px] text-gray-400"></i>
                                 </p>
                                 <input
                                     v-if="editingContextualField === 'years_in_finland'"
@@ -498,10 +672,10 @@
                                     @keydown.esc="cancelEditingContextual"
                                     @click.stop
                                     type="number"
-                                    class="w-full bg-[#011135] text-white text-sm p-2 rounded border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    class="w-full bg-gray-50 text-gray-900 text-sm p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#5cc094]"
                                     ref="contextualEditInput"
                                 />
-                                <p v-else class="text-sm font-bold text-white">{{ businessPlanData?.years_in_finland !== null && businessPlanData?.years_in_finland !== undefined ? businessPlanData.years_in_finland + ' years' : 'Not provided - Click to edit' }}</p>
+                                <p v-else :class="['text-sm font-bold', isContextualFieldCompleted('years_in_finland') ? 'text-[#5cc094]' : 'text-gray-900']">{{ businessPlanData?.years_in_finland !== null && businessPlanData?.years_in_finland !== undefined ? businessPlanData.years_in_finland + ' years' : 'Not provided - Click to edit' }}</p>
                             </div>
                             
                             <!-- Business Experience -->
@@ -509,15 +683,16 @@
                                 :ref="el => setContextualFieldRef('has_business_experience', el)"
                                 :id="'contextual-field-has_business_experience'"
                                 :class="[
-                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all cursor-pointer hover:bg-[#011135]',
-                                    fieldToHighlight === 'has_business_experience' ? 'field-highlight' : '',
-                                    editingContextualField === 'has_business_experience' ? 'border-white/50' : ''
+                                    'bg-white rounded-lg p-3 border transition-all cursor-pointer hover:bg-gray-50',
+                                    isContextualFieldCompleted('has_business_experience') ? 'border-[#5cc094]' : 'border-gray-200',
+                                    fieldToHighlight === 'has_business_experience' ? 'field-highlight border-[#5cc094]' : '',
+                                    editingContextualField === 'has_business_experience' ? 'border-[#5cc094]' : ''
                                 ]"
                                 @click="startEditingContextual('has_business_experience')"
                             >
-                                <p class="text-xs font-semibold text-white/70 mb-1 flex items-center justify-between">
+                                <p class="text-xs font-semibold text-gray-600 mb-1 flex items-center justify-between">
                                     <span>Business Experience</span>
-                                    <i class="fa-solid fa-pen text-[8px] text-white/50"></i>
+                                    <i class="fa-solid fa-pen text-[8px] text-gray-400"></i>
                                 </p>
                                 <select
                                     v-if="editingContextualField === 'has_business_experience'"
@@ -525,17 +700,17 @@
                                     @blur="saveContextualField('has_business_experience')"
                                     @change="saveContextualField('has_business_experience')"
                                     @click.stop
-                                    class="w-full bg-[#011135] text-white text-sm p-2 rounded border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    class="w-full bg-gray-50 text-gray-900 text-sm p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#5cc094]"
                                     ref="contextualEditInput"
                                 >
                                     <option value="">Not provided</option>
                                     <option value="true">Yes</option>
                                     <option value="false">No</option>
                                 </select>
-                                <p v-else class="text-sm font-bold text-white">
-                                    <span v-if="businessPlanData?.has_business_experience === true" class="text-green-400">Yes</span>
-                                    <span v-else-if="businessPlanData?.has_business_experience === false" class="text-gray-400">No</span>
-                                    <span v-else class="text-white/50">Not provided - Click to edit</span>
+                                <p v-else class="text-sm font-bold">
+                                    <span v-if="businessPlanData?.has_business_experience === true" class="text-[#5cc094]">Yes</span>
+                                    <span v-else-if="businessPlanData?.has_business_experience === false" class="text-gray-500">No</span>
+                                    <span v-else class="text-gray-500">Not provided - Click to edit</span>
                                 </p>
                             </div>
                             
@@ -544,15 +719,16 @@
                                 :ref="el => setContextualFieldRef('language', el)"
                                 :id="'contextual-field-language'"
                                 :class="[
-                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all cursor-pointer hover:bg-[#011135]',
-                                    fieldToHighlight === 'language' ? 'field-highlight' : '',
-                                    editingContextualField === 'language' ? 'border-white/50' : ''
+                                    'bg-white rounded-lg p-3 border transition-all cursor-pointer hover:bg-gray-50',
+                                    isContextualFieldCompleted('language') ? 'border-[#5cc094]' : 'border-gray-200',
+                                    fieldToHighlight === 'language' ? 'field-highlight border-[#5cc094]' : '',
+                                    editingContextualField === 'language' ? 'border-[#5cc094]' : ''
                                 ]"
                                 @click="startEditingContextual('language')"
                             >
-                                <p class="text-xs font-semibold text-white/70 mb-1 flex items-center justify-between">
+                                <p class="text-xs font-semibold text-gray-600 mb-1 flex items-center justify-between">
                                     <span>Preferred Language</span>
-                                    <i class="fa-solid fa-pen text-[8px] text-white/50"></i>
+                                    <i class="fa-solid fa-pen text-[8px] text-gray-400"></i>
                                 </p>
                                 <input
                                     v-if="editingContextualField === 'language'"
@@ -562,10 +738,10 @@
                                     @keydown.esc="cancelEditingContextual"
                                     @click.stop
                                     type="text"
-                                    class="w-full bg-[#011135] text-white text-sm p-2 rounded border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    class="w-full bg-gray-50 text-gray-900 text-sm p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#5cc094]"
                                     ref="contextualEditInput"
                                 />
-                                <p v-else class="text-sm font-bold text-white">{{ businessPlanData?.language || 'Not provided - Click to edit' }}</p>
+                                <p v-else :class="['text-sm font-bold', isContextualFieldCompleted('language') ? 'text-[#5cc094]' : 'text-gray-900']">{{ businessPlanData?.language || 'Not provided - Click to edit' }}</p>
                             </div>
                         </div>
                     </div>
@@ -579,9 +755,9 @@
                     />
                     
                     <!-- Document Requests Section -->
-                    <div v-if="pendingDocuments.length > 0" class="bg-[#012169] rounded-lg shadow-lg border border-white/20 p-5">
+                    <div v-if="pendingDocuments.length > 0" class="bg-white rounded-lg border border-gray-200 p-5">
                         <div class="flex items-center gap-3 mb-4">
-                            <h3 class="text-lg font-bold text-white">Document Requests</h3>
+                            <h3 class="text-lg font-bold text-gray-900">Document Requests</h3>
                         </div>
                         <div class="space-y-3">
                             <DocumentRequestCard
@@ -598,14 +774,48 @@
             </div>
         </div>
 
+        <!-- Manual Add Drawer -->
+        <div v-if="activeTab === 'add'" 
+             class="fixed inset-0 z-40 flex items-end drawer-overlay"
+             @click.self="activeTab = 'roadmap'">
+            <div class="bg-white rounded-t-lg w-full max-h-[85vh] overflow-y-auto drawer-content">
+                <div class="sticky top-0 bg-white p-5 flex items-center justify-between rounded-t-lg z-10 border-b border-gray-200">
+                    <h2 class="text-xl font-bold text-gray-900">Manual Entry</h2>
+                    <button @click="activeTab = 'roadmap'" class="text-gray-600 hover:text-gray-900 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="p-6 pb-24">
+                    <!-- Manual Add content embedded directly -->
+                    <div class="space-y-6">
+                        <p class="text-gray-600 mb-6">Here you can manually add or update business plan fields or roadmap steps.</p>
+                        <div class="group bg-[#5cc094] rounded-lg p-4 border border-[#5cc094] hover:bg-[#4a9d7a] transition-all">
+                            <h3 class="font-bold text-white mb-3 transition-colors">
+                                Add Business Plan Field
+                            </h3>
+                            <p class="text-sm text-white/90 transition-colors">Coming soon! You'll be able to manually add business plan information here.</p>
+                        </div>
+                        <div class="group bg-[#5cc094] rounded-lg p-4 border border-[#5cc094] hover:bg-[#4a9d7a] transition-all">
+                            <h3 class="font-bold text-white mb-3 transition-colors">
+                                Add Roadmap Step
+                            </h3>
+                            <p class="text-sm text-white/90 transition-colors">Coming soon! You'll be able to manually add roadmap steps here.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Advisors Drawer -->
         <div v-if="activeTab === 'advisors'" 
              class="fixed inset-0 z-40 flex items-end drawer-overlay"
              @click.self="activeTab = 'roadmap'">
-            <div class="bg-[#012169] rounded-t-lg shadow-2xl w-full h-[90vh] overflow-y-auto drawer-content">
-                <div class="sticky top-0 bg-[#011135] p-5 flex items-center justify-between rounded-t-lg shadow-md z-10 border-b border-white/20">
-                    <h2 class="text-xl font-bold text-white">Your Advisors</h2>
-                    <button @click="activeTab = 'roadmap'" class="text-white/80 hover:text-white transition-colors">
+            <div class="bg-white rounded-t-lg w-full h-[90vh] overflow-y-auto drawer-content">
+                <div class="sticky top-0 bg-white p-5 flex items-center justify-between rounded-t-lg z-10 border-b border-gray-200">
+                    <h2 class="text-xl font-bold text-gray-900">Your Advisors</h2>
+                    <button @click="activeTab = 'roadmap'" class="text-gray-600 hover:text-gray-900 transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -613,18 +823,18 @@
                 </div>
                 <div class="p-6 pb-24">
                     <!-- Advisors content embedded directly -->
-                    <p class="text-white/80 mb-6">Connect with experienced advisors who can help guide your startup journey.</p>
+                    <p class="text-gray-600 mb-6">Connect with experienced advisors who can help guide your startup journey.</p>
                     
                     <!-- Loading state -->
                     <div v-if="loadingAdvisors" class="text-center py-8">
-                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-                        <p class="mt-2 text-white/80">Loading advisors...</p>
+                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-[#5cc094]"></div>
+                        <p class="mt-2 text-gray-600">Loading advisors...</p>
                     </div>
                     
                     <!-- Empty state -->
                     <div v-else-if="advisors.length === 0" class="text-center py-12">
-                        <h3 class="text-xl font-bold text-white mb-2">No Advisors Available</h3>
-                        <p class="text-white/70">Advisors will appear here once they're added to the system.</p>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">No Advisors Available</h3>
+                        <p class="text-gray-600">Advisors will appear here once they're added to the system.</p>
                     </div>
                     
                     <!-- Advisors list -->
@@ -632,22 +842,22 @@
                         <div 
                             v-for="advisor in advisors" 
                             :key="advisor.id"
-                            class="bg-[#011135] rounded-lg p-4 border border-white/20 flex items-start gap-4 hover:bg-[#012169] transition-all"
+                            class="group bg-[#5cc094] rounded-lg p-4 border border-[#5cc094] flex items-start gap-4 hover:bg-[#4a9d7a] transition-all"
                         >
-                            <div class="flex-shrink-0 w-12 h-12 bg-[#012169] rounded-full flex items-center justify-center text-white text-lg font-bold border border-white/20">
+                            <div class="flex-shrink-0 w-12 h-12 bg-[#4a9d7a] rounded-full flex items-center justify-center text-white text-lg font-bold border border-white/30">
                                 {{ advisor.name.charAt(0).toUpperCase() }}
                             </div>
                             <div class="flex-1">
-                                <p class="font-bold text-white text-lg">{{ advisor.name }}</p>
-                                <p v-if="advisor.title" class="text-sm text-white/70 mb-1">{{ advisor.title }}</p>
-                                <p class="text-sm text-white/60 mb-2">{{ advisor.email }}</p>
-                                <p v-if="advisor.bio" class="text-sm text-white/80 mb-2">{{ advisor.bio }}</p>
+                                <p class="font-bold text-white text-lg transition-colors">{{ advisor.name }}</p>
+                                <p v-if="advisor.title" class="text-sm text-white/90 mb-1 transition-colors">{{ advisor.title }}</p>
+                                <p class="text-sm text-white/80 mb-2 transition-colors">{{ advisor.email }}</p>
+                                <p v-if="advisor.bio" class="text-sm text-white/90 mb-2 transition-colors">{{ advisor.bio }}</p>
                                 <div v-if="advisor.languages && Array.isArray(advisor.languages)" class="mb-2">
-                                    <p class="text-xs text-white/60 mb-1">Languages:</p>
-                                    <p class="text-sm text-white/80">{{ advisor.languages.join(', ') }}</p>
+                                    <p class="text-xs text-white/80 mb-1 transition-colors">Languages:</p>
+                                    <p class="text-sm text-white/90 transition-colors">{{ advisor.languages.join(', ') }}</p>
                                 </div>
                                 <div v-if="advisor.specialization" class="flex items-center gap-2 mt-2">
-                                    <span class="px-3 py-1 rounded-full text-xs font-semibold text-white bg-[#012169] border border-white/20">
+                                    <span class="px-3 py-1 rounded-full text-xs font-semibold text-white bg-[#4a9d7a] border border-white/30">
                                         {{ getSpecializationLabel(advisor.specialization) }}
                                     </span>
                                 </div>
@@ -662,10 +872,17 @@
         <div v-if="activeTab === 'roadmap-tab'" 
              class="fixed inset-0 z-40 flex items-end drawer-overlay"
              @click.self="activeTab = 'roadmap'">
+<<<<<<< Updated upstream
             <div class="bg-white rounded-t-3xl shadow-2xl w-full max-h-[85vh] overflow-y-auto drawer-content border border-[#205274]/60">
                 <div class="sticky top-0 bg-[#205274] p-5 flex items-center justify-between rounded-t-3xl shadow-md z-10 border-b border-white/20">
                     <h2 class="text-xl font-bold text-white">Your Roadmap</h2>
                     <button @click="activeTab = 'roadmap'" class="text-white/80 hover:text-white transition-colors">
+=======
+            <div class="bg-white rounded-t-lg w-full max-h-[85vh] overflow-y-auto drawer-content">
+                <div class="sticky top-0 bg-white p-5 flex items-center justify-between rounded-t-lg z-10 border-b border-gray-200">
+                    <h2 class="text-xl font-bold text-gray-900">Your Roadmap</h2>
+                    <button @click="activeTab = 'roadmap'" class="text-gray-600 hover:text-gray-900 transition-colors">
+>>>>>>> Stashed changes
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -673,16 +890,20 @@
                 </div>
                 <div class="p-6 pb-24">
                     <!-- Roadmap Visualization -->
+<<<<<<< Updated upstream
                     <div v-if="roadmap && roadmap.steps && roadmap.steps.filter(s => !s.isQuestion).length > 0" 
                          class="bg-[#205274] rounded-2xl shadow-lg border border-[#5cc094] p-5 text-white">
+=======
+                    <div v-if="roadmap && roadmap.steps && roadmap.steps.filter(s => !s.isQuestion).length > 0">
+>>>>>>> Stashed changes
                         <RoadmapVisualizer 
                             :roadmap="roadmap"
                             @step-update="handleStepUpdate"
                         />
                     </div>
                     <div v-else class="text-center py-12">
-                        <h3 class="text-xl font-bold text-white mb-2">No Roadmap Steps Yet</h3>
-                        <p class="text-white/70">Start a voice session to create your roadmap!</p>
+                        <h3 class="text-xl font-bold text-gray-900 mb-2">No Roadmap Steps Yet</h3>
+                        <p class="text-gray-600">Start a voice session to create your roadmap!</p>
                     </div>
                 </div>
             </div>
@@ -692,10 +913,10 @@
         <div v-if="activeTab === 'calendar'" 
              class="fixed inset-0 z-40 flex items-end drawer-overlay"
              @click.self="activeTab = 'roadmap'">
-            <div class="bg-[#012169] rounded-t-lg shadow-2xl w-full max-h-[85vh] overflow-y-auto drawer-content">
-                <div class="sticky top-0 bg-[#011135] p-5 flex items-center justify-between rounded-t-lg shadow-md z-10 border-b border-white/20">
-                    <h2 class="text-xl font-bold text-white">Your Calendar</h2>
-                    <button @click="activeTab = 'roadmap'" class="text-white/80 hover:text-white transition-colors">
+            <div class="bg-white rounded-t-lg w-full max-h-[85vh] overflow-y-auto drawer-content">
+                <div class="sticky top-0 bg-white p-5 flex items-center justify-between rounded-t-lg z-10 border-b border-gray-200">
+                    <h2 class="text-xl font-bold text-gray-900">Your Calendar</h2>
+                    <button @click="activeTab = 'roadmap'" class="text-gray-600 hover:text-gray-900 transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -703,12 +924,12 @@
                 </div>
                 <div class="p-6 pb-24">
                     <!-- Calendar content embedded directly -->
-                    <p class="text-white/80 mb-6">Manage your upcoming meetings and important dates.</p>
+                    <p class="text-gray-600 mb-6">Manage your upcoming meetings and important dates.</p>
                     <div class="space-y-4">
-                        <div class="bg-[#011135] rounded-lg p-4 border border-white/20">
-                            <p class="font-bold text-white mb-1">Meeting with Advisor A</p>
-                            <p class="text-sm text-white/70">Date: October 26, 2024, 10:00 AM</p>
-                            <p class="text-xs text-white/60">Topic: Funding Strategy</p>
+                        <div class="group bg-[#5cc094] rounded-lg p-4 border border-[#5cc094] hover:bg-[#4a9d7a] transition-all">
+                            <p class="font-bold text-white mb-1 transition-colors">Meeting with Advisor A</p>
+                            <p class="text-sm text-white/90 transition-colors">Date: October 26, 2024, 10:00 AM</p>
+                            <p class="text-xs text-white/80 transition-colors">Topic: Funding Strategy</p>
                         </div>
                     </div>
                 </div>
@@ -719,10 +940,10 @@
         <div v-if="activeTab === 'network'" 
              class="fixed inset-0 z-40 flex items-end drawer-overlay"
              @click.self="activeTab = 'roadmap'">
-            <div class="bg-[#012169] rounded-t-lg shadow-2xl w-full h-[90vh] overflow-hidden drawer-content flex flex-col">
-                <div class="sticky top-0 bg-[#011135] p-5 flex items-center justify-between rounded-t-lg shadow-md z-10 border-b border-white/20">
-                    <h2 class="text-xl font-bold text-white">B2B Network</h2>
-                    <button @click="activeTab = 'roadmap'" class="text-white/80 hover:text-white transition-colors">
+            <div class="bg-white rounded-t-lg w-full h-[90vh] overflow-hidden drawer-content flex flex-col">
+                <div class="sticky top-0 bg-white p-5 flex items-center justify-between rounded-t-lg z-10 border-b border-gray-200">
+                    <h2 class="text-xl font-bold text-gray-900">B2B Network</h2>
+                    <button @click="activeTab = 'roadmap'" class="text-gray-600 hover:text-gray-900 transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -750,6 +971,7 @@ import ResourceCard from '../components/ResourceCard.vue';
 import DocumentRequestCard from '../components/DocumentRequestCard.vue';
 import RewardAnimation from '../components/RewardAnimation.vue';
 import XPLevelHeader from '../components/XPLevelHeader.vue';
+import TopNavigation from '../components/TopNavigation.vue';
 import BottomNavigation from '../components/BottomNavigation.vue';
 import BusinessInfoModal from '../components/BusinessInfoModal.vue';
 import ManualAddModal from '../components/ManualAddModal.vue';
@@ -1656,7 +1878,7 @@ const chatAgent = useChatAgent({
     userName: props.userName
 });
 
-// Eppu animation state
+// Opa animation state
 const isTalking = computed(() => isListening.value || isSpeaking.value);
 
 const handleCallMode = () => {
@@ -1670,24 +1892,59 @@ const handleCallMode = () => {
     }
 };
 
-const handleConnect = async () => {
+const handleMicClick = async () => {
     try {
-        error.value = null;
-        await connect();
+        // Ensure we're in voice mode
+        interactionMode.value = 'voice';
+        
+        // If already connected and listening, stop/disconnect
+        if (isConnected.value && (isListening.value || isSessionActive.value)) {
+            await handleDisconnect();
+            return;
+        }
+        
+        // If not connected, connect (this will automatically start the session)
+        if (!isConnected.value) {
+            console.log('Starting voice connection...');
+            await handleConnect();
+            // After connecting, the session should be active automatically
+            if (isConnected.value) {
+                isSessionActive.value = true;
+                console.log('Voice session started successfully');
+            }
+        }
     } catch (err) {
-        console.error('Failed to connect:', err);
-        error.value = 'Failed to connect to voice agent';
+        console.error('Failed to handle mic click:', err);
+        error.value = 'Failed to handle voice session. Please try again.';
+        isSessionActive.value = false;
     }
 };
 
-const handleStartSession = async () => {
+const handleConnect = async () => {
     try {
         error.value = null;
-        await startSession();
-        isSessionActive.value = true;
+        console.log('Connecting to voice agent...');
+        
+        // Let the SDK handle microphone permissions - don't check beforehand
+        await connect();
+        
+        console.log('Connection result:', {
+            isConnected: isConnected.value,
+            isListening: isListening.value,
+            connectionStatus: connectionStatus.value
+        });
+        
+        // The connect() function already starts the session, so mark it as active
+        if (isConnected.value) {
+            isSessionActive.value = true;
+        } else {
+            error.value = 'Failed to establish connection. Please try again.';
+            isSessionActive.value = false;
+        }
     } catch (err) {
-        console.error('Failed to start session:', err);
-        error.value = 'Failed to start voice session. Please check your microphone permissions.';
+        console.error('Failed to connect:', err);
+        error.value = err.message || 'Failed to connect to voice agent. Please check your microphone permissions and try again.';
+        isSessionActive.value = false;
     }
 };
 
@@ -1701,8 +1958,10 @@ const handleStopSession = async () => {
 };
 
 const handleDisconnect = () => {
+    console.log('Disconnecting voice session...');
     disconnect();
     isSessionActive.value = false;
+    console.log('Voice session disconnected');
 };
 
 const handleStepUpdate = (step) => {
@@ -1880,6 +2139,26 @@ const handleNavigation = (tab) => {
     }
 };
 
+// Helper function to check if a contextual field is completed
+const isContextualFieldCompleted = (fieldKey) => {
+    const value = businessPlanData.value?.[fieldKey];
+    
+    // Handle null/undefined
+    if (value === null || value === undefined) return false;
+    
+    // Handle booleans - both true and false are considered completed
+    if (typeof value === 'boolean') return true;
+    
+    // Handle numbers - including 0, which is a valid value
+    if (typeof value === 'number') return true;
+    
+    // Handle strings - empty strings are not completed
+    if (typeof value === 'string' && value.trim() === '') return false;
+    if (typeof value === 'string') return true;
+    
+    return false;
+};
+
 // Contextual field editing functions
 const startEditingContextual = async (fieldKey) => {
     if (editingContextualField.value === fieldKey) return; // Already editing this field
@@ -2033,6 +2312,85 @@ onUnmounted(() => {
         border-color: var(--original-border, rgba(255, 255, 255, 0.1));
         box-shadow: none;
         transform: scale(1);
+    }
+}
+
+/* Pulsing bars animation for mic button */
+@keyframes pulseBar {
+    0%, 100% {
+        height: 8px;
+        opacity: 0.4;
+    }
+    50% {
+        height: 20px;
+        opacity: 1;
+    }
+}
+
+/* Mode switch transition animations */
+.mode-switch-enter-active,
+.mode-switch-leave-active {
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mode-switch-enter-from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.9);
+}
+
+.mode-switch-leave-to {
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+}
+
+.mode-switch-enter-to,
+.mode-switch-leave-from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+}
+
+/* Phone hanging (rotated when not active) */
+.phone-hanging {
+    transform: rotate(135deg);
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Phone shake animation - runs 10 times (5 seconds total) and stops */
+.phone-shake {
+    animation: phoneShake 0.5s ease-in-out;
+    animation-iteration-count: 10;
+}
+
+@keyframes phoneShake {
+    0%, 100% {
+        transform: translateX(0) rotate(0deg) scale(1.1);
+    }
+    10% {
+        transform: translateX(-2px) rotate(-2deg) scale(1.1);
+    }
+    20% {
+        transform: translateX(2px) rotate(2deg) scale(1.1);
+    }
+    30% {
+        transform: translateX(-2px) rotate(-2deg) scale(1.1);
+    }
+    40% {
+        transform: translateX(2px) rotate(2deg) scale(1.1);
+    }
+    50% {
+        transform: translateX(-1px) rotate(-1deg) scale(1.1);
+    }
+    60% {
+        transform: translateX(1px) rotate(1deg) scale(1.1);
+    }
+    70% {
+        transform: translateX(-1px) rotate(-1deg) scale(1.1);
+    }
+    80% {
+        transform: translateX(1px) rotate(1deg) scale(1.1);
+    }
+    90% {
+        transform: translateX(-1px) rotate(-1deg) scale(1.1);
     }
 }
 </style>

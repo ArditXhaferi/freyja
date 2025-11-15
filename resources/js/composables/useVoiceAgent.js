@@ -416,7 +416,7 @@ export default function useVoiceAgent({
 
             // Build first message dynamically from backend data
             const buildFirstMessage = (businessPlan, roadmap, userName) => {
-                let message = "Hi! I'm Eppu the Bear, your AI startup coach! 🐻\n\n";
+                let message = "Hi! I'm Opa the Bear, your AI startup coach! 🐻\n\n";
                 
                 // Add user name if available
                 if (userName) {
@@ -969,6 +969,18 @@ export default function useVoiceAgent({
                 onAudio: (base64Audio) => {
                     // Audio is automatically played by the SDK
                     console.log('Audio received, length:', base64Audio.length);
+                    isSpeaking.value = true;
+                    isListening.value = false;
+                },
+                onInterruptionBegin: () => {
+                    console.log('Interruption began');
+                    // Don't change isListening here - let the SDK manage it
+                    // isListening.value = false;
+                },
+                onInterruptionEnd: () => {
+                    console.log('Interruption ended - resuming listening');
+                    // Don't change isListening here - let the SDK manage it
+                    // isListening.value = true;
                 },
             });
 
@@ -976,6 +988,9 @@ export default function useVoiceAgent({
             connectionStatus.value = 'connected';
             isConnected.value = true;
             isListening.value = true;
+            isMuted.value = false; // Ensure microphone is not muted when connecting
+            
+            console.log('Voice conversation connected and ready to listen');
 
             // Send business plan and roadmap context to the agent after session starts
             // (contextWithFirstMessage already includes everything)
@@ -1185,15 +1200,22 @@ export default function useVoiceAgent({
                     console.log('Used unmute() method');
                 }
             } else {
-                // Fallback: interrupt when muted, resume when unmuted
+                // Fallback: For muting, we can't use interrupt() as it stops the conversation
+                // Instead, just update the UI state - the SDK should handle microphone access
                 if (isMuted.value) {
+<<<<<<< Updated upstream
                     if (typeof conversationRef.value.interrupt === 'function') {
                         conversationRef.value.interrupt();
                         console.log('Used interrupt() as fallback for mute');
                     }
+=======
+                    console.log('Muted state set - SDK should handle microphone blocking');
+                    // Don't interrupt - just let the mute state be reflected in UI
+                } else {
+                    console.log('Unmuted - conversation should resume listening naturally');
+                    // Don't force state changes - let SDK handle it
+>>>>>>> Stashed changes
                 }
-                // Note: Unmuting will resume naturally when user speaks
-                console.log('No SDK mute methods available, using state only');
             }
             
             console.log('Microphone muted:', isMuted.value);

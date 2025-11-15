@@ -1,19 +1,18 @@
 <template>
     <div class="w-full">
         <!-- Header -->
-        <div class="mb-4 bg-[#012169] rounded-lg p-4 shadow-lg">
+        <div class="mb-4 bg-[#5cc094] rounded-lg p-4">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="text-3xl">📋</div>
                     <h3 class="text-xl font-bold text-white">Business Plan</h3>
                 </div>
-                <div class="flex items-center gap-3 bg-[#011135] rounded-full px-4 py-2 border border-white/20">
+                <div class="flex items-center gap-3 bg-[#4a9d7a] rounded-full px-4 py-2 border border-white/20">
                     <div class="text-sm font-bold text-white">
                         {{ completedCount }}/{{ totalFields }}
                     </div>
                     <div class="w-20 h-3 bg-white/10 rounded-full overflow-hidden">
-                        <div 
-                            class="h-full bg-green-500 rounded-full transition-all duration-500 shadow-sm"
+                        <div  
+                            class="h-full bg-white rounded-full transition-all duration-500 shadow-sm"
                             :style="{ width: `${completionPercentage}%` }"
                         ></div>
                     </div>
@@ -24,114 +23,144 @@
             </div>
         </div>
 
-        <!-- Grid Cards -->
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+        <!-- Sections Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <div
-                v-for="(section, sectionKey) in businessPlanSections"
-                :key="sectionKey"
+                v-for="section in sectionsArray"
+                :key="section.key"
                 :class="[
-                    'rounded-lg p-3 transition-all duration-300 hover:scale-105 cursor-pointer shadow-md border',
+                    'bg-white rounded-xl border-2 transition-all hover:shadow-lg cursor-pointer overflow-hidden',
                     section.completed 
-                        ? 'bg-[#011135] border-green-500/50' 
-                        : 'bg-[#011135] border-white/20'
+                        ? 'border-[#5cc094] shadow-md' 
+                        : 'border-gray-200 hover:border-gray-300'
                 ]"
             >
-                <!-- Section Header -->
-                <div class="flex items-center justify-between mb-2">
-                    <div class="flex items-center gap-2">
+                <!-- Card Header -->
+                <div :class="[
+                    'px-6 py-5 border-b-2',
+                    section.completed 
+                        ? 'bg-gradient-to-br from-[#5cc094]/10 to-[#5cc094]/5 border-[#5cc094]/20' 
+                        : 'bg-gray-50 border-gray-200'
+                ]">
+                    <div class="flex items-center justify-between mb-3">
                         <div :class="[
-                            'w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-sm border',
+                            'w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold border-2 flex-shrink-0',
                             section.completed 
-                                ? 'bg-green-600 text-white border-green-400' 
-                                : 'bg-[#012169] text-white border-white/30'
+                                ? 'bg-[#5cc094] text-white border-[#5cc094] shadow-sm' 
+                                : 'bg-white text-gray-600 border-gray-300'
                         ]">
-                            <span v-if="section.completed">✓</span>
+                            <span v-if="section.completed" class="text-xl">✓</span>
                             <span v-else>{{ section.filledCount }}</span>
                         </div>
-                        <h4 class="font-bold text-xs text-white">{{ section.title }}</h4>
+                        <div :class="[
+                            'px-3 py-1 rounded-full text-xs font-bold',
+                            section.completed 
+                                ? 'bg-[#5cc094] text-white' 
+                                : 'bg-gray-200 text-gray-600'
+                        ]">
+                            {{ Math.round((section.filledCount / section.fields.length) * 100) }}%
+                        </div>
                     </div>
+                    <h4 class="font-bold text-lg text-gray-900 mb-1">{{ section.title }}</h4>
+                    <p class="text-xs text-gray-500">{{ section.filledCount }} of {{ section.fields.length }} fields completed</p>
                 </div>
 
-                <!-- Field List -->
-                <div class="space-y-1.5">
-                    <div
-                        v-for="fieldKey in section.fields"
-                        :key="fieldKey"
-                        :ref="el => setFieldRef(fieldKey, el)"
-                        :id="`field-${fieldKey}`"
-                        :class="[
-                            'p-1.5 rounded-lg text-xs transition-all border cursor-pointer hover:bg-white/10',
-                            isFieldFilled(fieldKey) 
-                                ? 'bg-green-600/20 border-green-500/50' 
-                                : 'bg-white/5 border-white/20',
-                            fieldToHighlight === fieldKey ? 'field-highlight' : '',
-                            editingField === fieldKey ? 'bg-[#012169] border-white/50' : ''
-                        ]"
-                        @click="startEditing(fieldKey)"
-                    >
-                        <div class="flex items-start gap-2">
-                            <div :class="[
-                                'w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 border mt-0.5',
+                <!-- Field List (Compact) -->
+                <div class="px-6 py-4 max-h-[400px] overflow-y-auto">
+                    <div class="space-y-3">
+                        <div
+                            v-for="fieldKey in section.fields"
+                            :key="fieldKey"
+                            :ref="el => setFieldRef(fieldKey, el)"
+                            :id="`field-${fieldKey}`"
+                            :class="[
+                                'p-3 rounded-lg transition-all cursor-pointer border',
                                 isFieldFilled(fieldKey) 
-                                    ? 'bg-green-600 text-white border-green-400' 
-                                    : 'bg-[#012169] text-white/70 border-white/30'
-                            ]">
-                                <span v-if="isFieldFilled(fieldKey)">✓</span>
-                                <span v-else class="text-[8px]">○</span>
-                            </div>
-                            <div class="flex-1 min-w-0">
-                                <div class="font-medium text-white mb-0.5 flex items-center justify-between">
-                                    <span>{{ getFieldLabel(fieldKey) }}</span>
-                                    <i class="fa-solid fa-pen text-[8px] text-white/50 ml-2"></i>
+                                    ? 'border-[#5cc094] bg-green-50/50' 
+                                    : 'border-gray-200 bg-gray-50/50 hover:bg-gray-100',
+                                fieldToHighlight === fieldKey ? 'field-highlight border-blue-400 bg-blue-50' : '',
+                                editingField === fieldKey ? 'border-[#5cc094] bg-blue-50' : ''
+                            ]"
+                            @click.stop="startEditing(fieldKey)"
+                        >
+                            <div class="flex items-start gap-3">
+                                <!-- Status Indicator -->
+                                <div :class="[
+                                    'w-5 h-5 rounded-full flex items-center justify-center flex-shrink-0 border-2 mt-0.5',
+                                    isFieldFilled(fieldKey) 
+                                        ? 'bg-[#5cc094] border-[#5cc094]' 
+                                        : 'bg-white border-gray-300'
+                                ]">
+                                    <span v-if="isFieldFilled(fieldKey)" class="text-white text-[10px] font-bold">✓</span>
+                                    <span v-else class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
                                 </div>
-                                <div v-if="editingField === fieldKey" class="mt-1" @click.stop>
-                                    <textarea
-                                        v-if="isTextField(fieldKey)"
-                                        v-model="editValue"
-                                        @blur="saveField(fieldKey)"
-                                        @keydown.enter.ctrl="saveField(fieldKey)"
-                                        @keydown.esc="cancelEditing"
-                                        @click.stop
-                                        class="w-full bg-[#011135] text-white text-[10px] p-2 rounded border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
-                                        rows="3"
-                                        ref="editInput"
-                                    ></textarea>
-                                    <input
-                                        v-else
-                                        v-model="editValue"
-                                        @blur="saveField(fieldKey)"
-                                        @keydown.enter="saveField(fieldKey)"
-                                        @keydown.esc="cancelEditing"
-                                        @click.stop
-                                        type="text"
-                                        class="w-full bg-[#011135] text-white text-[10px] p-2 rounded border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500"
-                                        ref="editInput"
-                                    />
-                                </div>
-                                <div v-else-if="isFieldFilled(fieldKey)" class="text-[10px] text-white line-clamp-2">
-                                    {{ formatFieldValue(fieldKey) }}
-                                </div>
-                                <div v-else class="text-[10px] text-white/60 italic">
-                                    Not provided - Click to edit
+                                
+                                <!-- Field Content -->
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between mb-1">
+                                        <h5 class="font-semibold text-xs text-gray-900">{{ getFieldLabel(fieldKey) }}</h5>
+                                        <i class="fa-solid fa-pen text-[10px] text-gray-400"></i>
+                                    </div>
+                                    
+                                    <!-- Editing Mode -->
+                                    <div v-if="editingField === fieldKey" class="mt-2" @click.stop>
+                                        <textarea
+                                            v-if="isTextField(fieldKey)"
+                                            v-model="editValue"
+                                            @blur="saveField(fieldKey)"
+                                            @keydown.enter.ctrl="saveField(fieldKey)"
+                                            @keydown.esc="cancelEditing"
+                                            @click.stop
+                                            class="w-full bg-white text-gray-900 text-xs p-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#5cc094] focus:border-[#5cc094] resize-none"
+                                            rows="3"
+                                            ref="editInput"
+                                        ></textarea>
+                                        <input
+                                            v-else
+                                            v-model="editValue"
+                                            @blur="saveField(fieldKey)"
+                                            @keydown.enter="saveField(fieldKey)"
+                                            @keydown.esc="cancelEditing"
+                                            @click.stop
+                                            type="text"
+                                            class="w-full bg-white text-gray-900 text-xs p-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#5cc094] focus:border-[#5cc094]"
+                                            ref="editInput"
+                                        />
+                                    </div>
+                                    
+                                    <!-- Display Mode -->
+                                    <div v-else>
+                                        <p v-if="isFieldFilled(fieldKey)" :class="['text-xs mt-1 line-clamp-2', isFieldFilled(fieldKey) ? 'text-[#5cc094] font-medium' : 'text-gray-600']">
+                                            {{ formatFieldValue(fieldKey) }}
+                                        </p>
+                                        <p v-else class="text-xs text-gray-400 italic mt-1">
+                                            Not provided
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Progress Bar -->
-                <div class="mt-2 pt-2 border-t border-white/20">
-                    <div class="flex items-center justify-between text-[10px] font-bold text-white/70 mb-1">
-                        <span>{{ section.filledCount }}/{{ section.fields.length }}</span>
-                    </div>
-                    <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-                        <div 
-                            :class="[
-                                'h-full rounded-full transition-all duration-500',
-                                section.completed ? 'bg-green-500' : 'bg-[#012169]'
-                            ]"
-                            :style="{ width: `${(section.filledCount / section.fields.length) * 100}%` }"
-                        ></div>
+                <!-- Card Footer Progress -->
+                <div :class="[
+                    'px-6 py-4 border-t-2',
+                    section.completed 
+                        ? 'bg-gradient-to-br from-[#5cc094]/10 to-[#5cc094]/5 border-[#5cc094]/20' 
+                        : 'bg-gray-50 border-gray-200'
+                ]">
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs font-semibold text-gray-600">{{ section.filledCount }}/{{ section.fields.length }}</span>
+                        <div class="flex-1 h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                            <div 
+                                :class="[
+                                    'h-full rounded-full transition-all duration-500',
+                                    section.completed ? 'bg-[#5cc094]' : 'bg-gray-400'
+                                ]"
+                                :style="{ width: `${(section.filledCount / section.fields.length) * 100}%` }"
+                            ></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -140,10 +169,11 @@
         <!-- Celebration Banner -->
         <div 
             v-if="completionPercentage === 100"
-            class="mt-4 bg-[#012169] border-2 border-green-500/50 rounded-lg p-4 text-center shadow-lg"
+            class="mt-6 bg-gradient-to-r from-[#5cc094] to-[#4a9d7a] rounded-lg p-6 text-center border border-[#5cc094]/20"
         >
-            <div class="text-4xl mb-2">🎉</div>
-            <h3 class="text-lg font-bold text-white">All Complete! 🎊</h3>
+            <div class="text-5xl mb-3">🎉</div>
+            <h3 class="text-xl font-bold text-white">All Complete! 🎊</h3>
+            <p class="text-white/90 text-sm mt-1">Great job completing your business plan!</p>
         </div>
     </div>
 </template>
@@ -211,42 +241,49 @@ const businessPlanSections = computed(() => {
     
     const sections = {
         basic: {
+            key: 'basic',
             title: 'Basic Info',
             fields: ['business_name', 'company_planned_name', 'company_type', 'industry', 'address', 'zip_code', 'postal_district', 'internet_address', 'business_id'],
             filledCount: 0,
             completed: false
         },
         company: {
+            key: 'company',
             title: 'Company',
             fields: ['year_of_establishment', 'number_of_employees', 'company_owners_holdings', 'company_contact_info'],
             filledCount: 0,
             completed: false
         },
         business: {
+            key: 'business',
             title: 'Concept',
             fields: ['business_idea', 'competence_skills', 'vision_long_term', 'my_business_comprehensive'],
             filledCount: 0,
             completed: false
         },
         analysis: {
+            key: 'analysis',
             title: 'Analysis',
             fields: ['swot_analysis', 'competitors', 'competitive_situation', 'operating_environment_risks', 'industry_future_prospects'],
             filledCount: 0,
             completed: false
         },
         products: {
+            key: 'products',
             title: 'Products',
             fields: ['products_services_general', 'products_services_detailed'],
             filledCount: 0,
             completed: false
         },
         market: {
+            key: 'market',
             title: 'Market',
             fields: ['target_market_groups', 'sales_marketing', 'distribution_network', 'production_logistics'],
             filledCount: 0,
             completed: false
         },
         legal: {
+            key: 'legal',
             title: 'Legal',
             fields: ['permits_notices', 'insurance_contracts', 'intellectual_property_rights', 'support_network'],
             filledCount: 0,
@@ -261,6 +298,10 @@ const businessPlanSections = computed(() => {
     });
 
     return sections;
+});
+
+const sectionsArray = computed(() => {
+    return Object.values(businessPlanSections.value);
 });
 
 const totalFields = computed(() => {
@@ -492,33 +533,25 @@ const saveField = async (fieldKey) => {
 
 /* Field highlight animation */
 .field-highlight {
-    animation: highlightPulse 5s ease-in-out;
-    background: rgba(34, 197, 94, 0.3) !important;
-    border: 2px solid #22c55e !important;
-    box-shadow: 0 0 20px rgba(34, 197, 94, 0.5), 0 0 40px rgba(34, 197, 94, 0.3);
-    transform: scale(1.05);
+    animation: highlightPulse 3s ease-in-out;
+    border-left: 4px solid #3b82f6 !important;
+    background: #eff6ff !important;
     z-index: 10;
     position: relative;
 }
 
 @keyframes highlightPulse {
     0% {
-        background: rgba(34, 197, 94, 0.3);
-        border-color: #22c55e;
-        box-shadow: 0 0 20px rgba(34, 197, 94, 0.5), 0 0 40px rgba(34, 197, 94, 0.3);
-        transform: scale(1.05);
+        background: #dbeafe;
+        border-left-color: #3b82f6;
     }
     50% {
-        background: rgba(34, 197, 94, 0.25);
-        border-color: #22c55e;
-        box-shadow: 0 0 15px rgba(34, 197, 94, 0.4), 0 0 30px rgba(34, 197, 94, 0.2);
-        transform: scale(1.03);
+        background: #eff6ff;
+        border-left-color: #60a5fa;
     }
     100% {
-        background: var(--original-bg, transparent);
-        border-color: var(--original-border, transparent);
-        box-shadow: none;
-        transform: scale(1);
+        background: #eff6ff;
+        border-left-color: #3b82f6;
     }
 }
 </style>

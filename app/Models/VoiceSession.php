@@ -36,8 +36,8 @@ class VoiceSession extends Model
         return [
             'id' => 'integer',
             'user_id' => 'integer',
-            'started_at' => 'timestamp',
-            'completed_at' => 'timestamp',
+            'started_at' => 'datetime',
+            'completed_at' => 'datetime',
         ];
     }
 

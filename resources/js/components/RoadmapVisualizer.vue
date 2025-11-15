@@ -1,7 +1,7 @@
 <template>
     <div class="w-full">
         <!-- Header -->
-        <div v-if="roadmap?.title || roadmap?.roadmap_json?.title" class="mb-4 bg-[#012169] rounded-lg p-4 shadow-lg">
+        <div v-if="roadmap?.title || roadmap?.roadmap_json?.title" class="mb-4 bg-[#5cc094] rounded-lg p-4">
             <div class="flex items-center gap-3">
                 <h2 class="text-xl font-bold text-white">
                     {{ roadmap.title || roadmap.roadmap_json?.title }}
@@ -11,9 +11,9 @@
 
         <!-- Empty State -->
         <div v-if="!roadmap || (!roadmap.steps && (!roadmap.roadmap_json || !roadmap.roadmap_json.steps)) || (roadmap.steps && roadmap.steps.length === 0) || (roadmap.roadmap_json && roadmap.roadmap_json.steps && roadmap.roadmap_json.steps.length === 0)" 
-             class="border border-dashed border-white/30 bg-[#011135] rounded-lg p-8 text-center">
-            <p class="font-bold text-white">No Roadmap Yet</p>
-            <p class="text-sm text-white/70 mt-1">Start a voice session to build your roadmap!</p>
+             class="border border-dashed border-gray-300 bg-white rounded-lg p-8 text-center">
+            <p class="font-bold text-gray-900">No Roadmap Yet</p>
+            <p class="text-sm text-gray-600 mt-1">Start a voice session to build your roadmap!</p>
         </div>
 
         <!-- Roadmap Cards -->
@@ -22,13 +22,13 @@
                 v-for="(step, index) in animatedSteps"
                 :key="step.id || step._stepId || index"
                 :class="[
-                    'rounded-lg p-4 transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg border',
+                    'rounded-lg p-4 transition-all duration-300 cursor-pointer border',
                     step.status === 'completed' 
-                        ? 'bg-[#011135] border-green-500/50' 
+                        ? 'bg-white border-[#5cc094]' 
                         : step.status === 'in_progress'
-                        ? 'bg-[#011135] border-[#012169]'
-                        : 'bg-[#011135] border-white/20',
-                    step.isNewlyAdded ? 'animate-pulse border-white' : ''
+                        ? 'bg-white border-gray-300'
+                        : 'bg-white border-gray-200',
+                    step.isNewlyAdded ? 'animate-pulse border-[#5cc094]' : ''
                 ]"
                 @click="handleStepClick(step)"
             >
@@ -37,10 +37,10 @@
                     <div :class="[
                         'w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 transition-all border',
                         step.status === 'completed' 
-                            ? 'bg-green-600 text-white border-green-400' 
+                            ? 'bg-[#5cc094] text-white border-[#5cc094]' 
                             : step.status === 'in_progress'
-                            ? 'bg-[#012169] text-white border-white/30 animate-pulse'
-                            : 'bg-[#012169] text-white border-white/20'
+                            ? 'bg-blue-500 text-white border-blue-300 animate-pulse'
+                            : 'bg-gray-300 text-gray-900 border-gray-400'
                     ]">
                         <span v-if="step.status === 'completed'" class="text-lg">✓</span>
                         <span v-else-if="step.status === 'in_progress'" class="text-sm">⟳</span>
@@ -50,32 +50,32 @@
                     <!-- Step Content -->
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-2 mb-2 flex-wrap">
-                            <h3 class="font-bold text-base text-white">
+                            <h3 class="font-bold text-base text-gray-900">
                                 {{ step.title || `Step ${step.order || index + 1}` }}
                             </h3>
                             <span :class="[
                                 'px-3 py-1 rounded-full text-xs font-semibold',
                                 step.status === 'completed' 
-                                    ? 'bg-green-600/30 text-green-300 border border-green-500/50' 
+                                    ? 'bg-[#5cc094]/30 text-[#5cc094] border border-[#5cc094]/50' 
                                     : step.status === 'in_progress'
-                                    ? 'bg-[#012169] text-white border border-white/30'
-                                    : 'bg-white/10 text-white/70 border border-white/20'
+                                    ? 'bg-blue-500 text-white border border-blue-300'
+                                    : 'bg-gray-100 text-gray-700 border border-gray-300'
                             ]">
                                 {{ (step.status || 'pending').replace('_', ' ').toUpperCase() }}
                             </span>
-                            <span v-if="step.isNewlyAdded" class="px-3 py-1 rounded-full bg-white/20 text-white text-xs font-semibold border border-white/30">
+                            <span v-if="step.isNewlyAdded" class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold border border-blue-300">
                                 NEW
                             </span>
                         </div>
                         
-                        <p v-if="step.description" class="text-sm leading-relaxed line-clamp-2 text-white/80">
+                        <p v-if="step.description" class="text-sm leading-relaxed line-clamp-2 text-gray-700">
                             {{ step.description }}
                         </p>
 
                         <!-- Resources Section -->
-                        <div v-if="step.resources && step.resources.length > 0" class="mt-3 pt-3 border-t border-white/20">
+                        <div v-if="step.resources && step.resources.length > 0" class="mt-3 pt-3 border-t border-gray-300">
                             <div class="flex items-center gap-2 mb-2">
-                                <span class="text-xs font-semibold text-white/70">Resources:</span>
+                                <span class="text-xs font-semibold text-gray-600">Resources:</span>
                             </div>
                             <div class="space-y-2">
                                 <a
@@ -84,18 +84,18 @@
                                     :href="resource.url"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    class="block bg-[#012169] rounded-lg p-2 border border-white/20 hover:border-white/40 hover:bg-[#011135] transition-all group"
+                                    class="block bg-gray-50 rounded-lg p-2 border border-gray-200 hover:border-gray-400 hover:bg-gray-100 transition-all group"
                                 >
                                     <div class="flex items-start gap-2">
-                                        <span class="text-white/60 text-sm group-hover:text-white">🔗</span>
+                                        <span class="text-gray-500 text-sm group-hover:text-gray-700">🔗</span>
                                         <div class="flex-1 min-w-0">
-                                            <p class="text-xs font-semibold text-white group-hover:text-white/90">
+                                            <p class="text-xs font-semibold text-gray-900 group-hover:text-gray-700">
                                                 {{ resource.title }}
                                             </p>
-                                            <p v-if="resource.description" class="text-xs text-white/60 mt-0.5 line-clamp-1">
+                                            <p v-if="resource.description" class="text-xs text-gray-600 mt-0.5 line-clamp-1">
                                                 {{ resource.description }}
                                             </p>
-                                            <p class="text-xs text-white/50 mt-1 truncate">
+                                            <p class="text-xs text-gray-500 mt-1 truncate">
                                                 {{ resource.url }}
                                             </p>
                                         </div>
@@ -105,15 +105,15 @@
                         </div>
 
                         <!-- Progress Bar for In Progress -->
-                        <div v-if="step.status === 'in_progress'" class="mt-3 pt-3 border-t border-white/20">
+                        <div v-if="step.status === 'in_progress'" class="mt-3 pt-3 border-t border-gray-300">
                             <div class="flex items-center gap-2">
-                                <div class="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
+                                <div class="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
                                     <div 
-                                        class="h-full bg-[#012169] rounded-full transition-all duration-500"
+                                        class="h-full bg-[#5cc094] rounded-full transition-all duration-500"
                                         style="width: 50%"
                                     ></div>
                                 </div>
-                                <span class="text-xs font-semibold text-white/70">50%</span>
+                                <span class="text-xs font-semibold text-gray-600">50%</span>
                             </div>
                         </div>
                     </div>

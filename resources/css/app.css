@@ -6,6 +6,28 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'Space Grotesk', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Poppins', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    
+    /* Custom Color Palette - Change these hex values to customize your theme */
+    /* Primary Colors */
+    --color-primary-dark: #f2f7f5;      /* Main background - warm white */
+    --color-primary: #f3f4f6;            /* Secondary light gray for cards */
+    --color-primary-light: #e4f0ff;     /* Light blue accent */
+    --color-primary-lighter: #e4f0ff;  /* Very light blue */
+    --color-primary-lightest: #f6f9ff;  /* Lightest blue background */
+    --color-primary-text: #1f2937;      /* Dark text for white background */
+    
+    /* Accent Colors */
+    --color-accent-primary: #5cc094;     /* Primary accent - teal/green */
+    --color-accent-primary-dark: #205274; /* Dark blue accent */
+    --color-accent-green: #5cc094;       /* Green accent - active states */
+    --color-accent-green-light: #5cc094;  /* Green accent - hover states */
+    --color-accent-blue: #205274;         /* Dark blue accent */
+    
+    /* To use these colors in components, you can reference them as:
+     * bg-[var(--color-primary-dark)]
+     * text-[var(--color-primary)]
+     * Or define them as Tailwind color classes below
+     */
 }
