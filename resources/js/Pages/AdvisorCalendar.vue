@@ -1,62 +1,62 @@
 <template>
     <Head title="Advisor Calendar" />
-    <div class="flex min-h-screen bg-[#f3f9ff] text-slate-700">
+    <div class="flex min-h-screen bg-[#f2f7f5] text-slate-700">
         <RequestSidebar :advisor="advisor" active="Calendar" />
 
         <main class="flex-1 px-4 pb-12 pt-8 sm:px-10">
-            <div class="flex flex-wrap items-center justify-between gap-4 rounded-3xl bg-white px-6 py-4 shadow-md shadow-blue-100/60">
+            <div class="flex flex-wrap items-center justify-between gap-4 rounded-3xl bg-white px-6 py-4 shadow-md shadow-emerald-100/60 border border-[#c3d7de]">
                 <div>
                     <p class="text-xs uppercase tracking-[0.5em] text-slate-400">Calendar</p>
-                    <h1 class="text-3xl font-semibold text-[#0f2e5a]">Upcoming schedules</h1>
+                    <h1 class="text-3xl font-semibold text-[#205274]">Upcoming schedules</h1>
                     <p class="text-sm text-slate-500">Track your meetings in a single glance.</p>
                 </div>
                 <div class="flex items-center gap-3">
-                    <button class="rounded-2xl border border-slate-200 px-4 py-2 text-sm font-semibold text-slate-500" @click="setToday">
+                    <button class="rounded-2xl border border-[#5cc094] bg-[#205274] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1a425d]" @click="setToday">
                         Today
                     </button>
                 </div>
             </div>
 
             <section class="mt-8 grid gap-6 lg:grid-cols-[320px,1fr]">
-                <div class="rounded-3xl bg-white/90 p-6 shadow-lg shadow-blue-100/70">
-                    <h2 class="text-lg font-semibold text-[#0f2e5a]">Upcoming events</h2>
+                <div class="rounded-3xl bg-white/90 p-6 shadow-lg shadow-emerald-100/70 border border-[#c3d7de]">
+                    <h2 class="text-lg font-semibold text-[#205274]">Upcoming events</h2>
                     <p class="text-xs text-slate-400">Don't miss scheduled meetings</p>
                     <div class="mt-6 space-y-4">
                         <article
                             v-for="event in upcomingList"
                             :key="event.id"
-                            class="rounded-2xl border border-slate-100 bg-[#f6fbff] p-4 text-sm text-[#0f2e5a] shadow-sm shadow-blue-50 transition hover:shadow-md cursor-pointer"
+                            class="rounded-2xl border border-[#c3d7de] bg-[#f2f8f5] p-4 text-sm text-[#205274] shadow-sm shadow-emerald-50 transition hover:shadow-md cursor-pointer"
                             @click="openMeetingModal(event)"
                         >
-                            <p class="text-xs font-semibold uppercase tracking-widest text-[#1c75c5]">
+                            <p class="text-xs font-semibold uppercase tracking-widest text-[#5cc094]">
                                 {{ event.timeRange }}
                             </p>
-                            <p class="mt-1 text-base font-semibold text-[#0f2e5a]">{{ event.title }}</p>
+                            <p class="mt-1 text-base font-semibold text-[#205274]">{{ event.title }}</p>
                             <p class="text-xs text-slate-500 line-clamp-2">{{ event.subtitle }}</p>
                         </article>
                         <p v-if="!upcomingList.length" class="text-sm text-slate-400">No upcoming meetings.</p>
                     </div>
-                    <div class="mt-6 rounded-2xl bg-gradient-to-br from-[#5ad4ff] to-[#4669f6] p-4 text-white shadow">
-                        <p class="text-xs uppercase tracking-widest text-white/70">Conversion history</p>
+                    <div class="mt-6 rounded-2xl bg-gradient-to-br from-[#205274] to-[#5cc094] p-4 text-white shadow">
+                        <p class="text-xs uppercase tracking-widest text-white/80">Conversion history</p>
                         <p class="mt-2 text-base font-semibold">Week to week performance</p>
-                        <button class="mt-3 rounded-2xl bg-white/90 px-4 py-2 text-xs font-semibold text-[#3b45d5]">
+                        <button class="mt-3 rounded-2xl bg-[#205274] border border-[#5cc094] px-4 py-2 text-xs font-semibold text-white hover:bg-[#1a425d]">
                             See more
                         </button>
                     </div>
                 </div>
 
-                <div class="rounded-3xl bg-white p-6 shadow-xl shadow-blue-100/70">
+                <div class="rounded-3xl bg-white p-6 shadow-xl shadow-emerald-100/70 border border-[#c3d7de]">
                     <div class="flex flex-wrap items-center justify-between gap-4">
                         <div class="flex items-center gap-4">
-                            <div class="rounded-full bg-[#e1f2ff] px-4 py-1 text-xs font-semibold text-[#0d4f8b]">
+                            <div class="rounded-full bg-[#e0f5ec] px-4 py-1 text-xs font-semibold text-[#205274]">
                                 {{ monthYearLabel }}
                             </div>
-                            <div class="hidden rounded-full bg-[#eef5ff] text-xs font-semibold text-[#5d6d85] lg:flex">
+                            <div class="hidden rounded-full bg-[#e0f5ec] text-xs font-semibold text-[#205274] lg:flex">
                                 <button
                                     v-for="mode in ['Month', 'Week', 'Day']"
                                     :key="mode"
                                     class="rounded-full px-4 py-1 transition"
-                                    :class="viewMode === mode ? 'bg-white text-[#0d4f8b] shadow-sm' : ''"
+                                    :class="viewMode === mode ? 'bg-white text-[#205274] shadow-sm' : ''"
                                     @click="viewMode = mode"
                                 >
                                     {{ mode }}
@@ -64,11 +64,11 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-2">
-                            <button class="rounded-full border border-slate-200 p-2" @click="prevMonth">
-                                <BaseIcon name="chevron-left" class="h-4 w-4 text-slate-500" />
+                            <button class="rounded-full border border-[#c3d7de] p-2" @click="prevMonth">
+                                <BaseIcon name="chevron-left" class="h-4 w-4 text-[#205274]" />
                             </button>
-                            <button class="rounded-full border border-slate-200 p-2" @click="nextMonth">
-                                <BaseIcon name="chevron-right" class="h-4 w-4 text-slate-500" />
+                            <button class="rounded-full border border-[#c3d7de] p-2" @click="nextMonth">
+                                <BaseIcon name="chevron-right" class="h-4 w-4 text-[#205274]" />
                             </button>
                         </div>
                     </div>
@@ -81,18 +81,18 @@
                         <div
                             v-for="day in calendarDays"
                             :key="day.iso"
-                            class="rounded-2xl border border-transparent bg-[#f2f8ff] p-3 text-left transition"
+                            class="rounded-2xl border border-transparent bg-[#f2f7f5] p-3 text-left transition"
                             :class="{
-                                'bg-white border-blue-200 shadow-sm': day.isToday,
+                                'bg-white border-[#5cc094] shadow-sm': day.isToday,
                                 'opacity-50': !day.isCurrentMonth
                             }"
                         >
-                            <p class="text-sm font-semibold text-[#0f2e5a]">{{ day.date }}</p>
+                            <p class="text-sm font-semibold text-[#205274]">{{ day.date }}</p>
                             <div class="mt-2 space-y-2">
                                 <div
                                     v-for="event in day.events"
                                     :key="event.id"
-                                    class="rounded-xl px-3 py-2 text-xs font-semibold text-[#0f2e5a] transition hover:scale-[1.02] hover:shadow cursor-pointer"
+                                    class="rounded-xl px-3 py-2 text-xs font-semibold text-[#205274] transition hover:scale-[1.02] hover:shadow cursor-pointer"
                                     :class="event.color"
                                     @click="openMeetingModal(event)"
                                 >
@@ -112,7 +112,7 @@
             v-if="selectedMeeting"
             class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
         >
-            <div class="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl">
+                    <div class="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl">
                 <header class="flex items-center justify-between">
                     <div>
                         <p class="text-xs uppercase tracking-[0.5em] text-slate-400">Meeting details</p>
@@ -125,7 +125,7 @@
                         ✕
                     </button>
                 </header>
-                <div class="mt-4 space-y-4 text-sm text-slate-600">
+                    <div class="mt-4 space-y-4 text-sm text-slate-600">
                     <div class="rounded-2xl bg-[#f6f9ff] px-4 py-3">
                         <p class="text-xs font-semibold uppercase tracking-widest text-slate-400">Schedule</p>
                         <p class="text-base text-[#0f2e5a]">
@@ -141,14 +141,14 @@
                             {{ selectedMeeting.subtitle || 'No agenda provided.' }}
                         </p>
                     </div>
-                    <div class="rounded-2xl bg-gradient-to-r from-[#8fc9ff] to-[#4da0ff] px-4 py-4 text-white shadow">
+                    <div class="rounded-2xl bg-gradient-to-r from-[#205274] to-[#5cc094] px-4 py-4 text-white shadow">
                         <p class="text-xs font-semibold uppercase tracking-widest text-white/70">Google Meet</p>
                         <p class="mt-2 text-base font-semibold">You can join through the Google Meet link</p>
                         <a
                             :href="selectedMeeting.meetLink"
                             target="_blank"
                             rel="noopener"
-                            class="mt-3 inline-flex items-center gap-2 rounded-2xl bg-white/90 px-4 py-2 text-sm font-semibold text-[#0f4f8b] transition hover:scale-[1.01]"
+                            class="mt-3 inline-flex items-center gap-2 rounded-2xl bg-[#205274] border border-[#5cc094] px-4 py-2 text-sm font-semibold text-white transition hover:bg-[#1a425d]"
                         >
                             {{ selectedMeeting.meetLink }}
                             <svg

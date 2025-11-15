@@ -1,6 +1,6 @@
 <template>
     <Head title="Advisor Dashboard" />
-    <div class="flex min-h-screen bg-[#eef5fb] text-slate-700">
+    <div class="flex min-h-screen bg-[#f2f7f5] text-slate-700">
         <RequestSidebar :advisor="advisor" active="Dashboard" />
 
         <main class="flex-1 px-4 pb-10 pt-8 sm:px-8">
@@ -11,12 +11,12 @@
                         <!-- Left: beer + tooltip -->
                         <div class="flex items-center gap-3 flex-1 min-w-0">
                             <div class="relative flex items-center gap-3">
-                                <img :key="beerFrameKey" :src="beerGif" alt="Cheers" class="h-[70px] w-[70px] rounded-2xl object-cover ring-4 ring-[#ecf5ff]" />
+                                <img :key="beerFrameKey" :src="beerGif" alt="Cheers" class="h-[70px] w-[70px] rounded-2xl object-cover" />
                                 <div class="tooltip-wrapper" aria-live="polite">
                                     <transition name="fade-scale">
                                         <div
                                             v-if="showTooltip"
-                                            class="tooltip-beer relative rounded-2xl px-4 py-2 text-sm font-semibold text-[#0f2e5a] shadow-lg"
+                                            class="tooltip-beer relative rounded-2xl px-4 py-2 text-sm font-semibold text-[#205274] shadow-lg"
                                         >
                                             <span class="typewriter">{{ welcomeText }}</span>
                                             <span class="tooltip-tail"></span>
@@ -29,15 +29,15 @@
                         <!-- Right: navbar controls (fixed width) -->
                         <div class="flex justify-end w-[280px] shrink-0">
                             <div
-                                class="flex w-full items-center justify-end gap-3 rounded-3xl border border-slate-100 bg-white px-4 py-2 shadow-sm shadow-blue-100"
+                                class="flex w-full items-center justify-end gap-3 rounded-3xl border border-[#5cc094] bg-white px-4 py-2 shadow-sm shadow-emerald-100/60"
                             >
                                 <!-- Reminders / notifications -->
                                 <button
                                     type="button"
                                     @click="handleReminderClick"
-                                    class="relative inline-flex items-center justify-center rounded-full border border-slate-100 bg-white px-3 py-2 text-slate-600 shadow-sm hover:bg-slate-50"
+                                    class="relative inline-flex items-center justify-center rounded-full border border-[#5cc094] bg-[#205274] px-3 py-2 text-xs font-semibold text-white shadow-sm hover:bg-[#1a425d]"
                                 >
-                                    <BaseIcon name="bell" class="h-4 w-4 text-[#0f2e5a]" />
+                                    <BaseIcon name="bell" class="h-4 w-4 text-white" />
                                     <span
                                         v-if="reminderCount"
                                         class="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#ff4d6a] text-[10px] font-bold text-white"
@@ -49,7 +49,7 @@
                                 <!-- Small icon container (e.g. for quick actions) -->
                                 <button
                                     type="button"
-                                    class="hidden sm:inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-100 bg-white text-slate-500 shadow-sm hover:bg-slate-50"
+                                    class="hidden sm:inline-flex h-9 w-9 items-center justify-center rounded-full border border-[#5cc094] bg-[#205274] text-white shadow-sm hover:bg-[#1a425d]"
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -70,11 +70,11 @@
 
                                 <!-- Profile chip -->
                                 <div
-                                    class="hidden sm:flex items-center gap-2 rounded-full border border-slate-100 bg-white px-3 py-1 text-xs shadow-sm shadow-blue-50"
+                                    class="hidden sm:flex items-center gap-2 rounded-full border border-[#5cc094] bg-white px-3 py-1 text-xs shadow-sm shadow-emerald-50"
                                 >
-                                    <div class="h-7 w-7 rounded-full bg-gradient-to-br from-[#4da0ff] to-[#0f2e5a]" />
+                                    <div class="h-7 w-7 rounded-full bg-gradient-to-br from-[#5cc094] to-[#205274]" />
                                     <div class="flex flex-col leading-tight">
-                                        <span class="font-semibold text-[#0f2e5a] truncate max-w-[120px]">
+                                        <span class="font-semibold text-[#205274] truncate max-w-[120px]">
                                             {{ advisor.name }}
                                         </span>
                                         <span class="text-[10px] uppercase tracking-wide text-slate-400">Advisor</span>
@@ -90,12 +90,16 @@
 
             <!-- stats cards -->
             <section class="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                <div v-for="card in summaryCards" :key="card.label" class="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm shadow-blue-100/70">
+                <div
+                    v-for="card in summaryCards"
+                    :key="card.label"
+                    class="rounded-3xl border border-[#c3d7de] bg-white p-5 shadow-sm shadow-emerald-100/70"
+                >
                     <div class="flex items-center justify-between text-slate-400 text-xs uppercase tracking-widest">
                         <span>{{ card.label }}</span>
                         <span>↗</span>
                     </div>
-                    <p class="mt-3 text-3xl font-semibold text-[#0e3f73]">{{ card.value }}</p>
+                    <p class="mt-3 text-3xl font-semibold text-[#205274]">{{ card.value }}</p>
                     <p class="text-xs text-slate-400">{{ card.subtext }}</p>
                 </div>
             </section>
@@ -103,54 +107,54 @@
             <section class="mt-8 grid gap-6 xl:grid-cols-3">
                 <div class="space-y-6 xl:col-span-2">
                     <div class="grid gap-6 lg:grid-cols-2">
-                        <div class="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm shadow-blue-100/70">
+                        <div class="rounded-3xl border border-[#c3d7de] bg-white p-5 shadow-sm shadow-emerald-100/70">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-xs uppercase tracking-widest text-slate-400">Lead analytics</p>
-                                    <h2 class="text-xl font-semibold text-[#0f2e5a]">Weekly submissions</h2>
+                                    <h2 class="text-xl font-semibold text-[#205274]">Weekly submissions</h2>
                                 </div>
-                                <span class="rounded-full bg-[#e1f1ff] px-3 py-1 text-xs font-semibold text-[#0d4f8b]">+12%</span>
+                                <span class="rounded-full bg-[#e0f5ec] px-3 py-1 text-xs font-semibold text-[#205274]">+12%</span>
                             </div>
                             <div class="mt-6 flex items-end gap-3">
                                 <div v-for="point in analytics" :key="point.label" class="flex flex-1 flex-col items-center gap-2">
-                                    <div class="flex w-full items-end justify-center rounded-xl bg-[#e7f2fb] p-1">
-                                        <div class="w-6 rounded-xl bg-gradient-to-t from-[#4da0ff] to-[#8fc9ff]" :style="{ height: point.percentage + '%' }"></div>
+                                    <div class="flex w-full items-end justify-center rounded-xl bg-[#e3f2ed] p-1">
+                                        <div class="w-6 rounded-xl bg-gradient-to-t from-[#205274] to-[#5cc094]" :style="{ height: point.percentage + '%' }"></div>
                                     </div>
                                     <p class="text-xs font-semibold text-slate-500">{{ point.label }}</p>
                                 </div>
                             </div>
                         </div>
-                        <div class="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm shadow-blue-100/70">
+                        <div class="rounded-3xl border border-[#c3d7de] bg-white p-5 shadow-sm shadow-emerald-100/70">
                             <div class="flex items-center justify-between">
                                 <div>
                                     <p class="text-xs uppercase tracking-widest text-slate-400">Reminders</p>
-                                    <h2 class="text-xl font-semibold text-[#0f2e5a]">Upcoming session</h2>
+                                    <h2 class="text-xl font-semibold text-[#205274]">Upcoming session</h2>
                                 </div>
-                                <span class="rounded-full bg-[#e1f1ff] px-3 py-1 text-xs font-semibold text-[#0d4f8b]">
+                                <span class="rounded-full bg-[#e0f5ec] px-3 py-1 text-xs font-semibold text-[#205274]">
                                     {{ formatDate(latestMeeting && latestMeeting.submitted_at) }}
                                 </span>
                             </div>
-                            <div class="mt-5 rounded-2xl border border-slate-100 bg-[#f6fbff] p-4 text-sm text-[#0f3061]">
+                            <div class="mt-5 rounded-2xl border border-slate-100 bg-[#f2f8f5] p-4 text-sm text-[#205274]">
                                 <p class="text-lg font-semibold">
                                     {{ latestMeeting ? latestMeeting.founder : 'No sessions scheduled' }}
                                 </p>
                                 <p class="text-sm text-slate-500">
                                     {{ latestMeeting ? latestMeeting.business_summary : 'Once a meeting is submitted, it will display here.' }}
                                 </p>
-                                <button class="mt-4 w-full rounded-2xl bg-gradient-to-r from-[#8fc9ff] to-[#4da0ff] py-2 text-sm font-semibold text-white shadow">
+                                <button class="mt-4 w-full rounded-2xl bg-gradient-to-r from-[#205274] to-[#5cc094] py-2 text-sm font-semibold text-white shadow">
                                     Start Meeting
                                 </button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm shadow-blue-100/70">
+                    <div class="rounded-3xl border border-[#5cc094] bg-white p-5 shadow-sm shadow-emerald-100/70">
                         <header class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
                             <div>
                                 <p class="text-xs uppercase tracking-widest text-slate-400">Meetings</p>
-                                <h2 class="text-xl font-semibold text-[#0f2e5a]">Pending requests</h2>
+                                <h2 class="text-xl font-semibold text-[#205274]">Pending requests</h2>
                             </div>
-                            <Link href="/advisor/meeting-requests" class="inline-flex items-center justify-center rounded-2xl border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-500 hover:text-[#0f2e5a]">
+                                <Link href="/advisor/meeting-requests" class="inline-flex items-center justify-center rounded-2xl border border-[#5cc094] bg-[#205274] px-4 py-2 text-xs font-semibold text-white hover:bg-[#1a425d]">
                                 View all
                             </Link>
                         </header>
@@ -158,19 +162,19 @@
                             <article
                                 v-for="request in meetingRequestsList.slice(0, 2)"
                                 :key="request.id"
-                                class="rounded-2xl border border-slate-100 px-4 py-4 shadow-sm shadow-blue-50"
+                                class="rounded-2xl border border-[#5cc094] px-4 py-4 shadow-sm shadow-emerald-50"
                             >
                                 <div class="flex items-start justify-between gap-2">
                                     <div>
-                                        <p class="text-sm font-semibold text-[#0f2e5a]">{{ request.founder }}</p>
+                                        <p class="text-sm font-semibold text-[#205274]">{{ request.founder }}</p>
                                         <p class="text-xs text-slate-400">{{ formatPreferredSlot(request.preferred_date, request.preferred_time) }}</p>
                                         <p class="mt-2 text-sm text-slate-500 text-left">
                                             {{ request.message || 'No additional context provided.' }}
                                         </p>
                                     </div>
-                                    <span class="inline-flex rounded-full bg-[#e1f1ff] px-3 py-1 text-xs font-semibold text-[#0d4f8b]">New</span>
+                                    <span class="inline-flex rounded-full bg-[#e0f5ec] px-3 py-1 text-xs font-semibold text-[#205274]">New</span>
                                 </div>
-                                <Link href="/advisor/meeting-requests" class="mt-4 inline-flex text-xs font-semibold text-[#0d4f8b] hover:underline">
+                                <Link href="/advisor/meeting-requests" class="mt-4 inline-flex text-xs font-semibold text-[#205274] hover:underline">
                                     Open request
                                 </Link>
                             </article>
@@ -180,17 +184,17 @@
                 </div>
 
                 <div class="space-y-6">
-                    <div class="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm shadow-blue-100/70">
+                    <div class="rounded-3xl border border-[#5cc094] bg-white p-5 shadow-sm shadow-emerald-100/70">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-xs uppercase tracking-widest text-slate-400">Projects</p>
-                                <h2 class="text-xl font-semibold text-[#0f2e5a]">Active requests</h2>
+                                <h2 class="text-xl font-semibold text-[#205274]">Active requests</h2>
                             </div>
-                            <button class="rounded-2xl border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-500">+ New</button>
+                            <button class="rounded-2xl border border-[#5cc094] bg-[#205274] px-4 py-2 text-xs font-semibold text-white hover:bg-[#1a425d]">+ New</button>
                         </div>
                         <div class="mt-4 space-y-4">
-                            <article v-for="project in projectList" :key="project.title" class="rounded-2xl border border-slate-100 px-4 py-3">
-                                <p class="text-sm font-semibold text-[#0f2e5a]">{{ project.title }}</p>
+                            <article v-for="project in projectList" :key="project.title" class="rounded-2xl border border-[#c3d7de] px-4 py-3">
+                                <p class="text-sm font-semibold text-[#205274]">{{ project.title }}</p>
                                 <p class="text-xs text-slate-400">Status: {{ project.status }}</p>
                                 <p class="text-xs text-slate-400">Requested: {{ project.due || 'N/A' }}</p>
                             </article>
@@ -198,21 +202,21 @@
                         </div>
                     </div>
 
-                    <div class="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm shadow-blue-100/70">
+                    <div class="rounded-3xl border border-[#5cc094] bg-white p-5 shadow-sm shadow-emerald-100/70">
                         <div class="flex items-center justify-between">
                             <div>
                                 <p class="text-xs uppercase tracking-widest text-slate-400">Schedule</p>
-                                <h2 class="text-xl font-semibold text-[#0f2e5a]">Upcoming meetings</h2>
+                                <h2 class="text-xl font-semibold text-[#205274]">Upcoming meetings</h2>
                             </div>
-                            <Link href="/meetings/request" class="rounded-2xl border border-slate-200 px-4 py-2 text-xs font-semibold text-slate-500 hover:text-[#0f2e5a]">
+                            <Link href="/meetings/request" class="rounded-2xl border border-[#5cc094] bg-[#205274] px-4 py-2 text-xs font-semibold text-white hover:bg-[#1a425d]">
                                 New request
                             </Link>
                         </div>
                         <div class="mt-4 space-y-4">
-                            <article v-for="meeting in upcomingMeetingsList" :key="meeting.id" class="rounded-2xl border border-slate-100 px-4 py-3">
+                            <article v-for="meeting in upcomingMeetingsList" :key="meeting.id" class="rounded-2xl border border-[#c3d7de] px-4 py-3">
                                 <div class="flex items-center justify-between gap-3">
                                     <div>
-                                        <p class="text-sm font-semibold text-[#0f2e5a]">{{ meeting.founder }}</p>
+                                        <p class="text-sm font-semibold text-[#205274]">{{ meeting.founder }}</p>
                                         <p class="text-xs text-slate-400">{{ formatDate(meeting.scheduled_at) }}</p>
                                     </div>
                                     <span :class="statusTagClass(meeting.status)" class="capitalize">{{ meeting.status }}</span>
@@ -544,9 +548,9 @@ onBeforeUnmount(() => {
 
 const statusPillClass = (status) => {
     const mapping = {
-        'In Progress': 'bg-[#e1f1ff] text-[#0d4f8b]',
+        'In Progress': 'bg-[#e0f5ec] text-[#205274]',
         Planning: 'bg-[#fef6d8] text-[#b38600]',
-        Launched: 'bg-[#e0fbec] text-[#0d884b]',
+        Launched: 'bg-[#e0f5ec] text-[#5cc094]',
         Pending: 'bg-[#ffe1e6] text-[#b8324f]'
     };
     return mapping[status] ?? 'bg-slate-100 text-slate-500';
@@ -591,7 +595,7 @@ const statusPillClass = (status) => {
     pointer-events: none;
     max-width: 260px;
     white-space: nowrap;
-    background-color: #d4e7ff;
+    background-color: #e0f5ec;
 }
 
 .tooltip-tail {
@@ -601,7 +605,7 @@ const statusPillClass = (status) => {
     transform: translateY(-50%) rotate(45deg);
     width: 12px;
     height: 12px;
-    background-color: #d4e7ff;
+    background-color: #e0f5ec;
 }
 </style>
 

@@ -1,12 +1,12 @@
 <template>
-    <aside class="hidden w-64 flex-col border-r border-[#dfe9f5] bg-white/90 px-6 py-8 lg:flex">
+    <aside class="hidden w-64 flex-col border-r border-[#d6e4dc] bg-white/95 px-6 py-8 lg:flex">
         <div class="flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-[#8fc9ff] to-[#4da0ff] text-white font-semibold">
+            <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-[#205274] to-[#5cc094] text-white font-semibold">
                 EB
             </div>
             <div>
-                <p class="text-lg font-semibold text-[#0f325a]">Espoo Advisor</p>
-                <p class="text-xs text-slate-400">Business Desk</p>
+                <p class="text-lg font-semibold text-[#205274]">Espoo Advisor</p>
+                <p class="text-xs text-slate-500">Business Desk</p>
             </div>
         </div>
         <nav class="mt-10 space-y-6">
@@ -18,9 +18,9 @@
                         :key="item.label"
                         :href="item.href"
                         class="flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-sm font-medium transition"
-                        :class="item.active ? 'bg-[#e3f2ff] text-[#0e3f73]' : 'text-slate-500 hover:bg-slate-50'"
+                        :class="item.active ? 'bg-[#d4efe3] text-[#205274]' : 'text-slate-500 hover:bg-[#f4faf7]'"
                     >
-                        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-500">
+                        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f4faf7] text-[#205274]">
                             <BaseIcon :name="item.icon" class="h-5 w-5" />
                         </span>
                         <span>{{ item.label }}</span>
@@ -30,16 +30,25 @@
             <div>
                 <p class="text-xs uppercase tracking-widest text-slate-400">General</p>
                 <div class="mt-3 space-y-2">
-                    <button class="flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50">
-                        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-500">
+                    <button class="flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-[#f4faf7]">
+                        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f4faf7] text-[#205274]">
                             <BaseIcon name="help" class="h-5 w-5" />
                         </span>
                         Help
                     </button>
+                    <Link
+                        href="/advisor/settings"
+                        class="flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-[#f4faf7]"
+                    >
+                        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f4faf7] text-[#205274]">
+                            <BaseIcon name="settings" class="h-5 w-5" />
+                        </span>
+                        Settings
+                    </Link>
                     <form method="POST" action="/logout">
                         <input type="hidden" name="_token" :value="$page.props.csrf_token" />
-                        <button type="submit" class="flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-slate-50">
-                            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-slate-50 text-slate-500">
+                        <button type="submit" class="flex w-full items-center gap-3 rounded-2xl px-3 py-2 text-sm font-medium text-slate-500 transition hover:bg-[#f4faf7]">
+                            <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-[#f4faf7] text-[#205274]">
                                 <BaseIcon name="logout" class="h-5 w-5" />
                             </span>
                             Logout
@@ -48,11 +57,13 @@
                 </div>
             </div>
         </nav>
-        <div class="mt-auto rounded-2xl bg-gradient-to-br from-[#b6e0ff] to-[#7fc3ff] p-4 text-sm text-[#05355f]">
-            <p class="text-xs uppercase tracking-widest text-[#05355f]/70">Mobile app</p>
+        <div class="mt-auto rounded-2xl bg-gradient-to-br from-[#205274] to-[#5cc094] p-4 text-sm text-white">
+            <p class="text-xs uppercase tracking-widest text-white/80">Mobile app</p>
             <p class="mt-2 text-base font-semibold">Support on the go</p>
-            <p class="mt-1 text-xs text-[#05355f]/70">Stay connected to every founder conversation from anywhere.</p>
-            <button class="mt-4 w-full rounded-xl bg-white/90 py-2 text-sm font-semibold text-[#0d4f8b] shadow">Download</button>
+            <p class="mt-1 text-xs text-white/85">Stay connected to every founder conversation from anywhere.</p>
+            <button class="mt-4 w-full rounded-xl bg-[#205274] border border-[#5cc094] py-2 text-sm font-semibold text-white shadow hover:bg-[#1a425d]">
+                Download
+            </button>
         </div>
     </aside>
 </template>

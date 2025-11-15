@@ -1,12 +1,12 @@
 <template>
     <Head title="Meeting Requests" />
-    <div class="flex min-h-screen bg-[#eef5fb] text-slate-700">
+    <div class="flex min-h-screen bg-[#f2f7f5] text-slate-700">
         <RequestSidebar :advisor="advisor" active="Meeting Requests" />
 
         <main class="flex-1 px-4 pb-10 pt-8 sm:px-8">
-            <header class="rounded-3xl bg-white/90 px-6 py-5 shadow-sm shadow-blue-200/40">
+            <header class="rounded-3xl bg-white/90 px-6 py-5 shadow-sm shadow-emerald-100/40 border border-[#5cc094]">
                 <p class="text-xs uppercase tracking-widest text-slate-400">Meetings</p>
-                <h1 class="text-3xl font-semibold text-[#0f2e5a]">Pending requests</h1>
+                <h1 class="text-3xl font-semibold text-[#205274]">Pending requests</h1>
                 <p class="text-sm text-slate-400">Review and schedule incoming sessions from entrepreneurs.</p>
             </header>
 
@@ -14,17 +14,17 @@
                 <article
                     v-for="request in requests"
                     :key="request.id"
-                    class="rounded-3xl border border-slate-100 bg-white p-6 shadow-sm shadow-blue-100/70"
+                    class="rounded-3xl border border-[#5cc094] bg-white p-6 shadow-sm shadow-emerald-100/70"
                 >
                     <div class="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                         <div>
                             <p class="text-sm uppercase tracking-widest text-slate-400">Founder</p>
-                            <h2 class="text-2xl font-semibold text-[#0f2e5a]">{{ request.founder }}</h2>
+                            <h2 class="text-2xl font-semibold text-[#205274]">{{ request.founder }}</h2>
                             <p class="text-xs text-slate-400">{{ preferredSlot(request.preferred_date, request.preferred_time) }}</p>
                         </div>
                         <div class="flex items-center gap-2">
                             <button
-                                class="rounded-full border border-slate-200 p-2 text-slate-500 transition hover:text-[#0f2e5a] cursor-pointer"
+                                class="rounded-full border border-[#5cc094] p-2 text-slate-500 transition hover:text-[#205274] cursor-pointer"
                                 @click="toggleCardCollapse(request.id)"
                             >
                                 <svg
@@ -47,11 +47,11 @@
                             <p class="mt-4 text-sm text-slate-500 whitespace-pre-line">{{ request.message || 'No additional context provided.' }}</p>
 
                             <section class="mt-6 grid gap-4 lg:grid-cols-[minmax(0,3fr)_minmax(0,1fr)]">
-                                <div class="rounded-3xl border border-slate-100 bg-gradient-to-br from-[#edf6ff] via-[#f8fbff] to-[#eaf2ff] p-5 shadow-inner shadow-blue-100/60">
+                                <div class="rounded-3xl border border-[#5cc094] bg-gradient-to-br from-[#f1fbf7] via-[#f8fbff] to-[#eaf2ff] p-5 shadow-inner shadow-emerald-100/60">
                                     <header class="flex flex-col gap-1">
                                         <div>
                                             <p class="text-xs uppercase tracking-[0.4em] text-slate-400">Business brief</p>
-                                            <h3 class="text-lg font-semibold text-[#0f2e5a]">
+                                            <h3 class="text-lg font-semibold text-[#205274]">
                                                 {{ request.business?.name || 'Unknown business' }}
                                             </h3>
                                             <p class="text-xs text-slate-500">
@@ -63,7 +63,7 @@
                                         </p>
                                     </header>
                                     <div class="mt-4 space-y-3">
-                                        <div class="rounded-2xl border border-white/60 bg-white/80 px-3 py-2.5">
+                                        <div class="rounded-2xl border border-[#5cc094]/40 bg-white/80 px-3 py-2.5">
                                             <div class="flex items-center justify-between text-[11px] font-semibold uppercase tracking-widest text-slate-400">
                                                 <span>Business summary</span>
                                                 <button
@@ -82,7 +82,7 @@
                                             </p>
                                         </div>
 
-                                        <div class="rounded-2xl border border-white/60 bg-white/80 px-3 py-2.5">
+                                        <div class="rounded-2xl border border-[#5cc094]/40 bg-white/80 px-3 py-2.5">
                                             <div class="flex items-center justify-between text-[11px] font-semibold uppercase tracking-widest text-slate-400">
                                                 <span>Target customers</span>
                                                 <button
@@ -101,7 +101,7 @@
                                             </p>
                                         </div>
 
-                                        <div class="rounded-2xl border border-white/60 bg-white/80 px-3 py-2.5">
+                                        <div class="rounded-2xl border border-[#5cc094]/40 bg-white/80 px-3 py-2.5">
                                             <div class="flex items-center justify-between text-[11px] font-semibold uppercase tracking-widest text-slate-400">
                                                 <span>Questions for advisor</span>
                                                 <button
@@ -122,7 +122,7 @@
                                     </div>
                                 </div>
 
-                                <div class="rounded-3xl border border-slate-100 bg-white p-5 shadow-sm shadow-blue-100/70 space-y-3">
+                                <div class="rounded-3xl border border-[#5cc094] bg-white p-5 shadow-sm shadow-emerald-100/70 space-y-3">
                                     <header>
                                         <p class="text-xs uppercase tracking-[0.4em] text-slate-400">Founder roadmap</p>
                                         <p class="text-[11px] text-slate-400">Visual overview of milestones shared by the entrepreneur.</p>
@@ -130,7 +130,7 @@
                                     <div class="space-y-3">
                                         <div
                                             v-if="request.roadmaps?.length"
-                                            class="relative rounded-2xl border border-slate-100 bg-[#f2f8ff] p-3"
+                                            class="relative rounded-2xl border border-[#5cc094]/60 bg-[#f2f7f5] p-3"
                                         >
                                             <BusinessRoadmapFlow
                                                 :roadmap="request.roadmaps[0]"
@@ -152,10 +152,10 @@
                                 </div>
                             </section>
 
-                            <div v-if="request.status === 'pending'" class="mt-6 flex flex-col gap-4 rounded-2xl border border-slate-100 p-4">
+                            <div v-if="request.status === 'pending'" class="mt-6 flex flex-col gap-4 rounded-2xl border border-[#5cc094] p-4">
                                 <div class="flex items-center justify-between gap-3">
                                     <button
-                                        class="flex h-12 min-w-[7rem] flex-1 items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#8fc9ff] to-[#4da0ff] text-white shadow transition hover:scale-105"
+                                        class="flex h-12 min-w-[7rem] flex-1 items-center justify-center gap-2 rounded-2xl bg-[#205274] border border-[#5cc094] text-white shadow transition hover:bg-[#1a425d]"
                                         :disabled="processing === request.id"
                                         @click="openScheduleModal(request)"
                                     >
@@ -165,7 +165,7 @@
                                         <span class="text-sm font-semibold">Accept</span>
                                     </button>
                                     <button
-                                        class="flex h-12 min-w-[7rem] flex-1 items-center justify-center gap-2 rounded-2xl border border-slate-200 text-slate-500 shadow-sm transition hover:bg-slate-50"
+                                        class="flex h-12 min-w-[7rem] flex-1 items-center justify-center gap-2 rounded-2xl border border-[#5cc094] text-[#205274] shadow-sm transition hover:bg-[#e0f5ec]"
                                         :disabled="rejecting === request.id"
                                         @click="reject(request.id)"
                                     >
@@ -224,11 +224,11 @@
                 v-if="scheduleModal.open"
                 class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
             >
-                <div class="relative w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl">
+                <div class="relative w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl border border-[#5cc094]">
                     <header class="flex items-center justify-between">
                         <div>
                             <p class="text-xs uppercase tracking-[0.4em] text-slate-400">Schedule with</p>
-                            <h3 class="text-2xl font-semibold text-[#0f2e5a]">{{ scheduleModal.founder }}</h3>
+                            <h3 class="text-2xl font-semibold text-[#205274]">{{ scheduleModal.founder }}</h3>
                         </div>
                         <button
                             class="rounded-full bg-slate-100 p-2 text-slate-500 hover:text-[#0f2e5a]"
@@ -252,8 +252,8 @@
                         </div>
                         <div>
                             <label class="text-xs font-semibold uppercase tracking-widest text-slate-400">Location</label>
-                            <div class="mt-1 flex items-center gap-3 rounded-2xl border border-slate-200 bg-[#f6f9ff] px-4 py-3 text-sm text-slate-600 transition focus-within:border-[#4da0ff]">
-                                <svg viewBox="0 0 24 24" class="h-4 w-4 text-[#4da0ff]" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                            <div class="mt-1 flex items-center gap-3 rounded-2xl border border-[#5cc094] bg-[#f2f7f5] px-4 py-3 text-sm text-slate-600 transition focus-within:border-[#205274]">
+                                <svg viewBox="0 0 24 24" class="h-4 w-4 text-[#205274]" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
                                     <path d="M12 21s6-5.686 6-11a6 6 0 10-12 0c0 5.314 6 11 6 11z" />
                                     <circle cx="12" cy="10" r="2.5" />
                                 </svg>
@@ -267,7 +267,7 @@
                         </div>
                         <div>
                             <label class="text-xs font-semibold uppercase tracking-widest text-slate-400">Optional notes</label>
-                            <div class="mt-1 rounded-2xl border border-slate-200 bg-[#f6f9ff] px-4 py-3 text-sm text-slate-600 transition focus-within:border-[#4da0ff]">
+                            <div class="mt-1 rounded-2xl border border-[#5cc094] bg-[#f2f7f5] px-4 py-3 text-sm text-slate-600 transition focus-within:border-[#205274]">
                                 <textarea
                                     rows="2"
                                     placeholder="Agenda / optional notes"
@@ -277,7 +277,7 @@
                             </div>
                         </div>
                         <button
-                            class="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#8fc9ff] to-[#4da0ff] px-4 py-3 text-sm font-semibold text-white shadow transition hover:scale-[1.01]"
+                            class="flex w-full items-center justify-center gap-2 rounded-2xl bg-[#205274] border border-[#5cc094] px-4 py-3 text-sm font-semibold text-white shadow transition hover:bg-[#1a425d]"
                             :disabled="processing === scheduleModal.requestId"
                             @click="accept(scheduleModal.requestId)"
                         >

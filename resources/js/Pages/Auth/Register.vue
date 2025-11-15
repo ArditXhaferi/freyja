@@ -1,37 +1,34 @@
 <template>
     <Head title="Sign Up" />
     <div class="min-h-screen bg-[#eef5fb] flex items-center justify-center px-4 py-10">
-        <div class="grid w-full max-w-5xl overflow-hidden rounded-[32px] border border-white/60 bg-white/70 shadow-2xl shadow-blue-100/60 backdrop-blur-lg lg:grid-cols-[1.1fr_1fr]">
-            <section class="relative hidden bg-gradient-to-br from-[#4da0ff] via-[#5fb2ff] to-[#0f4f8b] p-10 text-white lg:flex lg:flex-col lg:justify-between">
-                <div class="space-y-8">
+        <div class="grid w-full max-w-5xl overflow-hidden rounded-[32px] border border-white/60 bg-white/70 shadow-2xl shadow-emerald-100/60 backdrop-blur-lg lg:grid-cols-[1.1fr_1fr]">
+            <section class="relative hidden bg-gradient-to-br from-[#205274] via-[#276487] to-[#5cc094] p-10 text-white lg:flex lg:flex-col">
+                <div class="flex flex-1 flex-col justify-between space-y-10">
+                    <!-- Top copy -->
                     <div>
                         <p class="text-xs uppercase tracking-[0.45em] text-white/70">Espoo launch</p>
                         <h1 class="mt-6 text-4xl font-semibold leading-tight">Create your advisor workspace</h1>
                         <p class="mt-4 text-sm text-white/80">
-                            Unlock an operating system for guiding new businesses entering Espoo. Share guidance, review roadmaps,
-                            and keep every meeting aligned with their growth journey.
+                            A focused space to review founders, accept meetings, and keep their roadmap in view.
                         </p>
                     </div>
 
+                    <!-- Bottom feature/checklist card -->
                     <div class="grid gap-4 rounded-3xl border border-white/20 bg-white/10 p-5 backdrop-blur-sm">
                         <div>
                             <p class="text-xs uppercase tracking-[0.5em] text-white/60">What you get</p>
-                            <ul class="mt-3 space-y-3 text-sm text-white/85">
+                            <ul class="mt-3 space-y-2 text-sm text-white/85">
                                 <li class="flex items-start gap-3">
                                     <span class="mt-1 h-1.5 w-1.5 rounded-full bg-white/80"></span>
-                                    Unified dashboard with founder briefs, reminders, and roadmap previews.
+                                    Clean dashboard with founder briefs and reminders.
                                 </li>
                                 <li class="flex items-start gap-3">
                                     <span class="mt-1 h-1.5 w-1.5 rounded-full bg-white/80"></span>
-                                    Meeting request queue with structured context from each entrepreneur.
+                                    Meeting requests with structured context.
                                 </li>
                                 <li class="flex items-start gap-3">
                                     <span class="mt-1 h-1.5 w-1.5 rounded-full bg-white/80"></span>
-                                    Calendar view with automatic reminders (1 week, 3 days, 1 day, 1 hour).
-                                </li>
-                                <li class="flex items-start gap-3">
-                                    <span class="mt-1 h-1.5 w-1.5 rounded-full bg-white/80"></span>
-                                    Voice roadmap insights to understand every founder’s latest milestones.
+                                    Roadmap previews for every founder.
                                 </li>
                             </ul>
                         </div>
@@ -39,10 +36,9 @@
                         <div class="rounded-2xl border border-white/20 bg-white/5 p-4">
                             <p class="text-xs uppercase tracking-[0.5em] text-white/60">Advisor checklist</p>
                             <ol class="mt-3 space-y-2 text-sm text-white/80">
-                                <li>1 · Choose your role (advisor or entrepreneur).</li>
-                                <li>2 · Share your preferred language and origin.</li>
-                                <li>3 · Tell us if you have prior business experience.</li>
-                                <li>4 · Activate your account and start reviewing leads.</li>
+                                <li>1 · Fill in your basic details.</li>
+                                <li>2 · Choose your role and language.</li>
+                                <li>3 · Start reviewing founder requests.</li>
                             </ol>
                         </div>
                     </div>
@@ -51,8 +47,8 @@
 
             <section class="p-8 sm:p-10 bg-white">
                 <div class="space-y-2">
-                    <p class="text-xs uppercase tracking-[0.45em] text-slate-400">Let’s get started</p>
-                    <h2 class="text-3xl font-semibold text-[#0f2e5a]">Create your account</h2>
+                        <p class="text-xs uppercase tracking-[0.45em] text-slate-400">Let’s get started</p>
+                        <h2 class="text-3xl font-semibold text-[#205274]">Create your account</h2>
                     <p class="text-sm text-slate-500">Tell us who you are so we can tailor the workspace to your role.</p>
                 </div>
 
@@ -66,7 +62,7 @@
                     <div class="grid gap-4 sm:grid-cols-2">
                         <div class="sm:col-span-2">
                             <label for="name" class="text-xs font-semibold uppercase tracking-widest text-slate-400">Full name</label>
-                            <div class="mt-2 rounded-2xl border border-slate-200 bg-[#f6f9ff] px-4 py-3 text-sm focus-within:border-[#4da0ff]">
+                            <div class="mt-2 rounded-2xl border border-slate-200 bg-[#f6f9ff] px-4 py-3 text-sm focus-within:border-[#205274]">
                                 <input
                                     id="name"
                                     v-model="form.name"
@@ -80,7 +76,7 @@
 
                         <div class="sm:col-span-2">
                             <label for="email" class="text-xs font-semibold uppercase tracking-widest text-slate-400">Email address</label>
-                            <div class="mt-2 rounded-2xl border border-slate-200 bg-[#f6f9ff] px-4 py-3 text-sm focus-within:border-[#4da0ff]">
+                            <div class="mt-2 rounded-2xl border border-slate-200 bg-[#f6f9ff] px-4 py-3 text-sm focus-within:border-[#205274]">
                                 <input
                                     id="email"
                                     v-model="form.email"
@@ -94,7 +90,7 @@
 
                         <div>
                             <label for="password" class="text-xs font-semibold uppercase tracking-widest text-slate-400">Password</label>
-                            <div class="mt-2 rounded-2xl border border-slate-200 bg-[#f6f9ff] px-4 py-3 text-sm focus-within:border-[#4da0ff]">
+                            <div class="mt-2 rounded-2xl border border-slate-200 bg-[#f6f9ff] px-4 py-3 text-sm focus-within:border-[#205274]">
                                 <input
                                     id="password"
                                     v-model="form.password"
@@ -107,7 +103,7 @@
                         </div>
                         <div>
                             <label for="password_confirmation" class="text-xs font-semibold uppercase tracking-widest text-slate-400">Confirm password</label>
-                            <div class="mt-2 rounded-2xl border border-slate-200 bg-[#f6f9ff] px-4 py-3 text-sm focus-within:border-[#4da0ff]">
+                            <div class="mt-2 rounded-2xl border border-slate-200 bg-[#f6f9ff] px-4 py-3 text-sm focus-within:border-[#205274]">
                                 <input
                                     id="password_confirmation"
                                     v-model="form.password_confirmation"
@@ -121,7 +117,7 @@
 
                         <div>
                             <label for="role" class="text-xs font-semibold uppercase tracking-widest text-slate-400">Role</label>
-                            <div class="mt-2 rounded-2xl border border-slate-200 bg-[#f6f9ff] px-4 py-2.5 text-sm focus-within:border-[#4da0ff]">
+                            <div class="mt-2 rounded-2xl border border-slate-200 bg-[#f6f9ff] px-4 py-2.5 text-sm focus-within:border-[#205274]">
                                 <select
                                     id="role"
                                     v-model="form.role"
@@ -135,7 +131,7 @@
 
                         <div>
                             <label for="language" class="text-xs font-semibold uppercase tracking-widest text-slate-400">Preferred language</label>
-                            <div class="mt-2 rounded-2xl border border-slate-200 bg-[#f6f9ff] px-4 py-2.5 text-sm focus-within:border-[#4da0ff]">
+                            <div class="mt-2 rounded-2xl border border-slate-200 bg-[#f6f9ff] px-4 py-2.5 text-sm focus-within:border-[#205274]">
                                 <select
                                     id="language"
                                     v-model="form.language"
@@ -150,7 +146,7 @@
 
                         <div class="sm:col-span-2">
                             <label for="country_of_origin" class="text-xs font-semibold uppercase tracking-widest text-slate-400">Country of origin (optional)</label>
-                            <div class="mt-2 rounded-2xl border border-slate-200 bg-[#f6f9ff] px-4 py-3 text-sm focus-within:border-[#4da0ff]">
+                            <div class="mt-2 rounded-2xl border border-slate-200 bg-[#f6f9ff] px-4 py-3 text-sm focus-within:border-[#205274]">
                                 <input
                                     id="country_of_origin"
                                     v-model="form.country_of_origin"
@@ -168,7 +164,7 @@
                             v-model="form.has_business_experience"
                             type="checkbox"
                             value="1"
-                            class="mt-1 h-4 w-4 rounded border-slate-300 text-[#4da0ff] focus:ring-[#4da0ff]"
+                            class="mt-1 h-4 w-4 rounded border-slate-300 text-[#205274] focus:ring-[#205274]"
                         />
                         <span>
                             I have previous business experience
@@ -179,14 +175,14 @@
                     <button
                         type="submit"
                         :disabled="form.processing"
-                        class="w-full rounded-2xl bg-gradient-to-r from-[#8fc9ff] to-[#4da0ff] py-3 text-center text-sm font-semibold text-white shadow-lg shadow-blue-200 transition hover:scale-[1.01] disabled:opacity-60"
+                        class="w-full rounded-2xl bg-gradient-to-r from-[#205274] to-[#5cc094] py-3 text-center text-sm font-semibold text-white shadow-lg shadow-emerald-200 transition hover:scale-[1.01] disabled:opacity-60"
                     >
                         {{ form.processing ? 'Creating account...' : 'Create account' }}
                     </button>
 
                     <p class="text-center text-sm text-slate-500">
                         Already have an account?
-                        <Link href="/login" class="font-semibold text-[#0f4f8b] hover:text-[#4da0ff]">Sign in</Link>
+                        <Link href="/login" class="font-semibold text-[#205274] hover:text-[#5cc094]">Sign in</Link>
                     </p>
                 </form>
             </section>

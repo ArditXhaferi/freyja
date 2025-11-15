@@ -8,6 +8,7 @@ use App\Http\Controllers\AdvisorMeetingRequestController;
 use App\Http\Controllers\AdvisorCalendarController;
 use App\Http\Controllers\AdvisorReminderController;
 use App\Http\Controllers\AdvisorNetworkController;
+use App\Http\Controllers\AdvisorSettingsController;
 use App\Http\Controllers\MeetingRequestController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -111,6 +112,8 @@ Route::middleware('auth')->group(function () {
             ->name('advisor.calendar');
         Route::get('/advisor/network', AdvisorNetworkController::class)
             ->name('advisor.network');
+        Route::get('/advisor/settings', AdvisorSettingsController::class)
+            ->name('advisor.settings');
 
         Route::get('/advisor/meeting-requests', [AdvisorMeetingRequestController::class, 'index'])
             ->name('advisor.meeting-requests.index');
