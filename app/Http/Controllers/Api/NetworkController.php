@@ -26,8 +26,8 @@ class NetworkController extends Controller
             ->pluck('company_id')
             ->toArray();
         
-        // Get companies with complete business info (role = 'client' and has business data)
-        $companies = User::where('role', 'client')
+        // Get companies with complete business info (role = 'entrepreneur' and has business data)
+        $companies = User::where('role', 'entrepreneur')
             ->where('id', '!=', $user->id)
             ->whereNotNull('business_name')
             ->whereNotNull('industry')
