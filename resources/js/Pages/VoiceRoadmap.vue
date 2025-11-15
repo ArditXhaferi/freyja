@@ -1,36 +1,4 @@
 <template>
-<<<<<<< Updated upstream
-    <Head title="Eppu the Bear" />
-    <div class="min-h-screen bg-gradient-to-b from-[#0b1f30] via-[#102c40] to-[#020b16] py-6 px-4 pb-24">
-        <div class="max-w-6xl mx-auto">
-
-                    <!-- Eppu Animation (Always Visible, Circular) -->
-                    <div class="mb-6 flex flex-col items-center">
-                        <div class="relative w-64 h-64 rounded-full overflow-hidden border-4 shadow-xl bg-[#205274] transition-all duration-300"
-                             :class="[
-                                 isConnected && isMuted 
-                                     ? 'border-red-500 shadow-red-500/50' 
-                                     : isConnected 
-                                         ? 'border-green-500 shadow-green-500/50' 
-                                         : 'border-white/20'
-                             ]">
-                            <img
-                                :src="isTalking ? '/images/video6.gif' : '/images/video5.gif'"
-                                alt="Eppu the Bear"
-                                class="w-full h-full object-cover"
-                                :class="isConnected && isMuted ? 'opacity-60' : ''"
-                            />
-                            <!-- Mute Overlay Indicator -->
-                            <div v-if="isConnected && isMuted" 
-                                 class="absolute inset-0 flex items-center justify-center bg-red-500/30 rounded-full">
-                                <div class="bg-red-600 rounded-full p-4 shadow-lg">
-                                    <i class="fa-solid fa-microphone-slash text-white text-3xl"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <h1 class="text-3xl font-bold text-white mt-4 mb-2">
-                            Eppu the Bear
-=======
     <Head title="Opa the Bear" />
     <!-- Top Navigation -->
     <TopNavigation 
@@ -56,7 +24,6 @@
                     <div class="flex flex-col flex-1 w-full sm:w-auto text-center sm:text-left">
                         <h1 class="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-3 sm:mb-4 md:mb-5">
                             One bear.<br />Every language.
->>>>>>> Stashed changes
                         </h1>
 
                         <p class="text-[11px] sm:text-xs md:text-sm lg:text-base font-medium text-gray-600 max-w-full sm:max-w-xl md:max-w-2xl lg:max-w-3xl leading-relaxed mx-auto sm:mx-0">
@@ -75,29 +42,6 @@
                             <button
                                 @click="handleMicClick"
                                 :class="[
-<<<<<<< Updated upstream
-                                    'px-6 py-3 rounded-lg text-base font-semibold transition-all flex items-center gap-2 border',
-                                    interactionMode === 'voice'
-                                        ? 'bg-[#205274] text-white border-[#5cc094] shadow-lg shadow-[#205274]/40'
-                                        : 'bg-white text-[#205274] border-[#205274] hover:bg-[#5cc094] hover:text-[#205274]'
-                                ]"
-                            >
-                                <i v-if="isConnected" class="fa-solid fa-phone-slash"></i>
-                                <i v-else class="fa-solid fa-phone"></i>
-                                <span>{{ isConnected ? 'Cancel Call' : 'Call' }}</span>
-                            </button>
-                            <button
-                                @click="interactionMode = 'chat'"
-                                :class="[
-                                    'px-6 py-3 rounded-lg text-base font-semibold transition-all flex items-center gap-2 border',
-                                    interactionMode === 'chat'
-                                        ? 'bg-[#205274] text-white border-[#5cc094] shadow-lg shadow-[#205274]/40'
-                                        : 'bg-white text-[#205274] border-[#205274] hover:bg-[#5cc094] hover:text-[#205274]'
-                                ]"
-                            >
-                                <i class="fa-solid fa-comments"></i>
-                                <span>Text</span>
-=======
                                     'w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center transition-all',
                                     isListening || isSessionActive
                                         ? 'bg-[#5cc094] shadow-lg shadow-[#5cc094]/50 scale-110'
@@ -122,7 +66,6 @@
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                                     </svg>
                                 </template>
->>>>>>> Stashed changes
                             </button>
                             <p class="text-[#2E3A45]/70 mt-2 text-sm text-center">
                                 {{ isListening ? 'Listening...' : 'Tap to call' }}
@@ -191,14 +134,7 @@
             </div>
 
             <!-- Voice Interface (Full Screen) -->
-<<<<<<< Updated upstream
-            <div
-                v-if="interactionMode === 'voice' && activeTab === 'roadmap'"
-                class="bg-[#205274] rounded-3xl shadow-xl shadow-black/30 border border-[#5cc094] p-6 mb-6 min-h-[600px] flex flex-col"
-            >
-=======
             <div v-if="interactionMode === 'voice' && activeTab === 'roadmap'" class="bg-white rounded-lg shadow-lg border border-gray-200 mb-6 min-h-[600px] flex flex-col mt-8">
->>>>>>> Stashed changes
                 <!-- Call Status -->
                 <div class="flex items-center gap-4 px-6 pt-6 pb-4 border-b border-gray-300">
                     <div :class="[
@@ -240,13 +176,8 @@
                         :class="[
                             'ml-auto px-5 py-3 rounded-full text-base font-semibold transition-all flex items-center gap-2 shadow-lg cursor-pointer border-2 bg-white hover:scale-105 active:scale-95',
                             isMuted
-<<<<<<< Updated upstream
-                                ? 'bg-red-600 text-white hover:bg-red-700 hover:scale-105 active:scale-95 animate-pulse shadow-red-500/50'
-                                : 'bg-white/10 text-white hover:bg-white/20 border border-white/30 hover:scale-105 active:scale-95'
-=======
                                 ? 'border-red-600 text-red-600 hover:border-red-700 hover:text-red-700'
                                 : 'border-gray-400 text-gray-600 hover:border-gray-500 hover:text-gray-700'
->>>>>>> Stashed changes
                         ]"
                         :title="isMuted ? 'Click to unmute microphone' : 'Click to mute microphone'"
                     >
@@ -267,13 +198,8 @@
                         :class="[
                             'p-4 rounded-2xl text-base shadow-sm',
                             transcript.type === 'user' 
-<<<<<<< Updated upstream
-                                ? 'bg-[#205274] text-white ml-12 border border-[#5cc094]'
-                                : 'bg-white/5 text-white mr-12 border border-[#5cc094]/40'
-=======
                                 ? 'bg-[#e4f0ff] text-gray-900 ml-12 border border-gray-300' 
                                 : 'bg-gray-100 text-gray-900 mr-12 border border-gray-300'
->>>>>>> Stashed changes
                         ]"
                     >
                         <span class="font-medium text-lg">
@@ -285,12 +211,6 @@
             </div>
 
             <!-- Chat Interface (Full Screen) -->
-<<<<<<< Updated upstream
-            <div
-                v-if="interactionMode === 'chat' && activeTab === 'roadmap'"
-                class="bg-[#205274] rounded-3xl shadow-xl shadow-black/30 border border-[#5cc094] p-6 mb-6 min-h-[600px] flex flex-col"
-            >
-=======
             <div v-if="interactionMode === 'chat' && activeTab === 'roadmap'" class="bg-white rounded-xl shadow-xl border border-gray-200 mb-6 min-h-[600px] flex flex-col overflow-hidden">
                 <!-- Chat Status -->
                 <div class="flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
@@ -306,7 +226,6 @@
                         {{ connectionStatus === 'disconnected' ? 'Ready to call' : '' }}
                     </span>
                 </div>
->>>>>>> Stashed changes
                 <!-- Chat Messages -->
                 <div class="flex-1 overflow-y-auto space-y-4 pt-8 px-6 pb-6 bg-gray-50/30" ref="chatMessagesContainer">
                     <div v-if="chatMessages.length === 0" class="flex flex-col items-center justify-center h-full min-h-[400px]">
@@ -326,29 +245,16 @@
                     >
                         <div
                             :class="[
-<<<<<<< Updated upstream
-                                'max-w-[75%] rounded-2xl p-4 text-base shadow-sm',
-                                message.type === 'user'
-                                    ? 'bg-[#205274] text-white border border-[#5cc094]'
-                                    : 'bg-white/5 text-white border border-[#5cc094]/40'
-=======
                                 'max-w-[80%] md:max-w-[70%] rounded-2xl px-5 py-3.5 text-base shadow-sm',
                                 message.type === 'user'
                                     ? 'bg-[#5cc094] text-white rounded-br-md'
                                     : 'bg-white text-gray-900 border border-gray-200 rounded-bl-md'
->>>>>>> Stashed changes
                             ]"
                         >
                             <p class="whitespace-pre-wrap leading-relaxed">{{ message.text }}</p>
                         </div>
                     </div>
                     <div v-if="isLoadingChat" class="flex justify-start">
-<<<<<<< Updated upstream
-                        <div class="bg-white/5 text-white border border-[#5cc094]/40 rounded-2xl p-4 text-base">
-                            <div class="flex items-center gap-2">
-                                <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                                <span>Eppu is thinking...</span>
-=======
                         <div class="bg-white text-gray-900 border border-gray-200 rounded-2xl rounded-bl-md px-5 py-3.5 shadow-sm">
                             <div class="flex items-center gap-3">
                                 <div class="flex gap-1">
@@ -357,7 +263,6 @@
                                     <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
                                 </div>
                                 <span class="text-sm text-gray-600">Opa is thinking...</span>
->>>>>>> Stashed changes
                             </div>
                         </div>
                     </div>
@@ -369,23 +274,14 @@
                         v-model="chatInput"
                         @keyup.enter="sendChatMessage"
                         type="text"
-<<<<<<< Updated upstream
-                        placeholder="Type your message to Eppu..."
-                        class="flex-1 bg-white/5 text-white border border-[#205274] rounded-2xl px-5 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#5cc094]"
-=======
                         placeholder="Type your message to Opa..."
                         class="flex-1 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl px-5 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#5cc094]/50 focus:border-[#5cc094] transition-all placeholder:text-gray-400"
->>>>>>> Stashed changes
                         :disabled="isLoadingChat"
                     />
                     <button
                         @click="sendChatMessage"
                         :disabled="!chatInput.trim() || isLoadingChat"
-<<<<<<< Updated upstream
-                        class="px-8 py-3 bg-[#205274] text-white rounded-2xl border border-[#5cc094] hover:bg-[#5cc094] hover:text-[#205274] transition-all font-semibold shadow-lg shadow-[#205274]/40 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-lg"
-=======
                         class="px-6 py-3 bg-[#5cc094] text-white rounded-xl hover:bg-[#4a9d7a] transition-all font-semibold shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-base disabled:hover:shadow-md"
->>>>>>> Stashed changes
                     >
                         <i class="fa-solid fa-paper-plane text-sm"></i>
                         <span class="hidden sm:inline">Send</span>
@@ -872,17 +768,10 @@
         <div v-if="activeTab === 'roadmap-tab'" 
              class="fixed inset-0 z-40 flex items-end drawer-overlay"
              @click.self="activeTab = 'roadmap'">
-<<<<<<< Updated upstream
-            <div class="bg-white rounded-t-3xl shadow-2xl w-full max-h-[85vh] overflow-y-auto drawer-content border border-[#205274]/60">
-                <div class="sticky top-0 bg-[#205274] p-5 flex items-center justify-between rounded-t-3xl shadow-md z-10 border-b border-white/20">
-                    <h2 class="text-xl font-bold text-white">Your Roadmap</h2>
-                    <button @click="activeTab = 'roadmap'" class="text-white/80 hover:text-white transition-colors">
-=======
             <div class="bg-white rounded-t-lg w-full max-h-[85vh] overflow-y-auto drawer-content">
                 <div class="sticky top-0 bg-white p-5 flex items-center justify-between rounded-t-lg z-10 border-b border-gray-200">
                     <h2 class="text-xl font-bold text-gray-900">Your Roadmap</h2>
                     <button @click="activeTab = 'roadmap'" class="text-gray-600 hover:text-gray-900 transition-colors">
->>>>>>> Stashed changes
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
@@ -890,12 +779,7 @@
                 </div>
                 <div class="p-6 pb-24">
                     <!-- Roadmap Visualization -->
-<<<<<<< Updated upstream
-                    <div v-if="roadmap && roadmap.steps && roadmap.steps.filter(s => !s.isQuestion).length > 0" 
-                         class="bg-[#205274] rounded-2xl shadow-lg border border-[#5cc094] p-5 text-white">
-=======
                     <div v-if="roadmap && roadmap.steps && roadmap.steps.filter(s => !s.isQuestion).length > 0">
->>>>>>> Stashed changes
                         <RoadmapVisualizer 
                             :roadmap="roadmap"
                             @step-update="handleStepUpdate"
