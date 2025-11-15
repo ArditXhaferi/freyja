@@ -30,7 +30,7 @@
                                         : 'bg-[#011135] text-white/70 hover:text-white hover:bg-white/10 border border-white/20'
                                 ]"
                             >
-                                📞 Call
+                                {{ isConnected ? '❌ Cancel Call' : '📞 Call' }}
                             </button>
                             <button
                                 @click="interactionMode = 'chat'"
@@ -81,14 +81,30 @@
                         {{ connectionStatus === 'connecting' ? 'Connecting...' : '' }}
                         {{ connectionStatus === 'disconnected' ? 'Ready to call' : '' }}
                     </span>
-                    <span v-if="isListening" 
+                    <span v-if="isListening && !isMuted" 
                           class="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-medium animate-pulse">
                         🎤 Listening...
+                    </span>
+                    <span v-if="isMuted" 
+                          class="px-4 py-2 bg-red-500/50 text-white rounded-full text-sm font-medium">
+                        🔇 Muted
                     </span>
                     <span v-if="isSpeaking" 
                           class="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-medium">
                         🔊 Speaking...
                     </span>
+                    <button
+                        v-if="isConnected"
+                        @click="toggleMute"
+                        :class="[
+                            'ml-auto px-4 py-2 rounded-lg text-sm font-semibold transition-all',
+                            isMuted
+                                ? 'bg-red-600 text-white hover:bg-red-700'
+                                : 'bg-white/20 text-white hover:bg-white/30 border border-white/20'
+                        ]"
+                    >
+                        {{ isMuted ? '🔇 Unmute' : '🎤 Mute' }}
+                    </button>
                 </div>
 
                 <!-- Transcript Display (Full Screen) -->
@@ -1412,14 +1428,14 @@ const {
     isListening,
     isSpeaking,
     connectionStatus,
+    isMuted,
     connect,
     disconnect,
     startSession,
-    stopSession
+    stopSession,
+    toggleMute
 } = useVoiceAgent({
     onRoadmapUpdate: handleRoadmapUpdate,
-    onBusinessPlanUpdate: handleBusinessPlanUpdate,
-    userName: props.userName,
     onBusinessPlanUpdate: handleBusinessPlanUpdate,
     userName: props.userName,
     onTranscript: handleTranscript,
@@ -1501,8 +1517,11 @@ const isTalking = computed(() => isListening.value || isSpeaking.value);
 
 const handleCallMode = () => {
     interactionMode.value = 'voice';
-    // If not connected, trigger the call
-    if (!isConnected.value) {
+    // If connected, disconnect (cancel call)
+    if (isConnected.value) {
+        handleDisconnect();
+    } else {
+        // If not connected, trigger the call
         handleConnect();
     }
 };

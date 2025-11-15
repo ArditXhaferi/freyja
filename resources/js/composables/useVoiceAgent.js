@@ -47,6 +47,7 @@ export default function useVoiceAgent({
     const isListening = ref(false);
     const isSpeaking = ref(false);
     const connectionStatus = ref('disconnected');
+    const isMuted = ref(false);
     const conversationRef = ref(null);
     const sessionIdRef = ref(null);
     const businessPlanDataRef = ref(null);
@@ -969,6 +970,7 @@ export default function useVoiceAgent({
         isConnected.value = false;
         isListening.value = false;
         isSpeaking.value = false;
+        isMuted.value = false; // Reset mute state on disconnect
     };
 
     const startSession = async () => {
@@ -1054,14 +1056,46 @@ export default function useVoiceAgent({
         }
     };
 
+    const toggleMute = () => {
+        if (!conversationRef.value) return;
+        
+        try {
+            isMuted.value = !isMuted.value;
+            
+            // Use ElevenLabs SDK mute method if available
+            if (typeof conversationRef.value.setMuted === 'function') {
+                conversationRef.value.setMuted(isMuted.value);
+            } else if (typeof conversationRef.value.mute === 'function') {
+                if (isMuted.value) {
+                    conversationRef.value.mute();
+                } else {
+                    conversationRef.value.unmute();
+                }
+            } else {
+                // Fallback: interrupt when muted, resume when unmuted
+                if (isMuted.value) {
+                    conversationRef.value.interrupt();
+                }
+                // Note: Unmuting will resume naturally when user speaks
+            }
+            
+            console.log('Microphone muted:', isMuted.value);
+        } catch (error) {
+            console.error('Error toggling mute:', error);
+            isMuted.value = !isMuted.value; // Revert on error
+        }
+    };
+
     return {
         isConnected,
         isListening,
         isSpeaking,
         connectionStatus,
+        isMuted,
         connect,
         disconnect,
         startSession,
-        stopSession
+        stopSession,
+        toggleMute
     };
 }
