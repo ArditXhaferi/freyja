@@ -27,7 +27,8 @@ Route::middleware('guest')->group(function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    // Allow both POST (forms) and GET (direct hits) for logout to avoid MethodNotAllowed errors
+    Route::match(['POST', 'GET'], '/logout', [LoginController::class, 'logout'])->name('logout');
 
     Route::middleware('role:entrepreneur')->group(function () {
         Route::get('/voice-roadmap', function () {

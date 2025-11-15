@@ -11,7 +11,7 @@
                         <!-- Left: beer + tooltip -->
                         <div class="flex items-center gap-3 flex-1 min-w-0">
                             <div class="relative flex items-center gap-3">
-                                <img :key="beerFrameKey" :src="beerGif" alt="Cheers" class="h-[65px] w-[65px] rounded-2xl object-cover ring-4 ring-[#ecf5ff]" />
+                                <img :key="beerFrameKey" :src="beerGif" alt="Cheers" class="h-[70px] w-[70px] rounded-2xl object-cover ring-4 ring-[#ecf5ff]" />
                                 <div class="tooltip-wrapper" aria-live="polite">
                                     <transition name="fade-scale">
                                         <div
@@ -27,7 +27,7 @@
                         </div>
 
                         <!-- Right: navbar controls (fixed width) -->
-                        <div class="flex justify-end w-[360px] shrink-0">
+                        <div class="flex justify-end w-[280px] shrink-0">
                             <div
                                 class="flex w-full items-center justify-end gap-3 rounded-3xl border border-slate-100 bg-white px-4 py-2 shadow-sm shadow-blue-100"
                             >
