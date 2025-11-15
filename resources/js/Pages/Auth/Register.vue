@@ -46,15 +46,6 @@
                             </ol>
                         </div>
                     </div>
-
-                    <div class="space-y-3 rounded-3xl border border-white/20 bg-white/10 p-5 backdrop-blur-sm">
-                        <p class="text-xs uppercase tracking-[0.5em] text-white/60">Trusted by</p>
-                        <div class="text-2xl font-semibold">45+ advisors · 180+ founders</div>
-                        <p class="text-sm text-white/80">
-                            “Espoo Launch keeps me looped in on every founder’s progress before we even jump on a call.”
-                        </p>
-                        <p class="text-xs uppercase tracking-[0.5em] text-white/60">Secure onboarding · SOC2-ready</p>
-                    </div>
                 </div>
             </section>
 
