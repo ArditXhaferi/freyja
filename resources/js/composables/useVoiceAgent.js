@@ -469,46 +469,13 @@ export default function useVoiceAgent({
                 contextWithFirstMessage += advisorsContext;
             }
             
-            // Note: First message is now handled by ElevenLabs dashboard template with dynamic variables
-            // The agent will automatically use the first message template from the dashboard
-            // We don't need to include it in context - just send business plan and roadmap context
-            // This prevents conflicts that might cause disconnection
-            
-            // Extract dynamic variables for ElevenLabs first message template
-            // Simple variable substitution - no conditionals, just pass values (or empty strings)
-            const extractDynamicVariables = (businessPlan, roadmap, userName) => {
-                const variables = {};
-                
-                // User name (string) - always pass, use empty string if not available
-                variables.user_name = userName || '';
-                
-                // Business name (string) - prefer business_name, fallback to company_planned_name, or empty
-                variables.business_name = businessPlan?.business_name || 
-                                         businessPlan?.company_planned_name || 
-                                         '';
-                
-                // Industry (string) - or empty string
-                variables.industry = businessPlan?.industry || '';
-                
-                // Business idea (string) - short version for personalization, or empty
-                if (businessPlan?.business_idea) {
-                    const idea = businessPlan.business_idea;
-                    // Get first sentence or first 30 chars
-                    const shortIdea = idea.split('.')[0].substring(0, 30).trim();
-                    variables.business_idea = shortIdea || '';
-                } else {
-                    variables.business_idea = '';
-                }
-                
-                return variables;
-            };
-            
-            const dynamicVariables = extractDynamicVariables(
-                businessPlanDataRef.value, 
-                roadmapData, 
-                userName
-            );
-            console.log('Dynamic variables for voice agent:', dynamicVariables);
+            // Add first message instruction to context
+            if (contextWithFirstMessage) {
+                contextWithFirstMessage += '\n\n---\n\n🚨 CRITICAL: YOU MUST SPEAK FIRST 🚨\n\n';
+                contextWithFirstMessage += 'FIRST MESSAGE TO SAY (START SPEAKING IMMEDIATELY):\n';
+                contextWithFirstMessage += firstMessage;
+                contextWithFirstMessage += '\n\n⚠️ ACTION REQUIRED: You MUST start the conversation by speaking this message (or a natural variation of it) RIGHT NOW. Do not wait for the user to speak first. This message is personalized based on the user\'s current data.';
+            }
             
             console.log('Full context with first message:', contextWithFirstMessage.substring(0, 500) + '...');
 
@@ -516,7 +483,6 @@ export default function useVoiceAgent({
             const conversation = await VoiceConversation.startSession({
                 agentId: agentId,
                 apiKey: apiKey,
-                dynamicVariables: dynamicVariables, // Pass dynamic variables for first message template
                 clientTools: {
                     setContext: async (parameters) => {
                         console.log('Agent called setContext tool:', parameters);
@@ -919,13 +885,8 @@ export default function useVoiceAgent({
                         connectionStatus.value = 'disconnected';
                         isListening.value = false;
                         isSpeaking.value = false;
-                        // Reset mute state on disconnect
-                        isMuted.value = false;
                     } else if (prop.status === 'connecting') {
                         connectionStatus.value = 'connecting';
-                    } else if (prop.status === 'disconnecting') {
-                        connectionStatus.value = 'disconnecting';
-                        console.log('Connection is disconnecting...');
                     }
                 },
                 onModeChange: (prop) => {
@@ -995,39 +956,26 @@ export default function useVoiceAgent({
             isListening.value = true;
 
             // Send business plan and roadmap context to the agent after session starts
-            // Wait a bit for the connection to stabilize before sending context
+            // (contextWithFirstMessage already includes everything)
             if (contextWithFirstMessage) {
-                // Delay context update to ensure connection is stable
-                setTimeout(async () => {
-                    try {
-                        // Check if conversation is still connected before sending context
-                        if (!isConnected.value || !conversationRef.value) {
-                            console.warn('Connection lost before context could be sent');
-                            return;
-                        }
-                        
-                        // Send as contextual update (this is the proper way to pass context in ElevenLabs)
-                        conversation.sendContextualUpdate(contextWithFirstMessage);
-                        console.log('Full context sent to agent via sendContextualUpdate:', {
-                            businessPlanLength: businessPlanContext.length,
-                            roadmapLength: roadmapContext.length,
-                            firstMessageLength: firstMessage.length,
-                            totalLength: contextWithFirstMessage.length
-                        });
-                        
-                        // Give the agent a moment to process the context, then it should speak
-                        // The context includes explicit instructions to speak first
-                        setTimeout(() => {
-                            console.log('Context sent, agent should now speak with first message');
-                        }, 500);
-                    } catch (error) {
-                        console.error('Failed to send context to agent:', error);
-                        // Don't disconnect on context error - let the agent use the first message from dashboard
-                        if (onError) {
-                            onError('Failed to send context, but connection is still active');
-                        }
-                    }
-                }, 1000); // Wait 1 second for connection to stabilize
+                try {
+                    // Send as contextual update (this is the proper way to pass context in ElevenLabs)
+                    conversation.sendContextualUpdate(contextWithFirstMessage);
+                    console.log('Full context sent to agent via sendContextualUpdate:', {
+                        businessPlanLength: businessPlanContext.length,
+                        roadmapLength: roadmapContext.length,
+                        firstMessageLength: firstMessage.length,
+                        totalLength: contextWithFirstMessage.length
+                    });
+                    
+                    // Give the agent a moment to process the context, then it should speak
+                    // The context includes explicit instructions to speak first
+                    setTimeout(() => {
+                        console.log('Context sent, agent should now speak with first message');
+                    }, 500);
+                } catch (error) {
+                    console.warn('Failed to send context to agent:', error);
+                }
             }
         } catch (error) {
             console.error('Failed to connect:', error);
@@ -1121,14 +1069,10 @@ export default function useVoiceAgent({
         try {
             // Interrupt the conversation
             if (conversationRef.value) {
-                if (typeof conversationRef.value.interrupt === 'function') {
-                    try {
-                        conversationRef.value.interrupt();
-                    } catch (error) {
-                        console.error('Error interrupting conversation:', error);
-                    }
-                } else {
-                    console.log('No interrupt() method available on conversation');
+                try {
+                    conversationRef.value.interrupt();
+                } catch (error) {
+                    console.error('Error interrupting conversation:', error);
                 }
                 isListening.value = false;
                 isSpeaking.value = false;
@@ -1159,24 +1103,22 @@ export default function useVoiceAgent({
             isConnected: isConnected.value
         });
         
-        // If not connected, just update the state (UI will reflect it)
-        if (!isConnected.value || !conversationRef.value) {
-            isMuted.value = !isMuted.value;
-            console.log('Not connected or no conversation ref, state toggled to:', isMuted.value);
+        // Always toggle the state first (for UI feedback)
+        isMuted.value = !isMuted.value;
+        
+        // If no conversation, just update the state (UI will reflect it)
+        if (!conversationRef.value) {
+            console.log('No conversation ref, state toggled to:', isMuted.value);
             return;
         }
-        
-        // Always toggle the state first (for UI feedback)
-        const newMutedState = !isMuted.value;
-        isMuted.value = newMutedState;
         
         try {
             // Use ElevenLabs SDK mute method if available
             if (typeof conversationRef.value.setMuted === 'function') {
-                conversationRef.value.setMuted(newMutedState);
-                console.log('Used setMuted method:', newMutedState);
-            } else if (typeof conversationRef.value.mute === 'function' && typeof conversationRef.value.unmute === 'function') {
-                if (newMutedState) {
+                conversationRef.value.setMuted(isMuted.value);
+                console.log('Used setMuted method:', isMuted.value);
+            } else if (typeof conversationRef.value.mute === 'function') {
+                if (isMuted.value) {
                     conversationRef.value.mute();
                     console.log('Used mute() method');
                 } else {
@@ -1184,18 +1126,19 @@ export default function useVoiceAgent({
                     console.log('Used unmute() method');
                 }
             } else {
-                // No SDK mute methods available - just use UI state
-                // Don't try interrupt() as it might cause disconnection
-                console.log('No SDK mute methods available, using UI state only (visual feedback)');
-                console.log('Note: Mute state is visual only. The microphone may still be active.');
+                // Fallback: interrupt when muted, resume when unmuted
+                if (isMuted.value) {
+                    conversationRef.value.interrupt();
+                    console.log('Used interrupt() as fallback for mute');
+                }
+                // Note: Unmuting will resume naturally when user speaks
+                console.log('No SDK mute methods available, using state only');
             }
             
-            console.log('Microphone muted:', newMutedState);
+            console.log('Microphone muted:', isMuted.value);
         } catch (error) {
             console.error('Error toggling mute:', error);
-            // Revert state if SDK call fails to prevent UI/state mismatch
-            isMuted.value = !newMutedState;
-            console.warn('Reverted mute state due to error');
+            // Don't revert - keep the UI state even if SDK call fails
         }
     };
 

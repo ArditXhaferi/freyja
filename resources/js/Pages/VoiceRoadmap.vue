@@ -666,7 +666,6 @@
                         <RoadmapVisualizer 
                             :roadmap="roadmap"
                             @step-update="handleStepUpdate"
-                            @rebuild="handleRebuildRoadmap"
                         />
                     </div>
                     <div v-else class="text-center py-12">
@@ -1696,98 +1695,6 @@ const handleDisconnect = () => {
 
 const handleStepUpdate = (step) => {
     console.log('Step updated:', step);
-};
-
-const handleRebuildRoadmap = async () => {
-    try {
-        // Switch to chat mode if not already
-        if (interactionMode.value !== 'chat') {
-            interactionMode.value = 'chat';
-            // Wait a bit for the chat interface to render
-            await nextTick();
-        }
-        
-        // Always fetch the latest data from the server to ensure we have all current context
-        let businessPlanResponse = null;
-        let roadmapResponse = null;
-        let advisorsResponse = null;
-        
-        isLoadingChat.value = true;
-        
-        // Fetch latest business plan data
-        try {
-            businessPlanResponse = await axios.get('/api/business-plan');
-            if (businessPlanResponse?.data) {
-                businessPlanData.value = businessPlanResponse.data;
-            }
-        } catch (error) {
-            console.error('Failed to load business plan:', error);
-        }
-        
-        // Fetch latest roadmap data
-        try {
-            roadmapResponse = await axios.get('/api/roadmap');
-            if (roadmapResponse?.data) {
-                roadmap.value = roadmapResponse.data;
-            }
-        } catch (error) {
-            console.error('Failed to load roadmap:', error);
-        }
-        
-        // Fetch latest advisors data
-        try {
-            advisorsResponse = await axios.get('/api/advisors');
-            if (advisorsResponse?.data?.advisors) {
-                advisors.value = advisorsResponse.data.advisors;
-            }
-        } catch (error) {
-            console.error('Failed to load advisors:', error);
-        }
-        
-        // Disconnect existing chat connection to ensure fresh context
-        if (chatAgent.isConnected.value) {
-            chatAgent.disconnect();
-            // Clear chat messages to start fresh
-            chatMessages.value = [];
-        }
-        
-        // Initialize chat agent with fresh context (always re-initialize for rebuild)
-        await chatAgent.initializeChat(
-            businessPlanResponse?.data || businessPlanData.value || {},
-            roadmapResponse?.data || roadmap.value || {},
-            advisorsResponse?.data?.advisors || advisors.value || []
-        );
-        
-        // Send rebuild message with explicit instructions
-        const rebuildMessage = "Please rebuild my roadmap from scratch based on ALL of my current business plan information, background context, and any relevant details. Create a completely fresh, comprehensive roadmap that includes all necessary steps for my startup journey. Ignore the existing roadmap steps and build a new one based on the current context.";
-        
-        // Add user message to chat
-        chatMessages.value.push({
-            type: 'user',
-            text: rebuildMessage
-        });
-        
-        // Scroll to bottom
-        await nextTick();
-        scrollChatToBottom();
-        
-        // Send message using chat agent (this will be sent to ElevenLabs with all the fresh context)
-        await chatAgent.sendMessage(rebuildMessage);
-        
-    } catch (err) {
-        console.error('Error rebuilding roadmap:', err);
-        const errorMessage = err.message || 'Sorry, I encountered an error while rebuilding your roadmap. Please try again.';
-        chatMessages.value.push({
-            type: 'assistant',
-            text: errorMessage
-        });
-        await nextTick();
-        scrollChatToBottom();
-    } finally {
-        isLoadingChat.value = false;
-        await nextTick();
-        scrollChatToBottom();
-    }
 };
 
 // Navigation handler - toggle drawer behavior

@@ -255,84 +255,6 @@ export default function useChatAgent({
         return context;
     };
 
-    // Update agent's first message via ElevenLabs API
-    const updateAgentFirstMessage = async (firstMessage) => {
-        try {
-            const apiKey = import.meta.env.VITE_ELEVENLABS_API_KEY;
-            const agentId = import.meta.env.VITE_ELEVENLABS_AGENT_ID;
-
-            if (!apiKey || !agentId) {
-                console.warn('Cannot update agent first message: API key or agent ID missing');
-                return false;
-            }
-
-            // Update agent configuration with new first message
-            // Using PATCH to update only the first_message field
-            const response = await axios.patch(
-                `https://api.elevenlabs.io/v1/convai/agents/${agentId}`,
-                {
-                    first_message: firstMessage
-                },
-                {
-                    headers: {
-                        'xi-api-key': apiKey,
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
-
-            if (response.data) {
-                console.log('Agent first message updated successfully');
-                return true;
-            }
-
-            return false;
-        } catch (error) {
-            // Log but don't fail - agent might still work with context-based first message
-            console.warn('Failed to update agent first message via API:', error.response?.data || error.message);
-            // Try alternative endpoint format if the above fails
-            try {
-                const apiKey = import.meta.env.VITE_ELEVENLABS_API_KEY;
-                const agentId = import.meta.env.VITE_ELEVENLABS_AGENT_ID;
-                
-                // Alternative: Try PUT with full agent config
-                const getResponse = await axios.get(
-                    `https://api.elevenlabs.io/v1/convai/agents/${agentId}`,
-                    {
-                        headers: {
-                            'xi-api-key': apiKey
-                        }
-                    }
-                );
-
-                if (getResponse.data) {
-                    const agentConfig = getResponse.data;
-                    agentConfig.first_message = firstMessage;
-                    
-                    const putResponse = await axios.put(
-                        `https://api.elevenlabs.io/v1/convai/agents/${agentId}`,
-                        agentConfig,
-                        {
-                            headers: {
-                                'xi-api-key': apiKey,
-                                'Content-Type': 'application/json'
-                            }
-                        }
-                    );
-
-                    if (putResponse.data) {
-                        console.log('Agent first message updated successfully (via PUT)');
-                        return true;
-                    }
-                }
-            } catch (altError) {
-                console.warn('Alternative update method also failed:', altError.response?.data || altError.message);
-            }
-            
-            return false;
-        }
-    };
-
     // Initialize chat conversation
     const initializeChat = async (businessPlanData, roadmapData, advisorsData) => {
         if (conversationRef.value && isConnected.value) {
@@ -438,11 +360,6 @@ export default function useChatAgent({
             
             const firstMessage = buildFirstMessage(businessPlanData, roadmapData, userName);
 
-            // Update agent's first message via API before initializing conversation
-            if (firstMessage) {
-                await updateAgentFirstMessage(firstMessage);
-            }
-
             // Add first message to context
             if (contextWithFirstMessage && firstMessage) {
                 contextWithFirstMessage += '\n\n' + '='.repeat(50) + '\n\n';
@@ -462,120 +379,54 @@ export default function useChatAgent({
             };
             isConnected.value = true;
 
-            // Show personalized first message immediately to user
-            if (firstMessage && !contextSent.value) {
-                console.log('Showing personalized first message:', firstMessage);
-                if (onMessage) {
-                    onMessage({
-                        type: 'assistant',
-                        text: firstMessage
-                    });
-                }
-            } else if (!firstMessage && !contextSent.value) {
-                // Fallback if first message wasn't built
-                console.warn('No first message built, using default');
-                const defaultMessage = "Hi! I'm Eppu the Bear, your AI startup coach! 🐻\n\nReady to build your startup roadmap? Let's get started!";
-                if (onMessage) {
-                    onMessage({
-                        type: 'assistant',
-                        text: defaultMessage
-                    });
-                }
-            }
-
-            // Extract variables for ElevenLabs dynamic variables
-            // Simple variable substitution - no conditionals, just pass values (or empty strings)
-            const extractVariables = (businessPlan, roadmap, userName) => {
-                const variables = {};
-                
-                // User name (string) - always pass, use empty string if not available
-                variables.user_name = userName || '';
-                
-                // Business name (string) - prefer business_name, fallback to company_planned_name, or empty
-                variables.business_name = businessPlan?.business_name || 
-                                         businessPlan?.company_planned_name || 
-                                         '';
-                
-                // Industry (string) - or empty string
-                variables.industry = businessPlan?.industry || '';
-                
-                // Business idea (string) - short version for personalization, or empty
-                if (businessPlan?.business_idea) {
-                    const idea = businessPlan.business_idea;
-                    // Get first sentence or first 30 chars
-                    const shortIdea = idea.split('.')[0].substring(0, 30).trim();
-                    variables.business_idea = shortIdea || '';
-                } else {
-                    variables.business_idea = '';
-                }
-                
-                return variables;
-            };
-            
-            const dynamicVariables = extractVariables(businessPlanData, roadmapData, userName);
-            console.log('Dynamic variables for ElevenLabs:', dynamicVariables);
-
-            // Send context to initialize conversation (without showing trigger message)
-            if (contextWithFirstMessage && !contextSent.value) {
+            // Send first message with context to initialize conversation
+            if (firstMessage && contextWithFirstMessage && !contextSent.value) {
                 try {
-                    console.log('Sending context to agent, context length:', contextWithFirstMessage.length);
-                    
-                    // Try sending with empty message first
-                    let response;
-                    try {
-                        response = await axios.post(
-                            'https://api.elevenlabs.io/v1/convai/conversation',
-                            {
-                                agent_id: agentId,
-                                text_only: true,
-                                message: '', // Empty message to just send context
-                                contextual_update: contextWithFirstMessage,
-                                dynamic_variables: dynamicVariables // Pass variables for first message
-                            },
-                            {
-                                headers: {
-                                    'xi-api-key': apiKey,
-                                    'Content-Type': 'application/json'
-                                }
+                    // Send first message with context via REST API
+                    const response = await axios.post(
+                        'https://api.elevenlabs.io/v1/convai/conversation',
+                        {
+                            agent_id: agentId,
+                            text_only: true,
+                            message: '', // Empty message to trigger agent response
+                            contextual_update: contextWithFirstMessage
+                        },
+                        {
+                            headers: {
+                                'xi-api-key': apiKey,
+                                'Content-Type': 'application/json'
                             }
-                        );
-                    } catch (emptyMsgError) {
-                        // If empty message doesn't work, try with a minimal trigger
-                        console.log('Empty message failed, trying with minimal trigger');
-                        response = await axios.post(
-                            'https://api.elevenlabs.io/v1/convai/conversation',
-                            {
-                                agent_id: agentId,
-                                text_only: true,
-                                message: 'start', // Minimal trigger
-                                contextual_update: contextWithFirstMessage,
-                                dynamic_variables: dynamicVariables // Pass variables for first message
-                            },
-                            {
-                                headers: {
-                                    'xi-api-key': apiKey,
-                                    'Content-Type': 'application/json'
-                                }
-                            }
-                        );
-                    }
+                        }
+                    );
 
-                    // Store conversation ID if provided
-                    if (response?.data?.conversation_id) {
-                        conversationRef.value.conversation_id = response.data.conversation_id;
-                        console.log('Conversation ID stored:', response.data.conversation_id);
+                    if (response.data) {
+                        const agentResponse = response.data.agent_response || response.data.response || firstMessage;
+                        if (onMessage) {
+                            const cleanedResponse = stripCharacterTags(agentResponse);
+                            onMessage({
+                                type: 'assistant',
+                                text: cleanedResponse
+                            });
+                        }
+
+                        // Store conversation ID
+                        if (response.data.conversation_id) {
+                            conversationRef.value.conversation_id = response.data.conversation_id;
+                        }
                     }
 
                     contextSent.value = true;
-                    console.log('Context sent to agent successfully');
+                    console.log('Context sent to agent via REST API');
                 } catch (error) {
-                    console.error('Failed to send context to agent:', error.response?.data || error.message);
-                    // Context send failed, but message already shown
-                    contextSent.value = true;
+                    console.warn('Failed to send context to agent:', error);
+                    // Still show first message even if context send fails
+                    if (onMessage) {
+                        onMessage({
+                            type: 'assistant',
+                            text: firstMessage
+                        });
+                    }
                 }
-            } else if (!contextSent.value) {
-                // No context to send, just mark as sent
-                contextSent.value = true;
             }
 
         } catch (error) {
