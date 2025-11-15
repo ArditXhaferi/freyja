@@ -1,9 +1,8 @@
 <template>
     <div class="w-full">
-        <!-- Cute Header -->
-        <div v-if="roadmap?.title || roadmap?.roadmap_json?.title" class="mb-4 bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 rounded-2xl p-4 shadow-lg">
+        <!-- Header -->
+        <div v-if="roadmap?.title || roadmap?.roadmap_json?.title" class="mb-4 bg-[#012169] rounded-lg p-4 shadow-lg">
             <div class="flex items-center gap-3">
-                <div class="text-3xl">🗺️</div>
                 <h2 class="text-xl font-bold text-white">
                     {{ roadmap.title || roadmap.roadmap_json?.title }}
                 </h2>
@@ -12,84 +11,109 @@
 
         <!-- Empty State -->
         <div v-if="!roadmap || (!roadmap.steps && (!roadmap.roadmap_json || !roadmap.roadmap_json.steps)) || (roadmap.steps && roadmap.steps.length === 0) || (roadmap.roadmap_json && roadmap.roadmap_json.steps && roadmap.roadmap_json.steps.length === 0)" 
-             class="border-2 border-dashed border-blue-300 bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-8 text-center">
-            <div class="text-5xl mb-3">🗺️</div>
-            <p class="font-bold text-gray-700">No Roadmap Yet</p>
-            <p class="text-sm text-gray-500 mt-1">Start a voice session to build your roadmap!</p>
+             class="border border-dashed border-white/30 bg-[#011135] rounded-lg p-8 text-center">
+            <p class="font-bold text-white">No Roadmap Yet</p>
+            <p class="text-sm text-white/70 mt-1">Start a voice session to build your roadmap!</p>
         </div>
 
-        <!-- Cute Roadmap Cards -->
+        <!-- Roadmap Cards -->
         <div v-else class="space-y-3">
             <div
                 v-for="(step, index) in animatedSteps"
                 :key="step.id || step._stepId || index"
                 :class="[
-                    'rounded-2xl p-4 transition-all duration-300 cursor-pointer shadow-md hover:shadow-xl hover:scale-[1.02]',
+                    'rounded-lg p-4 transition-all duration-300 cursor-pointer shadow-md hover:shadow-lg border',
                     step.status === 'completed' 
-                        ? 'bg-gradient-to-br from-green-100 to-emerald-200 border-2 border-green-300' 
+                        ? 'bg-[#011135] border-green-500/50' 
                         : step.status === 'in_progress'
-                        ? 'bg-gradient-to-br from-blue-100 to-purple-200 border-2 border-blue-300'
-                        : 'bg-gradient-to-br from-gray-50 to-blue-50 border-2 border-gray-200',
-                    step.isNewlyAdded ? 'animate-pulse border-yellow-400' : ''
+                        ? 'bg-[#011135] border-[#012169]'
+                        : 'bg-[#011135] border-white/20',
+                    step.isNewlyAdded ? 'animate-pulse border-white' : ''
                 ]"
                 @click="handleStepClick(step)"
             >
                 <div class="flex items-start gap-4">
-                    <!-- Cute Step Number Badge -->
+                    <!-- Step Number Badge -->
                     <div :class="[
-                        'w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold shadow-lg flex-shrink-0 transition-all hover:scale-110',
+                        'w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 transition-all border',
                         step.status === 'completed' 
-                            ? 'bg-gradient-to-br from-green-400 to-emerald-500 text-white' 
+                            ? 'bg-green-600 text-white border-green-400' 
                             : step.status === 'in_progress'
-                            ? 'bg-gradient-to-br from-blue-400 to-purple-500 text-white animate-pulse'
-                            : 'bg-gradient-to-br from-gray-300 to-gray-400 text-gray-700'
+                            ? 'bg-[#012169] text-white border-white/30 animate-pulse'
+                            : 'bg-[#012169] text-white border-white/20'
                     ]">
-                        <span v-if="step.status === 'completed'" class="text-2xl">✓</span>
-                        <span v-else-if="step.status === 'in_progress'" class="text-xl">⟳</span>
+                        <span v-if="step.status === 'completed'" class="text-lg">✓</span>
+                        <span v-else-if="step.status === 'in_progress'" class="text-sm">⟳</span>
                         <span v-else>{{ step.order || index + 1 }}</span>
                     </div>
 
                     <!-- Step Content -->
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-2 mb-2 flex-wrap">
-                            <h3 :class="[
-                                'font-bold text-base',
-                                step.status === 'completed' ? 'text-green-800' : step.status === 'in_progress' ? 'text-blue-800' : 'text-gray-700'
-                            ]">
+                            <h3 class="font-bold text-base text-white">
                                 {{ step.title || `Step ${step.order || index + 1}` }}
                             </h3>
                             <span :class="[
-                                'px-3 py-1 rounded-full text-xs font-bold shadow-sm',
+                                'px-3 py-1 rounded-full text-xs font-semibold',
                                 step.status === 'completed' 
-                                    ? 'bg-green-300 text-green-800' 
+                                    ? 'bg-green-600/30 text-green-300 border border-green-500/50' 
                                     : step.status === 'in_progress'
-                                    ? 'bg-blue-300 text-blue-800'
-                                    : 'bg-gray-200 text-gray-600'
+                                    ? 'bg-[#012169] text-white border border-white/30'
+                                    : 'bg-white/10 text-white/70 border border-white/20'
                             ]">
                                 {{ (step.status || 'pending').replace('_', ' ').toUpperCase() }}
                             </span>
-                            <span v-if="step.isNewlyAdded" class="px-3 py-1 rounded-full bg-gradient-to-r from-yellow-300 to-orange-300 text-yellow-900 text-xs font-bold shadow-sm animate-bounce">
-                                ✨ NEW
+                            <span v-if="step.isNewlyAdded" class="px-3 py-1 rounded-full bg-white/20 text-white text-xs font-semibold border border-white/30">
+                                NEW
                             </span>
                         </div>
                         
-                        <p v-if="step.description" :class="[
-                            'text-sm leading-relaxed line-clamp-2',
-                            step.status === 'completed' ? 'text-green-700' : step.status === 'in_progress' ? 'text-blue-700' : 'text-gray-600'
-                        ]">
+                        <p v-if="step.description" class="text-sm leading-relaxed line-clamp-2 text-white/80">
                             {{ step.description }}
                         </p>
 
-                        <!-- Cute Progress Bar for In Progress -->
-                        <div v-if="step.status === 'in_progress'" class="mt-3 pt-3 border-t border-blue-200">
+                        <!-- Resources Section -->
+                        <div v-if="step.resources && step.resources.length > 0" class="mt-3 pt-3 border-t border-white/20">
+                            <div class="flex items-center gap-2 mb-2">
+                                <span class="text-xs font-semibold text-white/70">Resources:</span>
+                            </div>
+                            <div class="space-y-2">
+                                <a
+                                    v-for="(resource, resIndex) in step.resources"
+                                    :key="resIndex"
+                                    :href="resource.url"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="block bg-[#012169] rounded-lg p-2 border border-white/20 hover:border-white/40 hover:bg-[#011135] transition-all group"
+                                >
+                                    <div class="flex items-start gap-2">
+                                        <span class="text-white/60 text-sm group-hover:text-white">🔗</span>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-xs font-semibold text-white group-hover:text-white/90">
+                                                {{ resource.title }}
+                                            </p>
+                                            <p v-if="resource.description" class="text-xs text-white/60 mt-0.5 line-clamp-1">
+                                                {{ resource.description }}
+                                            </p>
+                                            <p class="text-xs text-white/50 mt-1 truncate">
+                                                {{ resource.url }}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+
+                        <!-- Progress Bar for In Progress -->
+                        <div v-if="step.status === 'in_progress'" class="mt-3 pt-3 border-t border-white/20">
                             <div class="flex items-center gap-2">
-                                <div class="flex-1 h-2 bg-white/60 rounded-full overflow-hidden">
+                                <div class="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
                                     <div 
-                                        class="h-full bg-gradient-to-r from-blue-400 to-purple-400 rounded-full transition-all duration-500"
+                                        class="h-full bg-[#012169] rounded-full transition-all duration-500"
                                         style="width: 50%"
                                     ></div>
                                 </div>
-                                <span class="text-xs font-bold text-blue-700">50%</span>
+                                <span class="text-xs font-semibold text-white/70">50%</span>
                             </div>
                         </div>
                     </div>

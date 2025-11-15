@@ -63,6 +63,10 @@ class RoadmapController extends Controller
             'roadmap_json.steps.*.description' => 'sometimes|string',
             'roadmap_json.steps.*.status' => 'sometimes|string|in:pending,in_progress,completed',
             'roadmap_json.steps.*.order' => 'sometimes|integer',
+            'roadmap_json.steps.*.resources' => 'sometimes|array',
+            'roadmap_json.steps.*.resources.*.title' => 'required_with:roadmap_json.steps.*.resources|string|max:255',
+            'roadmap_json.steps.*.resources.*.url' => 'required_with:roadmap_json.steps.*.resources|url|max:500',
+            'roadmap_json.steps.*.resources.*.description' => 'nullable|string|max:1000',
         ]);
 
         $roadmap = Roadmap::firstOrNew(['user_id' => $user->id]);

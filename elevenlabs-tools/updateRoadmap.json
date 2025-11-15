@@ -1,0 +1,148 @@
+{
+  "type": "client",
+  "name": "updateRoadmap",
+  "description": "Creates or updates roadmap steps with titles, descriptions, order, and helpful resources. Use this tool to build the user's startup roadmap based on their business information and background. CRITICAL: Always include helpful resources (links to guides, official websites) when creating steps. DO NOT use this tool to mark steps as completed - use markChecklistComplete instead.",
+  "disable_interruptions": false,
+  "force_pre_tool_speech": "auto",
+  "assignments": [],
+  "tool_call_sound": null,
+  "tool_call_sound_behavior": "auto",
+  "execution_mode": "immediate",
+  "expects_response": false,
+  "response_timeout_secs": 1,
+  "parameters": [
+    {
+      "id": "roadmap",
+      "type": "object",
+      "description": "The roadmap data object containing title and steps array. Each step can include resources (helpful links).",
+      "properties": [
+        {
+          "id": "title",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "The roadmap title (e.g., 'My Startup Roadmap')",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "steps",
+          "type": "array",
+          "description": "Array of roadmap steps. Each step should include title, description, order, status (always 'pending' for new steps), and optional resources array.",
+          "items": {
+            "id": "",
+            "type": "object",
+            "description": "A single roadmap step",
+            "properties": [
+              {
+                "id": "title",
+                "type": "string",
+                "value_type": "llm_prompt",
+                "description": "Clear, actionable step title (e.g., 'Register your business with the Trade Register')",
+                "dynamic_variable": "",
+                "constant_value": "",
+                "enum": null,
+                "is_system_provided": false,
+                "required": true
+              },
+              {
+                "id": "description",
+                "type": "string",
+                "value_type": "llm_prompt",
+                "description": "Detailed description of what needs to be done for this step",
+                "dynamic_variable": "",
+                "constant_value": "",
+                "enum": null,
+                "is_system_provided": false,
+                "required": false
+              },
+              {
+                "id": "order",
+                "type": "number",
+                "value_type": "llm_prompt",
+                "description": "Sequential order number (1, 2, 3, etc.) - must be unique and sequential",
+                "dynamic_variable": "",
+                "constant_value": "",
+                "enum": null,
+                "is_system_provided": false,
+                "required": false
+              },
+              {
+                "id": "status",
+                "type": "string",
+                "value_type": "llm_prompt",
+                "description": "Step status. Always set to 'pending' when creating new steps. DO NOT set to 'completed' - use markChecklistComplete tool for that.",
+                "dynamic_variable": "",
+                "constant_value": "pending",
+                "enum": ["pending", "in_progress", "completed"],
+                "is_system_provided": false,
+                "required": false
+              },
+              {
+                "id": "resources",
+                "type": "array",
+                "description": "Helpful resources (links) for this step. Automatically include relevant resources when creating steps (e.g., official websites, guides).",
+                "items": {
+                  "id": "",
+                  "type": "object",
+                  "description": "A single resource (link)",
+                  "properties": [
+                    {
+                      "id": "title",
+                      "type": "string",
+                      "value_type": "llm_prompt",
+                      "description": "Resource title (e.g., 'Migri Residence Permit Guide')",
+                      "dynamic_variable": "",
+                      "constant_value": "",
+                      "enum": null,
+                      "is_system_provided": false,
+                      "required": true
+                    },
+                    {
+                      "id": "url",
+                      "type": "string",
+                      "value_type": "llm_prompt",
+                      "description": "Full URL to the resource (must be a valid URL, e.g., 'https://migri.fi/en/residence-permit-for-an-entrepreneur')",
+                      "dynamic_variable": "",
+                      "constant_value": "",
+                      "enum": null,
+                      "is_system_provided": false,
+                      "required": true
+                    },
+                    {
+                      "id": "description",
+                      "type": "string",
+                      "value_type": "llm_prompt",
+                      "description": "Optional description of what the resource contains",
+                      "dynamic_variable": "",
+                      "constant_value": "",
+                      "enum": null,
+                      "is_system_provided": false,
+                      "required": false
+                    }
+                  ],
+                  "required": false,
+                  "value_type": "llm_prompt"
+                },
+                "required": false,
+                "value_type": "llm_prompt"
+              }
+            ],
+            "required": false,
+            "value_type": "llm_prompt"
+          },
+          "required": true,
+          "value_type": "llm_prompt"
+        }
+      ],
+      "required": true,
+      "value_type": "llm_prompt"
+    }
+  ],
+  "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+  }
+}
+

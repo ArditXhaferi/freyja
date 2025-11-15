@@ -1,21 +1,20 @@
 <template>
     <Head title="Voice Roadmap Builder" />
-    <div class="min-h-screen bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 py-6 px-4 pb-24">
+    <div class="min-h-screen bg-[#011135] py-6 px-4 pb-24">
         <div class="max-w-6xl mx-auto">
 
-                    <!-- Cute Header - Eppu the Bear -->
-                    <div class="mb-6 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 rounded-3xl p-6 text-center shadow-xl">
-                        <div class="text-6xl mb-3">🐻</div>
-                        <h1 class="text-3xl font-bold text-white mb-2">
-                            Eppu the Bear
+                    <!-- Professional Header -->
+                    <div class="mb-6 bg-[#012169] rounded-lg p-6 text-center shadow-lg">
+                        <h1 class="text-2xl font-bold text-white mb-2">
+                            Voice Roadmap Builder
                         </h1>
-                        <p class="text-lg font-medium text-white/90">
-                            Your AI Startup Coach 🚀
+                        <p class="text-sm font-medium text-white/80">
+                            Your AI Startup Coach
                         </p>
                     </div>
 
-            <!-- Cute Error Display -->
-            <div v-if="error" class="mb-4 bg-gradient-to-r from-red-300 to-pink-300 rounded-2xl p-4 shadow-lg border-2 border-red-400">
+            <!-- Error Display -->
+            <div v-if="error" class="mb-4 bg-red-900/80 border border-red-600 rounded-lg p-4 shadow-lg">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
                         <span class="text-red-500 text-xl">⚠️</span>
@@ -34,8 +33,8 @@
                 </div>
             </div>
 
-            <!-- Cute Voice Controls -->
-            <div class="bg-white rounded-2xl shadow-lg border-2 border-blue-200 p-5 mb-6">
+            <!-- Voice Controls -->
+            <div class="bg-[#012169] rounded-lg shadow-lg border border-[#011135] p-5 mb-6">
                 <div class="flex items-center justify-between flex-wrap gap-4">
                     <div class="flex items-center gap-4">
                         <div :class="[
@@ -44,17 +43,17 @@
                             connectionStatus === 'connecting' ? 'bg-yellow-500 animate-pulse' : '',
                             connectionStatus === 'disconnected' ? 'bg-gray-400' : ''
                         ]"></div>
-                        <span class="text-gray-700 font-medium">
+                        <span class="text-white font-medium">
                             {{ connectionStatus === 'connected' ? 'Connected' : '' }}
                             {{ connectionStatus === 'connecting' ? 'Connecting...' : '' }}
                             {{ connectionStatus === 'disconnected' ? 'Disconnected' : '' }}
                         </span>
                         <span v-if="isListening" 
-                              class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm font-medium animate-pulse">
+                              class="px-3 py-1 bg-white/20 text-white rounded-full text-sm font-medium animate-pulse">
                             🎤 Listening...
                         </span>
                         <span v-if="isSpeaking" 
-                              class="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-sm font-medium">
+                              class="px-3 py-1 bg-white/20 text-white rounded-full text-sm font-medium">
                             🔊 Speaking...
                         </span>
                     </div>
@@ -63,30 +62,30 @@
                         <button
                             v-if="!isConnected"
                             @click="handleConnect"
-                            class="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-xl hover:from-blue-600 hover:to-purple-700 transition-all font-bold shadow-lg hover:shadow-xl transform hover:scale-105"
+                            class="px-6 py-3 bg-[#011135] text-white rounded-lg hover:bg-[#012169] transition-all font-semibold shadow-lg border border-white/20"
                         >
-                            ✨ Connect
+                            Connect
                         </button>
                         <template v-else>
                             <button
                                 v-if="!isSessionActive"
                                 @click="handleStartSession"
-                                class="px-6 py-3 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-600 hover:to-emerald-700 transition-all font-bold shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2"
+                                class="px-6 py-3 bg-[#011135] text-white rounded-lg hover:bg-[#012169] transition-all font-semibold shadow-lg border border-white/20 flex items-center gap-2"
                             >
-                                <span class="text-xl">🎤</span>
+                                <span>🎤</span>
                                 Start Voice Session
                             </button>
                             <button
                                 v-else
                                 @click="handleStopSession"
-                                class="px-6 py-3 bg-gradient-to-r from-red-500 to-pink-600 text-white rounded-xl hover:from-red-600 hover:to-pink-700 transition-all font-bold shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2"
+                                class="px-6 py-3 bg-red-700 text-white rounded-lg hover:bg-red-800 transition-all font-semibold shadow-lg border border-red-600 flex items-center gap-2"
                             >
-                                <span class="text-xl">⏹️</span>
+                                <span>⏹️</span>
                                 Stop Session
                             </button>
                             <button
                                 @click="handleDisconnect"
-                                class="px-6 py-3 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-xl hover:from-gray-600 hover:to-gray-700 transition-all font-bold shadow-lg hover:shadow-xl transform hover:scale-105"
+                                class="px-6 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-all font-semibold shadow-lg border border-gray-600"
                             >
                                 Disconnect
                             </button>
@@ -95,8 +94,8 @@
                 </div>
 
                 <!-- Transcript Display -->
-                <div v-if="transcripts.length > 0" class="mt-6 pt-6 border-t border-gray-200">
-                    <h3 class="text-sm font-semibold text-gray-700 mb-3">Conversation</h3>
+                <div v-if="transcripts.length > 0" class="mt-6 pt-6 border-t border-white/20">
+                    <h3 class="text-sm font-semibold text-white mb-3">Conversation</h3>
                     <div class="max-h-48 overflow-y-auto space-y-2">
                         <div
                             v-for="(transcript, index) in transcripts.slice(-5)"
@@ -104,8 +103,8 @@
                             :class="[
                                 'p-3 rounded-lg text-sm',
                                 transcript.type === 'user' 
-                                    ? 'bg-blue-50 text-blue-900 ml-8' 
-                                    : 'bg-gray-50 text-gray-900 mr-8'
+                                    ? 'bg-[#011135] text-white ml-8 border border-white/10' 
+                                    : 'bg-white/10 text-white mr-8 border border-white/10'
                             ]"
                         >
                             <span class="font-medium">
@@ -122,21 +121,19 @@
                 <!-- Home page shows only voice agent interface -->
             </div>
 
-            <!-- Cute Help Text -->
-            <div v-if="!isConnected" class="mt-4 bg-gradient-to-r from-blue-100 to-purple-100 rounded-2xl p-4 border-2 border-blue-200 shadow-md">
+            <!-- Help Text -->
+            <div v-if="!isConnected" class="mt-4 bg-[#012169] rounded-lg p-4 border border-white/20 shadow-md">
                 <div class="flex items-center gap-3">
-                    <div class="text-2xl">💡</div>
-                    <p class="text-sm font-bold text-gray-700">
-                        <span class="text-blue-600">Getting Started:</span> Click "Connect" to start building your roadmap!
+                    <p class="text-sm font-semibold text-white">
+                        <span class="text-white/80">Getting Started:</span> Click "Connect" to start building your roadmap!
                     </p>
                 </div>
             </div>
 
             <!-- Document Requests Section (shown in business tab) -->
-            <div v-if="pendingDocuments.length > 0 && activeTab === 'business'" class="mt-4 bg-white rounded-2xl shadow-lg border-2 border-yellow-200 p-5">
+            <div v-if="pendingDocuments.length > 0 && activeTab === 'business'" class="mt-4 bg-[#012169] rounded-lg shadow-lg border border-white/20 p-5">
                 <div class="flex items-center gap-3 mb-4">
-                    <div class="text-2xl">📄</div>
-                    <h3 class="text-lg font-bold text-gray-800">Document Requests</h3>
+                    <h3 class="text-lg font-bold text-white">Document Requests</h3>
                 </div>
                 <div class="space-y-3">
                     <DocumentRequestCard
@@ -194,20 +191,19 @@
         <div v-if="activeTab === 'business'" 
              class="fixed inset-0 z-40 flex items-end drawer-overlay"
              @click.self="activeTab = 'roadmap'">
-            <div class="bg-white rounded-t-3xl shadow-2xl w-full max-h-[85vh] overflow-y-auto drawer-content">
-                <div class="sticky top-0 bg-gradient-to-r from-purple-400 to-pink-400 p-5 flex items-center justify-between rounded-t-3xl shadow-md z-10">
-                    <h2 class="text-xl font-bold text-white">💼 Business Information</h2>
+            <div class="bg-[#012169] rounded-t-lg shadow-2xl w-full max-h-[85vh] overflow-y-auto drawer-content">
+                <div class="sticky top-0 bg-[#011135] p-5 flex items-center justify-between rounded-t-lg shadow-md z-10 border-b border-white/20">
+                    <h2 class="text-xl font-bold text-white">Business Information</h2>
                     <button @click="activeTab = 'roadmap'" class="text-white/80 hover:text-white transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
-                <div class="p-6 space-y-6">
+                <div class="p-6 pb-24 space-y-6">
                     <!-- Contextual Information Section -->
-                    <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl shadow-lg border-2 border-indigo-200 p-5">
-                        <h3 class="text-lg font-bold text-indigo-800 mb-4 flex items-center gap-2">
-                            <span class="text-2xl">🌍</span>
+                    <div class="bg-[#011135] rounded-lg shadow-lg border border-white/20 p-5">
+                        <h3 class="text-lg font-bold text-white mb-4">
                             Your Background Information
                         </h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -215,105 +211,105 @@
                                 :ref="el => setContextualFieldRef('country_of_origin', el)"
                                 :id="'contextual-field-country_of_origin'"
                                 :class="[
-                                    'bg-white rounded-xl p-3 border border-indigo-100 transition-all',
+                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all',
                                     fieldToHighlight === 'country_of_origin' ? 'field-highlight' : ''
                                 ]"
                             >
-                                <p class="text-xs font-semibold text-gray-500 mb-1">Country of Origin</p>
-                                <p class="text-sm font-bold text-gray-800">{{ businessPlanData?.country_of_origin || 'Not provided' }}</p>
+                                <p class="text-xs font-semibold text-white/70 mb-1">Country of Origin</p>
+                                <p class="text-sm font-bold text-white">{{ businessPlanData?.country_of_origin || 'Not provided' }}</p>
                             </div>
                             <div 
                                 :ref="el => setContextualFieldRef('is_eu_resident', el)"
                                 :id="'contextual-field-is_eu_resident'"
                                 :class="[
-                                    'bg-white rounded-xl p-3 border border-indigo-100 transition-all',
+                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all',
                                     fieldToHighlight === 'is_eu_resident' ? 'field-highlight' : ''
                                 ]"
                             >
-                                <p class="text-xs font-semibold text-gray-500 mb-1">EU Resident</p>
-                                <p class="text-sm font-bold text-gray-800">
-                                    <span v-if="businessPlanData?.is_eu_resident === true" class="text-green-600">✅ Yes</span>
-                                    <span v-else-if="businessPlanData?.is_eu_resident === false" class="text-orange-600">❌ No</span>
-                                    <span v-else class="text-gray-400">Not provided</span>
+                                <p class="text-xs font-semibold text-white/70 mb-1">EU Resident</p>
+                                <p class="text-sm font-bold text-white">
+                                    <span v-if="businessPlanData?.is_eu_resident === true" class="text-green-400">Yes</span>
+                                    <span v-else-if="businessPlanData?.is_eu_resident === false" class="text-red-400">No</span>
+                                    <span v-else class="text-white/50">Not provided</span>
                                 </p>
                             </div>
                             <div 
                                 :ref="el => setContextualFieldRef('is_newcomer_to_finland', el)"
                                 :id="'contextual-field-is_newcomer_to_finland'"
                                 :class="[
-                                    'bg-white rounded-xl p-3 border border-indigo-100 transition-all',
+                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all',
                                     fieldToHighlight === 'is_newcomer_to_finland' ? 'field-highlight' : ''
                                 ]"
                             >
-                                <p class="text-xs font-semibold text-gray-500 mb-1">Newcomer to Finland</p>
-                                <p class="text-sm font-bold text-gray-800">
-                                    <span v-if="businessPlanData?.is_newcomer_to_finland === true" class="text-blue-600">✅ Yes</span>
-                                    <span v-else-if="businessPlanData?.is_newcomer_to_finland === false" class="text-gray-600">❌ No</span>
-                                    <span v-else class="text-gray-400">Not provided</span>
+                                <p class="text-xs font-semibold text-white/70 mb-1">Newcomer to Finland</p>
+                                <p class="text-sm font-bold text-white">
+                                    <span v-if="businessPlanData?.is_newcomer_to_finland === true" class="text-green-400">Yes</span>
+                                    <span v-else-if="businessPlanData?.is_newcomer_to_finland === false" class="text-gray-400">No</span>
+                                    <span v-else class="text-white/50">Not provided</span>
                                 </p>
                             </div>
                             <div 
                                 :ref="el => setContextualFieldRef('has_residence_permit', el)"
                                 :id="'contextual-field-has_residence_permit'"
                                 :class="[
-                                    'bg-white rounded-xl p-3 border border-indigo-100 transition-all',
+                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all',
                                     fieldToHighlight === 'has_residence_permit' ? 'field-highlight' : ''
                                 ]"
                             >
-                                <p class="text-xs font-semibold text-gray-500 mb-1">Residence Permit</p>
-                                <p class="text-sm font-bold text-gray-800">
-                                    <span v-if="businessPlanData?.has_residence_permit === true" class="text-green-600">✅ Yes</span>
-                                    <span v-else-if="businessPlanData?.has_residence_permit === false" class="text-orange-600">❌ No</span>
-                                    <span v-else class="text-gray-400">Not provided</span>
+                                <p class="text-xs font-semibold text-white/70 mb-1">Residence Permit</p>
+                                <p class="text-sm font-bold text-white">
+                                    <span v-if="businessPlanData?.has_residence_permit === true" class="text-green-400">Yes</span>
+                                    <span v-else-if="businessPlanData?.has_residence_permit === false" class="text-red-400">No</span>
+                                    <span v-else class="text-white/50">Not provided</span>
                                 </p>
                             </div>
                             <div 
                                 :ref="el => setContextualFieldRef('residence_permit_type', el)"
                                 :id="'contextual-field-residence_permit_type'"
                                 :class="[
-                                    'bg-white rounded-xl p-3 border border-indigo-100 transition-all',
+                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all',
                                     fieldToHighlight === 'residence_permit_type' ? 'field-highlight' : ''
                                 ]"
                             >
-                                <p class="text-xs font-semibold text-gray-500 mb-1">Residence Permit Type</p>
-                                <p class="text-sm font-bold text-gray-800">{{ businessPlanData?.residence_permit_type || 'Not provided' }}</p>
+                                <p class="text-xs font-semibold text-white/70 mb-1">Residence Permit Type</p>
+                                <p class="text-sm font-bold text-white">{{ businessPlanData?.residence_permit_type || 'Not provided' }}</p>
                             </div>
                             <div 
                                 :ref="el => setContextualFieldRef('years_in_finland', el)"
                                 :id="'contextual-field-years_in_finland'"
                                 :class="[
-                                    'bg-white rounded-xl p-3 border border-indigo-100 transition-all',
+                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all',
                                     fieldToHighlight === 'years_in_finland' ? 'field-highlight' : ''
                                 ]"
                             >
-                                <p class="text-xs font-semibold text-gray-500 mb-1">Years in Finland</p>
-                                <p class="text-sm font-bold text-gray-800">{{ businessPlanData?.years_in_finland !== null && businessPlanData?.years_in_finland !== undefined ? businessPlanData.years_in_finland + ' years' : 'Not provided' }}</p>
+                                <p class="text-xs font-semibold text-white/70 mb-1">Years in Finland</p>
+                                <p class="text-sm font-bold text-white">{{ businessPlanData?.years_in_finland !== null && businessPlanData?.years_in_finland !== undefined ? businessPlanData.years_in_finland + ' years' : 'Not provided' }}</p>
                             </div>
                             <div 
                                 :ref="el => setContextualFieldRef('has_business_experience', el)"
                                 :id="'contextual-field-has_business_experience'"
                                 :class="[
-                                    'bg-white rounded-xl p-3 border border-indigo-100 transition-all',
+                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all',
                                     fieldToHighlight === 'has_business_experience' ? 'field-highlight' : ''
                                 ]"
                             >
-                                <p class="text-xs font-semibold text-gray-500 mb-1">Business Experience</p>
-                                <p class="text-sm font-bold text-gray-800">
-                                    <span v-if="businessPlanData?.has_business_experience === true" class="text-green-600">✅ Yes</span>
-                                    <span v-else-if="businessPlanData?.has_business_experience === false" class="text-gray-600">❌ No</span>
-                                    <span v-else class="text-gray-400">Not provided</span>
+                                <p class="text-xs font-semibold text-white/70 mb-1">Business Experience</p>
+                                <p class="text-sm font-bold text-white">
+                                    <span v-if="businessPlanData?.has_business_experience === true" class="text-green-400">Yes</span>
+                                    <span v-else-if="businessPlanData?.has_business_experience === false" class="text-gray-400">No</span>
+                                    <span v-else class="text-white/50">Not provided</span>
                                 </p>
                             </div>
                             <div 
                                 :ref="el => setContextualFieldRef('language', el)"
                                 :id="'contextual-field-language'"
                                 :class="[
-                                    'bg-white rounded-xl p-3 border border-indigo-100 transition-all',
+                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all',
                                     fieldToHighlight === 'language' ? 'field-highlight' : ''
                                 ]"
                             >
-                                <p class="text-xs font-semibold text-gray-500 mb-1">Preferred Language</p>
-                                <p class="text-sm font-bold text-gray-800">{{ businessPlanData?.language || 'Not provided' }}</p>
+                                <p class="text-xs font-semibold text-white/70 mb-1">Preferred Language</p>
+                                <p class="text-sm font-bold text-white">{{ businessPlanData?.language || 'Not provided' }}</p>
                             </div>
                         </div>
                     </div>
@@ -326,10 +322,9 @@
                     />
                     
                     <!-- Document Requests Section -->
-                    <div v-if="pendingDocuments.length > 0" class="bg-white rounded-2xl shadow-lg border-2 border-yellow-200 p-5">
+                    <div v-if="pendingDocuments.length > 0" class="bg-[#012169] rounded-lg shadow-lg border border-white/20 p-5">
                         <div class="flex items-center gap-3 mb-4">
-                            <div class="text-2xl">📄</div>
-                            <h3 class="text-lg font-bold text-gray-800">Document Requests</h3>
+                            <h3 class="text-lg font-bold text-white">Document Requests</h3>
                         </div>
                         <div class="space-y-3">
                             <DocumentRequestCard
@@ -350,32 +345,30 @@
         <div v-if="activeTab === 'add'" 
              class="fixed inset-0 z-40 flex items-end drawer-overlay"
              @click.self="activeTab = 'roadmap'">
-            <div class="bg-white rounded-t-3xl shadow-2xl w-full max-h-[85vh] overflow-y-auto drawer-content">
-                <div class="sticky top-0 bg-gradient-to-r from-green-400 to-emerald-400 p-5 flex items-center justify-between rounded-t-3xl shadow-md z-10">
-                    <h2 class="text-xl font-bold text-white">✍️ Manual Entry</h2>
+            <div class="bg-[#012169] rounded-t-lg shadow-2xl w-full max-h-[85vh] overflow-y-auto drawer-content">
+                <div class="sticky top-0 bg-[#011135] p-5 flex items-center justify-between rounded-t-lg shadow-md z-10 border-b border-white/20">
+                    <h2 class="text-xl font-bold text-white">Manual Entry</h2>
                     <button @click="activeTab = 'roadmap'" class="text-white/80 hover:text-white transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
-                <div class="p-6">
+                <div class="p-6 pb-24">
                     <!-- Manual Add content embedded directly -->
                     <div class="space-y-6">
-                        <p class="text-gray-600 mb-6">Here you can manually add or update business plan fields or roadmap steps.</p>
-                        <div class="bg-gradient-to-br from-blue-50 to-purple-50 rounded-2xl p-4 border-2 border-blue-200">
-                            <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
-                                <span class="text-xl">📝</span>
+                        <p class="text-white/80 mb-6">Here you can manually add or update business plan fields or roadmap steps.</p>
+                        <div class="bg-[#011135] rounded-lg p-4 border border-white/20">
+                            <h3 class="font-bold text-white mb-3">
                                 Add Business Plan Field
                             </h3>
-                            <p class="text-sm text-gray-600 mb-4">Coming soon! You'll be able to manually add business plan information here.</p>
+                            <p class="text-sm text-white/70 mb-4">Coming soon! You'll be able to manually add business plan information here.</p>
                         </div>
-                        <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-4 border-2 border-green-200">
-                            <h3 class="font-bold text-gray-800 mb-3 flex items-center gap-2">
-                                <span class="text-xl">🗺️</span>
+                        <div class="bg-[#011135] rounded-lg p-4 border border-white/20">
+                            <h3 class="font-bold text-white mb-3">
                                 Add Roadmap Step
                             </h3>
-                            <p class="text-sm text-gray-600 mb-4">Coming soon! You'll be able to manually add roadmap steps here.</p>
+                            <p class="text-sm text-white/70 mb-4">Coming soon! You'll be able to manually add roadmap steps here.</p>
                         </div>
                     </div>
                 </div>
@@ -386,25 +379,55 @@
         <div v-if="activeTab === 'advisors'" 
              class="fixed inset-0 z-40 flex items-end drawer-overlay"
              @click.self="activeTab = 'roadmap'">
-            <div class="bg-white rounded-t-3xl shadow-2xl w-full max-h-[85vh] overflow-y-auto drawer-content">
-                <div class="sticky top-0 bg-gradient-to-r from-yellow-400 to-orange-400 p-5 flex items-center justify-between rounded-t-3xl shadow-md z-10">
-                    <h2 class="text-xl font-bold text-white">🤝 Your Advisors</h2>
+            <div class="bg-[#012169] rounded-t-lg shadow-2xl w-full h-[90vh] overflow-y-auto drawer-content">
+                <div class="sticky top-0 bg-[#011135] p-5 flex items-center justify-between rounded-t-lg shadow-md z-10 border-b border-white/20">
+                    <h2 class="text-xl font-bold text-white">Your Advisors</h2>
                     <button @click="activeTab = 'roadmap'" class="text-white/80 hover:text-white transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
-                <div class="p-6">
+                <div class="p-6 pb-24">
                     <!-- Advisors content embedded directly -->
-                    <p class="text-gray-600 mb-6">Connect with experienced advisors who can help guide your startup journey.</p>
-                    <div class="space-y-4">
-                        <div class="bg-purple-50 rounded-lg p-4 border border-purple-200 flex items-center gap-4">
-                            <div class="flex-shrink-0 w-12 h-12 bg-purple-300 rounded-full flex items-center justify-center text-white text-xl font-bold">A</div>
-                            <div>
-                                <p class="font-bold text-purple-800">Advisor Name 1</p>
-                                <p class="text-sm text-gray-600">Specialization: Funding, Business Strategy</p>
-                                <p class="text-xs text-gray-500">Next meeting: Oct 26, 2024</p>
+                    <p class="text-white/80 mb-6">Connect with experienced advisors who can help guide your startup journey.</p>
+                    
+                    <!-- Loading state -->
+                    <div v-if="loadingAdvisors" class="text-center py-8">
+                        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                        <p class="mt-2 text-white/80">Loading advisors...</p>
+                    </div>
+                    
+                    <!-- Empty state -->
+                    <div v-else-if="advisors.length === 0" class="text-center py-12">
+                        <h3 class="text-xl font-bold text-white mb-2">No Advisors Available</h3>
+                        <p class="text-white/70">Advisors will appear here once they're added to the system.</p>
+                    </div>
+                    
+                    <!-- Advisors list -->
+                    <div v-else class="space-y-4">
+                        <div 
+                            v-for="advisor in advisors" 
+                            :key="advisor.id"
+                            class="bg-[#011135] rounded-lg p-4 border border-white/20 flex items-start gap-4 hover:bg-[#012169] transition-all"
+                        >
+                            <div class="flex-shrink-0 w-12 h-12 bg-[#012169] rounded-full flex items-center justify-center text-white text-lg font-bold border border-white/20">
+                                {{ advisor.name.charAt(0).toUpperCase() }}
+                            </div>
+                            <div class="flex-1">
+                                <p class="font-bold text-white text-lg">{{ advisor.name }}</p>
+                                <p v-if="advisor.title" class="text-sm text-white/70 mb-1">{{ advisor.title }}</p>
+                                <p class="text-sm text-white/60 mb-2">{{ advisor.email }}</p>
+                                <p v-if="advisor.bio" class="text-sm text-white/80 mb-2">{{ advisor.bio }}</p>
+                                <div v-if="advisor.languages && Array.isArray(advisor.languages)" class="mb-2">
+                                    <p class="text-xs text-white/60 mb-1">Languages:</p>
+                                    <p class="text-sm text-white/80">{{ advisor.languages.join(', ') }}</p>
+                                </div>
+                                <div v-if="advisor.specialization" class="flex items-center gap-2 mt-2">
+                                    <span class="px-3 py-1 rounded-full text-xs font-semibold text-white bg-[#012169] border border-white/20">
+                                        {{ getSpecializationLabel(advisor.specialization) }}
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -416,28 +439,27 @@
         <div v-if="activeTab === 'roadmap-tab'" 
              class="fixed inset-0 z-40 flex items-end drawer-overlay"
              @click.self="activeTab = 'roadmap'">
-            <div class="bg-white rounded-t-3xl shadow-2xl w-full max-h-[85vh] overflow-y-auto drawer-content">
-                <div class="sticky top-0 bg-gradient-to-r from-blue-400 to-purple-400 p-5 flex items-center justify-between rounded-t-3xl shadow-md z-10">
-                    <h2 class="text-xl font-bold text-white">🗺️ Your Roadmap</h2>
+            <div class="bg-[#012169] rounded-t-lg shadow-2xl w-full max-h-[85vh] overflow-y-auto drawer-content">
+                <div class="sticky top-0 bg-[#011135] p-5 flex items-center justify-between rounded-t-lg shadow-md z-10 border-b border-white/20">
+                    <h2 class="text-xl font-bold text-white">Your Roadmap</h2>
                     <button @click="activeTab = 'roadmap'" class="text-white/80 hover:text-white transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
-                <div class="p-6">
+                <div class="p-6 pb-24">
                     <!-- Roadmap Visualization -->
                     <div v-if="roadmap && roadmap.steps && roadmap.steps.filter(s => !s.isQuestion).length > 0" 
-                         class="bg-white rounded-2xl shadow-lg border-2 border-blue-200 p-5">
+                         class="bg-[#011135] rounded-lg shadow-lg border border-white/20 p-5">
                         <RoadmapVisualizer 
                             :roadmap="roadmap"
                             @step-update="handleStepUpdate"
                         />
                     </div>
                     <div v-else class="text-center py-12">
-                        <div class="text-6xl mb-4">🗺️</div>
-                        <h3 class="text-xl font-bold text-gray-800 mb-2">No Roadmap Steps Yet</h3>
-                        <p class="text-gray-600">Start a voice session with Eppu the Bear to create your roadmap!</p>
+                        <h3 class="text-xl font-bold text-white mb-2">No Roadmap Steps Yet</h3>
+                        <p class="text-white/70">Start a voice session to create your roadmap!</p>
                     </div>
                 </div>
             </div>
@@ -447,23 +469,23 @@
         <div v-if="activeTab === 'calendar'" 
              class="fixed inset-0 z-40 flex items-end drawer-overlay"
              @click.self="activeTab = 'roadmap'">
-            <div class="bg-white rounded-t-3xl shadow-2xl w-full max-h-[85vh] overflow-y-auto drawer-content">
-                <div class="sticky top-0 bg-gradient-to-r from-pink-400 to-red-400 p-5 flex items-center justify-between rounded-t-3xl shadow-md z-10">
-                    <h2 class="text-xl font-bold text-white">📅 Your Calendar</h2>
+            <div class="bg-[#012169] rounded-t-lg shadow-2xl w-full max-h-[85vh] overflow-y-auto drawer-content">
+                <div class="sticky top-0 bg-[#011135] p-5 flex items-center justify-between rounded-t-lg shadow-md z-10 border-b border-white/20">
+                    <h2 class="text-xl font-bold text-white">Your Calendar</h2>
                     <button @click="activeTab = 'roadmap'" class="text-white/80 hover:text-white transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                         </svg>
                     </button>
                 </div>
-                <div class="p-6">
+                <div class="p-6 pb-24">
                     <!-- Calendar content embedded directly -->
-                    <p class="text-gray-600 mb-6">Manage your upcoming meetings and important dates.</p>
+                    <p class="text-white/80 mb-6">Manage your upcoming meetings and important dates.</p>
                     <div class="space-y-4">
-                        <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                            <p class="font-bold text-blue-800 mb-1">Meeting with Advisor A</p>
-                            <p class="text-sm text-gray-600">Date: October 26, 2024, 10:00 AM</p>
-                            <p class="text-xs text-gray-500">Topic: Funding Strategy</p>
+                        <div class="bg-[#011135] rounded-lg p-4 border border-white/20">
+                            <p class="font-bold text-white mb-1">Meeting with Advisor A</p>
+                            <p class="text-sm text-white/70">Date: October 26, 2024, 10:00 AM</p>
+                            <p class="text-xs text-white/60">Topic: Funding Strategy</p>
                         </div>
                     </div>
                 </div>
@@ -503,6 +525,10 @@ const props = defineProps({
     userName: {
         type: String,
         default: null
+    },
+    advisors: {
+        type: Array,
+        default: () => []
     }
 });
 
@@ -577,6 +603,10 @@ watch(() => fieldToHighlight.value, async (newField) => {
 const showManualAdd = ref(false);
 const showAdvisors = ref(false);
 const showCalendar = ref(false);
+
+// Advisors
+const advisors = ref(props.advisors || []);
+const loadingAdvisors = ref(false);
 
 // Map business plan fields to questions
 const businessPlanQuestions = {
@@ -1002,6 +1032,76 @@ const handleMeetingPrep = (prepData) => {
 };
 
 // Load user progress from API
+const loadAdvisors = async () => {
+    try {
+        loadingAdvisors.value = true;
+        const response = await axios.get('/api/advisors');
+        if (response.data && response.data.advisors) {
+            advisors.value = response.data.advisors;
+        }
+    } catch (err) {
+        console.error('Failed to load advisors:', err);
+    } finally {
+        loadingAdvisors.value = false;
+    }
+};
+
+// Map step content to specializations for advisor matching
+const matchAdvisorsToStep = (step) => {
+    if (!step || !advisors.value.length) return [];
+    
+    const stepText = (step.title + ' ' + (step.description || '')).toLowerCase();
+    
+    const specializationMap = {
+        'residence_permit': ['residence permit', 'residence', 'permit', 'migri', 'immigration'],
+        'business_registration': ['business registration', 'register', 'trade register', 'company registration', 'y-tunnus'],
+        'tax': ['tax', 'vat', 'accounting', 'verohallinto', 'tax office'],
+        'funding': ['funding', 'grant', 'investor', 'investment', 'finance', 'loan'],
+        'legal': ['legal', 'contract', 'law', 'intellectual property', 'ip', 'patent', 'trademark'],
+        'marketing': ['marketing', 'sales', 'branding', 'advertising', 'promotion'],
+    };
+    
+    const matchedSpecializations = [];
+    for (const [specialization, keywords] of Object.entries(specializationMap)) {
+        for (const keyword of keywords) {
+            if (stepText.includes(keyword)) {
+                matchedSpecializations.push(specialization);
+                break;
+            }
+        }
+    }
+    
+    if (matchedSpecializations.length === 0) return [];
+    
+    return advisors.value.filter(advisor => 
+        advisor.specialization && matchedSpecializations.includes(advisor.specialization)
+    );
+};
+
+const getSpecializationLabel = (specialization) => {
+    const labels = {
+        'residence_permit': 'Residence Permit',
+        'business_registration': 'Business Registration',
+        'tax': 'Tax & Accounting',
+        'funding': 'Funding & Finance',
+        'legal': 'Legal & IP',
+        'marketing': 'Marketing & Sales',
+    };
+    return labels[specialization] || specialization;
+};
+
+const getSpecializationColor = (specialization) => {
+    const colors = {
+        'residence_permit': 'from-blue-400 to-blue-600',
+        'business_registration': 'from-purple-400 to-purple-600',
+        'tax': 'from-green-400 to-green-600',
+        'funding': 'from-yellow-400 to-yellow-600',
+        'legal': 'from-red-400 to-red-600',
+        'marketing': 'from-pink-400 to-pink-600',
+    };
+    return colors[specialization] || 'from-gray-400 to-gray-600';
+};
+
 const loadUserProgress = async () => {
     try {
         const response = await axios.get('/api/user-progress');
@@ -1231,6 +1331,8 @@ const handleNavigation = (tab) => {
 onMounted(async () => {
     // Load user progress on mount
     await loadUserProgress();
+    // Load advisors on mount
+    await loadAdvisors();
     // Data is already loaded via Inertia props
     // Roadmap only shows action steps, no question steps
     // Question steps are handled separately in BusinessPlanProgress component
@@ -1240,7 +1342,7 @@ onMounted(async () => {
 
 <style scoped>
 .drawer-overlay {
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(1, 17, 53, 0.8);
     animation: fadeIn 0.2s ease-out;
 }
 
@@ -1267,30 +1369,30 @@ onMounted(async () => {
 /* Field highlight animation */
 .field-highlight {
     animation: highlightPulse 5s ease-in-out;
-    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%) !important;
-    border: 3px solid #f59e0b !important;
-    box-shadow: 0 0 20px rgba(245, 158, 11, 0.5), 0 0 40px rgba(245, 158, 11, 0.3);
-    transform: scale(1.05);
+    background: #012169 !important;
+    border: 2px solid #ffffff !important;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(255, 255, 255, 0.1);
+    transform: scale(1.02);
     z-index: 10;
     position: relative;
 }
 
 @keyframes highlightPulse {
     0% {
-        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%);
-        border-color: #f59e0b;
-        box-shadow: 0 0 20px rgba(245, 158, 11, 0.5), 0 0 40px rgba(245, 158, 11, 0.3);
-        transform: scale(1.05);
+        background: #012169;
+        border-color: #ffffff;
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(255, 255, 255, 0.1);
+        transform: scale(1.02);
     }
     50% {
-        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%);
-        border-color: #f59e0b;
-        box-shadow: 0 0 15px rgba(245, 158, 11, 0.4), 0 0 30px rgba(245, 158, 11, 0.2);
-        transform: scale(1.03);
+        background: #012169;
+        border-color: #ffffff;
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.2), 0 0 30px rgba(255, 255, 255, 0.05);
+        transform: scale(1.01);
     }
     100% {
-        background: var(--original-bg, transparent);
-        border-color: var(--original-border, transparent);
+        background: var(--original-bg, #012169);
+        border-color: var(--original-border, rgba(255, 255, 255, 0.1));
         box-shadow: none;
         transform: scale(1);
     }

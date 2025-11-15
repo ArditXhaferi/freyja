@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\RoadmapController;
 use App\Http\Controllers\Api\VoiceSessionController;
 use App\Http\Controllers\Api\BusinessPlanController;
 use App\Http\Controllers\Api\UserProgressController;
+use App\Http\Controllers\Api\AdvisorController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,5 +40,11 @@ Route::middleware(['web', 'auth'])->group(function () {
 Route::middleware(['web', 'auth'])->group(function () {
     Route::get('/user-progress', [UserProgressController::class, 'show']);
     Route::post('/user-progress/award-xp', [UserProgressController::class, 'awardXP']);
+});
+
+// Advisor routes (require authentication)
+Route::middleware(['web', 'auth'])->group(function () {
+    Route::get('/advisors', [AdvisorController::class, 'index']);
+    Route::post('/advisors/match', [AdvisorController::class, 'matchByStep']);
 });
 

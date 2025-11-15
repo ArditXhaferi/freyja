@@ -105,6 +105,50 @@
           "required": false
         },
         {
+          "id": "specialization",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "Advisor specialization area (e.g., 'marketing', 'funding', 'business_registration', 'residence_permit', 'tax', 'legal'). Extract from user's response when they mention their area of expertise.",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "title",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "Professional title or role (e.g., 'Business Advisor', 'Executive Director'). Extract from user's response when they mention their title.",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "bio",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "Professional biography or description. Extract from user's response when they describe their background or expertise.",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "languages",
+          "type": "array",
+          "value_type": "llm_prompt",
+          "description": "List of languages spoken (e.g., ['Finnish', 'English', 'Swedish']). Extract from user's response when they mention languages they speak.",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
           "id": "operating_environment_risks",
           "type": "string",
           "value_type": "llm_prompt",

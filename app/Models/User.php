@@ -20,6 +20,10 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'specialization',
+        'title',
+        'bio',
+        'languages',
         'language',
         'country_of_origin',
         'is_eu_resident',
@@ -95,6 +99,23 @@ class User extends Authenticatable
             'number_of_employees' => 'integer',
             'swot_analysis' => 'array',
             'products_services_detailed' => 'array',
+            'languages' => 'array',
         ];
+    }
+
+    /**
+     * Scope a query to only include advisors.
+     */
+    public function scopeAdvisors($query)
+    {
+        return $query->where('role', 'advisor');
+    }
+
+    /**
+     * Scope a query to filter by specialization.
+     */
+    public function scopeBySpecialization($query, string $specialization)
+    {
+        return $query->where('specialization', $specialization);
     }
 }

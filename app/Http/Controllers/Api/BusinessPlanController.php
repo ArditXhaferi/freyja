@@ -34,6 +34,11 @@ class BusinessPlanController extends Controller
             'years_in_finland' => $user->years_in_finland,
             'has_business_experience' => $user->has_business_experience,
             'language' => $user->language,
+            // Advisor fields
+            'specialization' => $user->specialization,
+            'title' => $user->title,
+            'bio' => $user->bio,
+            'languages' => $user->languages,
             // Business plan fields
             'business_name' => $user->business_name,
             'company_contact_info' => $user->company_contact_info,
@@ -120,6 +125,11 @@ class BusinessPlanController extends Controller
             'years_in_finland' => 'sometimes|nullable|integer|min:0',
             'has_business_experience' => 'sometimes|nullable|boolean',
             'language' => 'sometimes|nullable|string|max:10',
+            // Advisor fields
+            'specialization' => 'sometimes|nullable|string|max:255',
+            'title' => 'sometimes|nullable|string|max:255',
+            'bio' => 'sometimes|nullable|string',
+            'languages' => 'sometimes|nullable|array',
             // Business plan fields
             'business_name' => 'sometimes|string|max:255',
             'company_contact_info' => 'sometimes|string',
@@ -185,6 +195,11 @@ class BusinessPlanController extends Controller
                 'years_in_finland' => $user->years_in_finland,
                 'has_business_experience' => $user->has_business_experience,
                 'language' => $user->language,
+                // Advisor fields
+                'specialization' => $user->specialization,
+                'title' => $user->title,
+                'bio' => $user->bio,
+                'languages' => $user->languages,
                 // Business plan fields
                 'business_name' => $user->business_name,
                 'company_contact_info' => $user->company_contact_info,

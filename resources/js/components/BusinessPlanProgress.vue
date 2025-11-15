@@ -1,19 +1,19 @@
 <template>
     <div class="w-full">
-        <!-- Cute Header -->
-        <div class="mb-4 bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 rounded-2xl p-4 shadow-lg">
+        <!-- Header -->
+        <div class="mb-4 bg-[#012169] rounded-lg p-4 shadow-lg">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <div class="text-3xl">📋</div>
                     <h3 class="text-xl font-bold text-white">Business Plan</h3>
                 </div>
-                <div class="flex items-center gap-3 bg-white/30 backdrop-blur-sm rounded-full px-4 py-2">
+                <div class="flex items-center gap-3 bg-[#011135] rounded-full px-4 py-2 border border-white/20">
                     <div class="text-sm font-bold text-white">
                         {{ completedCount }}/{{ totalFields }}
                     </div>
-                    <div class="w-20 h-3 bg-white/50 rounded-full overflow-hidden">
+                    <div class="w-20 h-3 bg-white/10 rounded-full overflow-hidden">
                         <div 
-                            class="h-full bg-white rounded-full transition-all duration-500 shadow-sm"
+                            class="h-full bg-green-500 rounded-full transition-all duration-500 shadow-sm"
                             :style="{ width: `${completionPercentage}%` }"
                         ></div>
                     </div>
@@ -24,35 +24,35 @@
             </div>
         </div>
 
-        <!-- Cute Grid Cards -->
+        <!-- Grid Cards -->
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
             <div
                 v-for="(section, sectionKey) in businessPlanSections"
                 :key="sectionKey"
                 :class="[
-                    'rounded-2xl p-3 transition-all duration-300 hover:scale-105 cursor-pointer shadow-md',
+                    'rounded-lg p-3 transition-all duration-300 hover:scale-105 cursor-pointer shadow-md border',
                     section.completed 
-                        ? 'bg-gradient-to-br from-green-100 to-emerald-200 border-2 border-green-300' 
-                        : 'bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200'
+                        ? 'bg-[#011135] border-green-500/50' 
+                        : 'bg-[#011135] border-white/20'
                 ]"
             >
                 <!-- Section Header -->
                 <div class="flex items-center justify-between mb-2">
                     <div class="flex items-center gap-2">
                         <div :class="[
-                            'w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-sm',
+                            'w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold shadow-sm border',
                             section.completed 
-                                ? 'bg-green-400 text-white' 
-                                : 'bg-blue-300 text-blue-700'
+                                ? 'bg-green-600 text-white border-green-400' 
+                                : 'bg-[#012169] text-white border-white/30'
                         ]">
-                            <span v-if="section.completed">✨</span>
+                            <span v-if="section.completed">✓</span>
                             <span v-else>{{ section.filledCount }}</span>
                         </div>
-                        <h4 class="font-bold text-xs text-gray-700">{{ section.title }}</h4>
+                        <h4 class="font-bold text-xs text-white">{{ section.title }}</h4>
                     </div>
                 </div>
 
-                <!-- Cute Field List -->
+                <!-- Field List -->
                 <div class="space-y-1.5">
                     <div
                         v-for="fieldKey in section.fields"
@@ -60,38 +60,48 @@
                         :ref="el => setFieldRef(fieldKey, el)"
                         :id="`field-${fieldKey}`"
                         :class="[
-                            'flex items-center gap-2 p-1.5 rounded-lg text-xs transition-all',
+                            'p-1.5 rounded-lg text-xs transition-all border',
                             isFieldFilled(fieldKey) 
-                                ? 'bg-green-200 border border-green-300' 
-                                : 'bg-white/60 border border-blue-200',
+                                ? 'bg-green-600/20 border-green-500/50' 
+                                : 'bg-white/5 border-white/20',
                             fieldToHighlight === fieldKey ? 'field-highlight' : ''
                         ]"
                     >
-                        <div :class="[
-                            'w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0',
-                            isFieldFilled(fieldKey) 
-                                ? 'bg-green-400 text-white' 
-                                : 'bg-blue-200 text-blue-600'
-                        ]">
-                            <span v-if="isFieldFilled(fieldKey)">✓</span>
-                            <span v-else class="text-[8px]">○</span>
-                        </div>
-                        <div class="flex-1 min-w-0 font-medium truncate text-gray-700">
-                            {{ getFieldLabel(fieldKey) }}
+                        <div class="flex items-start gap-2">
+                            <div :class="[
+                                'w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold flex-shrink-0 border mt-0.5',
+                                isFieldFilled(fieldKey) 
+                                    ? 'bg-green-600 text-white border-green-400' 
+                                    : 'bg-[#012169] text-white/70 border-white/30'
+                            ]">
+                                <span v-if="isFieldFilled(fieldKey)">✓</span>
+                                <span v-else class="text-[8px]">○</span>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="font-medium text-white/90 mb-0.5">
+                                    {{ getFieldLabel(fieldKey) }}
+                                </div>
+                                <div v-if="isFieldFilled(fieldKey)" class="text-[10px] text-white/70 line-clamp-2">
+                                    {{ formatFieldValue(fieldKey) }}
+                                </div>
+                                <div v-else class="text-[10px] text-white/40 italic">
+                                    Not provided
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Cute Progress Bar -->
-                <div class="mt-2 pt-2 border-t border-blue-200">
-                    <div class="flex items-center justify-between text-[10px] font-bold text-gray-600 mb-1">
+                <!-- Progress Bar -->
+                <div class="mt-2 pt-2 border-t border-white/20">
+                    <div class="flex items-center justify-between text-[10px] font-bold text-white/70 mb-1">
                         <span>{{ section.filledCount }}/{{ section.fields.length }}</span>
                     </div>
-                    <div class="w-full h-2 bg-white/60 rounded-full overflow-hidden">
+                    <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
                         <div 
                             :class="[
                                 'h-full rounded-full transition-all duration-500',
-                                section.completed ? 'bg-gradient-to-r from-green-400 to-emerald-500' : 'bg-gradient-to-r from-blue-400 to-purple-400'
+                                section.completed ? 'bg-green-500' : 'bg-[#012169]'
                             ]"
                             :style="{ width: `${(section.filledCount / section.fields.length) * 100}%` }"
                         ></div>
@@ -103,10 +113,10 @@
         <!-- Celebration Banner -->
         <div 
             v-if="completionPercentage === 100"
-            class="mt-4 bg-gradient-to-r from-yellow-300 via-pink-300 to-purple-300 rounded-2xl p-4 text-center shadow-lg animate-bounce"
+            class="mt-4 bg-[#012169] border-2 border-green-500/50 rounded-lg p-4 text-center shadow-lg"
         >
             <div class="text-4xl mb-2">🎉</div>
-            <h3 class="text-lg font-bold text-gray-800">All Complete! 🎊</h3>
+            <h3 class="text-lg font-bold text-white">All Complete! 🎊</h3>
         </div>
     </div>
 </template>
@@ -298,17 +308,89 @@ const getFieldLabel = (fieldKey) => {
     };
     return labels[fieldKey] || fieldKey.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
 };
+
+const formatFieldValue = (fieldKey) => {
+    const _ = updateTrigger.value;
+    const value = props.businessPlan?.[fieldKey];
+    
+    if (value === null || value === undefined) return '';
+    
+    // Handle booleans
+    if (typeof value === 'boolean') {
+        return value ? 'Yes' : 'No';
+    }
+    
+    // Handle numbers
+    if (typeof value === 'number') {
+        // Special formatting for certain fields
+        if (fieldKey === 'year_of_establishment') {
+            return value.toString();
+        }
+        if (fieldKey === 'number_of_employees') {
+            return `${value} ${value === 1 ? 'employee' : 'employees'}`;
+        }
+        if (fieldKey === 'years_in_finland') {
+            return `${value} ${value === 1 ? 'year' : 'years'}`;
+        }
+        return value.toString();
+    }
+    
+    // Handle arrays
+    if (Array.isArray(value)) {
+        if (value.length === 0) return '';
+        // For languages array
+        if (fieldKey === 'languages') {
+            return value.join(', ');
+        }
+        // For products_services_detailed
+        if (fieldKey === 'products_services_detailed') {
+            return `${value.length} ${value.length === 1 ? 'item' : 'items'}`;
+        }
+        return value.join(', ');
+    }
+    
+    // Handle objects
+    if (typeof value === 'object') {
+        // For SWOT analysis
+        if (fieldKey === 'swot_analysis') {
+            const parts = [];
+            if (value.strengths) parts.push('Strengths');
+            if (value.weaknesses) parts.push('Weaknesses');
+            if (value.opportunities) parts.push('Opportunities');
+            if (value.threats) parts.push('Threats');
+            return parts.length > 0 ? parts.join(', ') : 'SWOT analysis';
+        }
+        return Object.keys(value).length > 0 ? 'See details' : '';
+    }
+    
+    // Handle strings
+    if (typeof value === 'string') {
+        // Truncate long strings
+        if (value.length > 60) {
+            return value.substring(0, 57) + '...';
+        }
+        return value;
+    }
+    
+    return String(value);
+};
 </script>
 
 <style scoped>
-/* Cute, playful animations */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
 
 /* Field highlight animation */
 .field-highlight {
     animation: highlightPulse 5s ease-in-out;
-    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%) !important;
-    border: 3px solid #f59e0b !important;
-    box-shadow: 0 0 20px rgba(245, 158, 11, 0.5), 0 0 40px rgba(245, 158, 11, 0.3);
+    background: rgba(34, 197, 94, 0.3) !important;
+    border: 2px solid #22c55e !important;
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.5), 0 0 40px rgba(34, 197, 94, 0.3);
     transform: scale(1.05);
     z-index: 10;
     position: relative;
@@ -316,15 +398,15 @@ const getFieldLabel = (fieldKey) => {
 
 @keyframes highlightPulse {
     0% {
-        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%);
-        border-color: #f59e0b;
-        box-shadow: 0 0 20px rgba(245, 158, 11, 0.5), 0 0 40px rgba(245, 158, 11, 0.3);
+        background: rgba(34, 197, 94, 0.3);
+        border-color: #22c55e;
+        box-shadow: 0 0 20px rgba(34, 197, 94, 0.5), 0 0 40px rgba(34, 197, 94, 0.3);
         transform: scale(1.05);
     }
     50% {
-        background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%);
-        border-color: #f59e0b;
-        box-shadow: 0 0 15px rgba(245, 158, 11, 0.4), 0 0 30px rgba(245, 158, 11, 0.2);
+        background: rgba(34, 197, 94, 0.25);
+        border-color: #22c55e;
+        box-shadow: 0 0 15px rgba(34, 197, 94, 0.4), 0 0 30px rgba(34, 197, 94, 0.2);
         transform: scale(1.03);
     }
     100% {

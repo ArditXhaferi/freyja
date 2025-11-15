@@ -311,11 +311,35 @@ export default function useVoiceAgent({
                 envKeys: Object.keys(import.meta.env).filter(key => key.includes('ELEVENLABS'))
             });
 
-            // Fetch business plan and roadmap data for context
+            // Fetch business plan, roadmap, and advisors data for context
             let businessPlanContext = '';
             let roadmapContext = '';
+            let advisorsContext = '';
             
             try {
+                // Fetch advisors
+                const advisorsResponse = await axios.get('/api/advisors');
+                if (advisorsResponse.data && advisorsResponse.data.advisors && advisorsResponse.data.advisors.length > 0) {
+                    const advisors = advisorsResponse.data.advisors;
+                    advisorsContext = 'AVAILABLE ADVISORS:\n\n';
+                    advisors.forEach(advisor => {
+                        advisorsContext += `- ${advisor.name} (${advisor.email})\n`;
+                        if (advisor.specialization) {
+                            const specializationLabels = {
+                                'residence_permit': 'Residence Permit Applications',
+                                'business_registration': 'Business Registration & Trade Register',
+                                'tax': 'Tax Matters, VAT & Accounting',
+                                'funding': 'Funding, Grants & Investors',
+                                'legal': 'Legal Matters, Contracts & IP',
+                                'marketing': 'Marketing, Sales & Branding',
+                            };
+                            advisorsContext += `  Specialization: ${specializationLabels[advisor.specialization] || advisor.specialization}\n`;
+                        }
+                        advisorsContext += '\n';
+                    });
+                    advisorsContext += 'You can suggest these advisors to the user when creating roadmap steps that match their specializations.\n';
+                }
+                
                 const businessPlanResponse = await axios.get('/api/business-plan');
                 console.log('Business plan API response:', businessPlanResponse.data);
                 businessPlanDataRef.value = businessPlanResponse.data;
@@ -410,6 +434,13 @@ export default function useVoiceAgent({
                     contextWithFirstMessage += '\n\n' + '='.repeat(50) + '\n\n';
                 }
                 contextWithFirstMessage += roadmapContext;
+            }
+            
+            if (advisorsContext) {
+                if (contextWithFirstMessage) {
+                    contextWithFirstMessage += '\n\n' + '='.repeat(50) + '\n\n';
+                }
+                contextWithFirstMessage += advisorsContext;
             }
             
             // Add first message instruction to context

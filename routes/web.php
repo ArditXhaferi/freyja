@@ -6,6 +6,7 @@ use Inertia\Inertia;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Models\Roadmap;
+use App\Models\User;
 
 Route::get('/', function () {
     return Inertia::render('Welcome');
@@ -75,10 +76,16 @@ Route::middleware('auth')->group(function () {
             'my_business_comprehensive' => $user->my_business_comprehensive,
         ];
         
+        // Fetch advisors
+        $advisors = User::advisors()
+            ->select('id', 'name', 'email', 'specialization')
+            ->get();
+        
         return Inertia::render('VoiceRoadmap', [
             'initialRoadmap' => $roadmapData,
             'initialBusinessPlan' => $businessPlanData,
             'userName' => $user->name, // Pass user name for first message
+            'advisors' => $advisors, // Pass advisors to frontend
         ]);
     })->name('voice-roadmap');
 });
