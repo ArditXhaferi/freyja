@@ -2,6 +2,30 @@ import { ref, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
 
 /**
+ * Strip CHARACTER tags from ElevenLabs Agent responses
+ * Handles multiple formats:
+ * - <CHARACTER>default>text</CHARACTER> -> text
+ * - <CHARACTER>default</CHARACTER> -> (removed)
+ * - <CHARACTER>default>text</CHARACTER>text -> texttext
+ */
+const stripCharacterTags = (text) => {
+    if (!text || typeof text !== 'string') return text;
+    
+    // Remove all CHARACTER tags (with or without content)
+    // Pattern 1: <CHARACTER>default>content</CHARACTER> -> content
+    // Pattern 2: <CHARACTER>default</CHARACTER> -> (removed completely)
+    let cleaned = text.replace(/<CHARACTER>[^>]*>([^<]*)<\/CHARACTER>/gi, '$1');
+    
+    // Also handle cases where tag might be standalone
+    cleaned = cleaned.replace(/<CHARACTER>[^<]*<\/CHARACTER>/gi, '');
+    
+    // Clean up any extra whitespace that might result
+    cleaned = cleaned.replace(/\s+/g, ' ').trim();
+    
+    return cleaned;
+};
+
+/**
  * useChatAgent Composable
  * Vue composable for ElevenLabs Agents Text Chat integration
  * Uses ElevenLabs REST API directly for text-only chat
@@ -378,9 +402,10 @@ export default function useChatAgent({
                     if (response.data) {
                         const agentResponse = response.data.agent_response || response.data.response || firstMessage;
                         if (onMessage) {
+                            const cleanedResponse = stripCharacterTags(agentResponse);
                             onMessage({
                                 type: 'assistant',
-                                text: agentResponse
+                                text: cleanedResponse
                             });
                         }
 
@@ -449,9 +474,10 @@ export default function useChatAgent({
             if (response.data) {
                 const agentResponse = response.data.agent_response || response.data.response || response.data.message;
                 if (agentResponse && onMessage) {
+                    const cleanedResponse = stripCharacterTags(agentResponse);
                     onMessage({
                         type: 'assistant',
-                        text: agentResponse
+                        text: cleanedResponse
                     });
                 }
 

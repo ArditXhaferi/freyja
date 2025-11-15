@@ -3,6 +3,30 @@ import axios from 'axios';
 import { VoiceConversation } from '@elevenlabs/client';
 
 /**
+ * Strip CHARACTER tags from ElevenLabs Agent responses
+ * Handles multiple formats:
+ * - <CHARACTER>default>text</CHARACTER> -> text
+ * - <CHARACTER>default</CHARACTER> -> (removed)
+ * - <CHARACTER>default>text</CHARACTER>text -> texttext
+ */
+const stripCharacterTags = (text) => {
+    if (!text || typeof text !== 'string') return text;
+    
+    // Remove all CHARACTER tags (with or without content)
+    // Pattern 1: <CHARACTER>default>content</CHARACTER> -> content
+    // Pattern 2: <CHARACTER>default</CHARACTER> -> (removed completely)
+    let cleaned = text.replace(/<CHARACTER>[^>]*>([^<]*)<\/CHARACTER>/gi, '$1');
+    
+    // Also handle cases where tag might be standalone
+    cleaned = cleaned.replace(/<CHARACTER>[^<]*<\/CHARACTER>/gi, '');
+    
+    // Clean up any extra whitespace that might result
+    cleaned = cleaned.replace(/\s+/g, ' ').trim();
+    
+    return cleaned;
+};
+
+/**
  * useVoiceAgent Composable
  * Vue composable for ElevenLabs Agents Voice Conversation integration
  */
@@ -837,9 +861,10 @@ export default function useVoiceAgent({
                 onMessage: (props) => {
                     console.log('Message received:', props);
                     if (onTranscript) {
+                        const messageText = stripCharacterTags(props.message || '');
                         onTranscript({
                             type: props.source === 'user' ? 'user' : 'ai',
-                            text: props.message || '',
+                            text: messageText,
                             timestamp: new Date().toISOString()
                         });
                     }

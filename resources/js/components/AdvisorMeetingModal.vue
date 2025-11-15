@@ -1,9 +1,9 @@
 <template>
     <div v-if="show" class="fixed inset-0 z-50 flex items-center justify-center p-4 modal-overlay" @click.self="close">
-        <div class="bg-white rounded-lg shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto modal-content">
-            <div class="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between rounded-t-lg z-10">
-                <h2 class="text-2xl font-bold text-gray-800">Schedule Advisor Meeting</h2>
-                <button @click="close" class="text-gray-400 hover:text-gray-600 transition-colors">
+        <div class="bg-[#012169] rounded-lg shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto modal-content border border-white/20">
+            <div class="sticky top-0 bg-[#011135] border-b border-white/20 px-6 py-4 flex items-center justify-between rounded-t-lg z-10">
+                <h2 class="text-2xl font-bold text-white">Schedule Advisor Meeting</h2>
+                <button @click="close" class="text-white/70 hover:text-white transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
@@ -13,31 +13,31 @@
             <div class="p-6">
                 <!-- Loading State -->
                 <div v-if="checkingReadiness" class="text-center py-12">
-                    <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-                    <p class="text-lg font-medium text-gray-700">Checking your readiness...</p>
+                    <div class="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mb-4"></div>
+                    <p class="text-lg font-medium text-white/80">Checking your readiness...</p>
                 </div>
 
                 <!-- Not Ready State -->
                 <div v-else-if="!readinessData.is_ready" class="space-y-6">
-                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+                    <div class="bg-[#011135] border-l-4 border-yellow-500/70 p-4 rounded-lg border border-white/10">
                         <div class="flex items-start">
-                            <svg class="w-6 h-6 text-yellow-600 mr-3 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-6 h-6 text-yellow-400 mr-3 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                             </svg>
-                            <div>
-                                <h3 class="text-lg font-bold text-yellow-800 mb-2">Not Quite Ready Yet</h3>
-                                <p class="text-sm text-yellow-700 mb-3">
+                            <div class="flex-1">
+                                <h3 class="text-lg font-bold text-white mb-2">Not Quite Ready Yet</h3>
+                                <p class="text-sm text-white/80 mb-3">
                                     You're {{ readinessData.readiness_score }}% ready. Let's get you prepared for your advisor meeting!
                                 </p>
-                                <div class="bg-white rounded p-3 mb-3">
-                                    <p class="text-sm font-semibold text-gray-800 mb-2">Progress:</p>
-                                    <div class="w-full bg-gray-200 rounded-full h-2.5 mb-2">
+                                <div class="bg-[#012169] rounded-lg p-3 mb-3 border border-white/10">
+                                    <p class="text-sm font-semibold text-white mb-2">Progress:</p>
+                                    <div class="w-full bg-white/10 rounded-full h-2.5 mb-2">
                                         <div 
-                                            class="bg-yellow-600 h-2.5 rounded-full transition-all duration-300" 
+                                            class="bg-yellow-500 h-2.5 rounded-full transition-all duration-300" 
                                             :style="{ width: readinessData.readiness_score + '%' }"
                                         ></div>
                                     </div>
-                                    <p class="text-xs text-gray-600">
+                                    <p class="text-xs text-white/70">
                                         {{ readinessData.filled_fields_count }} of {{ readinessData.total_fields_count }} business plan fields completed
                                         <span v-if="!readinessData.has_roadmap"> • No roadmap created yet</span>
                                     </p>
@@ -46,11 +46,11 @@
                         </div>
                     </div>
 
-                    <div class="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
-                        <h4 class="font-semibold text-blue-800 mb-2">What You Need to Do:</h4>
+                    <div class="bg-[#011135] border-l-4 border-[#012169] p-4 rounded-lg border border-white/10">
+                        <h4 class="font-semibold text-white mb-2">What You Need to Do:</h4>
                         <ul class="space-y-2">
-                            <li v-for="(rec, index) in readinessData.recommendations" :key="index" class="flex items-start text-sm text-blue-700">
-                                <svg class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <li v-for="(rec, index) in readinessData.recommendations" :key="index" class="flex items-start text-sm text-white/80">
+                                <svg class="w-5 h-5 mr-2 mt-0.5 flex-shrink-0 text-[#012169]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
                                 </svg>
                                 {{ rec }}
@@ -61,13 +61,13 @@
                     <div class="flex gap-4 justify-end">
                         <button
                             @click="close"
-                            class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors"
+                            class="px-6 py-2 border border-white/20 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition-colors"
                         >
                             I'll Prepare First
                         </button>
                         <button
                             @click="proceedAnyway"
-                            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                            class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-semibold"
                         >
                             Schedule Anyway
                         </button>
@@ -76,37 +76,38 @@
 
                 <!-- Ready State - Scheduling Form -->
                 <div v-else class="space-y-6">
-                    <div class="bg-green-50 border-l-4 border-green-400 p-4 rounded">
+                    <div class="bg-[#011135] border-l-4 border-green-500 p-4 rounded-lg border border-white/10">
                         <div class="flex items-center">
-                            <svg class="w-6 h-6 text-green-600 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg class="w-6 h-6 text-green-500 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
-                            <p class="text-sm text-green-700 font-semibold">Great! You're ready to schedule a meeting with an advisor.</p>
+                            <p class="text-sm text-white font-semibold">Great! You're ready to schedule a meeting with an advisor.</p>
                         </div>
                     </div>
 
                     <!-- Advisor Selection -->
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Select Advisor <span class="text-red-500">*</span>
+                        <label class="block text-sm font-semibold text-white mb-2">
+                            Select Advisor <span class="text-red-400">*</span>
                         </label>
                         <select
                             v-model="selectedAdvisorId"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            class="w-full px-4 py-2 bg-[#011135] text-white border border-white/20 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
                             :disabled="loadingAdvisors || scheduling"
                         >
-                            <option value="">-- Select an advisor --</option>
+                            <option value="" class="bg-[#011135] text-white">-- Select an advisor --</option>
                             <option 
                                 v-for="advisor in filteredAdvisors" 
                                 :key="advisor.id" 
                                 :value="advisor.id"
+                                class="bg-[#011135] text-white"
                             >
                                 {{ advisor.name }} 
                                 <span v-if="advisor.title">- {{ advisor.title }}</span>
                                 <span v-if="advisor.specialization"> ({{ getSpecializationLabel(advisor.specialization) }})</span>
                             </option>
                         </select>
-                        <p v-if="selectedAdvisor" class="mt-2 text-sm text-gray-600">
+                        <p v-if="selectedAdvisor" class="mt-2 text-sm text-white/70">
                             <span v-if="selectedAdvisor.email">📧 {{ selectedAdvisor.email }}</span>
                             <span v-if="selectedAdvisor.bio" class="block mt-1">{{ selectedAdvisor.bio }}</span>
                         </p>
@@ -114,62 +115,62 @@
 
                     <!-- Meeting Topic -->
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        <label class="block text-sm font-semibold text-white mb-2">
                             Meeting Topic
                         </label>
                         <input
                             v-model="meetingTopic"
                             type="text"
                             placeholder="e.g., Funding application, Business registration, etc."
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            class="w-full px-4 py-2 bg-[#011135] text-white border border-white/20 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder:text-white/40 transition-colors"
                             :disabled="scheduling"
                         />
                     </div>
 
                     <!-- Date Selection -->
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Date <span class="text-red-500">*</span>
+                        <label class="block text-sm font-semibold text-white mb-2">
+                            Date <span class="text-red-400">*</span>
                         </label>
                         <input
                             v-model="meetingDate"
                             type="date"
                             :min="minDate"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            class="w-full px-4 py-2 bg-[#011135] text-white border border-white/20 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
                             :disabled="scheduling"
                         />
                     </div>
 
                     <!-- Time Selection -->
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
-                            Time <span class="text-red-500">*</span>
+                        <label class="block text-sm font-semibold text-white mb-2">
+                            Time <span class="text-red-400">*</span>
                         </label>
                         <input
                             v-model="meetingTime"
                             type="time"
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            class="w-full px-4 py-2 bg-[#011135] text-white border border-white/20 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-colors"
                             :disabled="scheduling"
                         />
                     </div>
 
                     <!-- Notes -->
                     <div>
-                        <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        <label class="block text-sm font-semibold text-white mb-2">
                             Additional Notes (Optional)
                         </label>
                         <textarea
                             v-model="meetingNotes"
                             rows="3"
                             placeholder="Any specific questions or topics you'd like to discuss..."
-                            class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            class="w-full px-4 py-2 bg-[#011135] text-white border border-white/20 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder:text-white/40 transition-colors resize-none"
                             :disabled="scheduling"
                         ></textarea>
                     </div>
 
                     <!-- Error Message -->
-                    <div v-if="errorMessage" class="bg-red-50 border-l-4 border-red-400 p-4 rounded">
-                        <p class="text-sm text-red-700">{{ errorMessage }}</p>
+                    <div v-if="errorMessage" class="bg-[#011135] border-l-4 border-red-500 p-4 rounded-lg border border-white/10">
+                        <p class="text-sm text-red-400">{{ errorMessage }}</p>
                     </div>
 
                     <!-- Action Buttons -->
@@ -177,14 +178,14 @@
                         <button
                             @click="close"
                             :disabled="scheduling"
-                            class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            class="px-6 py-2 border border-white/20 rounded-lg text-white/80 hover:bg-white/10 hover:text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             Cancel
                         </button>
                         <button
                             @click="scheduleMeeting"
                             :disabled="!canSchedule || scheduling"
-                            class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                            class="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 font-semibold"
                         >
                             <span v-if="scheduling">
                                 <span class="inline-block animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></span>
@@ -444,12 +445,25 @@ onMounted(() => {
 
 <style scoped>
 .modal-overlay {
-    background-color: rgba(0, 0, 0, 0.5);
+    background-color: rgba(1, 17, 53, 0.8);
+    backdrop-filter: blur(4px);
     animation: fadeIn 0.2s ease-out;
 }
 
 .modal-content {
     animation: slideUp 0.3s ease-out;
+}
+
+/* Custom styling for date/time inputs in dark mode */
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
+select option {
+    background-color: #011135;
+    color: white;
 }
 
 @keyframes fadeIn {
