@@ -1097,32 +1097,48 @@ export default function useVoiceAgent({
     };
 
     const toggleMute = () => {
-        if (!conversationRef.value) return;
+        console.log('toggleMute called', {
+            hasConversation: !!conversationRef.value,
+            currentMutedState: isMuted.value,
+            isConnected: isConnected.value
+        });
+        
+        // Always toggle the state first (for UI feedback)
+        isMuted.value = !isMuted.value;
+        
+        // If no conversation, just update the state (UI will reflect it)
+        if (!conversationRef.value) {
+            console.log('No conversation ref, state toggled to:', isMuted.value);
+            return;
+        }
         
         try {
-            isMuted.value = !isMuted.value;
-            
             // Use ElevenLabs SDK mute method if available
             if (typeof conversationRef.value.setMuted === 'function') {
                 conversationRef.value.setMuted(isMuted.value);
+                console.log('Used setMuted method:', isMuted.value);
             } else if (typeof conversationRef.value.mute === 'function') {
                 if (isMuted.value) {
                     conversationRef.value.mute();
+                    console.log('Used mute() method');
                 } else {
                     conversationRef.value.unmute();
+                    console.log('Used unmute() method');
                 }
             } else {
                 // Fallback: interrupt when muted, resume when unmuted
                 if (isMuted.value) {
                     conversationRef.value.interrupt();
+                    console.log('Used interrupt() as fallback for mute');
                 }
                 // Note: Unmuting will resume naturally when user speaks
+                console.log('No SDK mute methods available, using state only');
             }
             
             console.log('Microphone muted:', isMuted.value);
         } catch (error) {
             console.error('Error toggling mute:', error);
-            isMuted.value = !isMuted.value; // Revert on error
+            // Don't revert - keep the UI state even if SDK call fails
         }
     };
 

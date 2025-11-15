@@ -5,12 +5,27 @@
 
                     <!-- Eppu Animation (Always Visible, Circular) -->
                     <div class="mb-6 flex flex-col items-center">
-                        <div class="relative w-64 h-64 rounded-full overflow-hidden border-4 border-white/20 shadow-xl bg-[#012169]">
+                        <div class="relative w-64 h-64 rounded-full overflow-hidden border-4 shadow-xl bg-[#012169] transition-all duration-300"
+                             :class="[
+                                 isConnected && isMuted 
+                                     ? 'border-red-500 shadow-red-500/50' 
+                                     : isConnected 
+                                         ? 'border-green-500 shadow-green-500/50' 
+                                         : 'border-white/20'
+                             ]">
                             <img
                                 :src="isTalking ? '/images/video6.gif' : '/images/video5.gif'"
                                 alt="Eppu the Bear"
                                 class="w-full h-full object-cover"
+                                :class="isConnected && isMuted ? 'opacity-60' : ''"
                             />
+                            <!-- Mute Overlay Indicator -->
+                            <div v-if="isConnected && isMuted" 
+                                 class="absolute inset-0 flex items-center justify-center bg-red-500/30 rounded-full">
+                                <div class="bg-red-600 rounded-full p-4 shadow-lg">
+                                    <i class="fa-solid fa-microphone-slash text-white text-3xl"></i>
+                                </div>
+                            </div>
                         </div>
                         <h1 class="text-3xl font-bold text-white mt-4 mb-2">
                             Eppu the Bear
@@ -91,7 +106,7 @@
                         <span>Listening...</span>
                     </span>
                     <span v-if="isMuted" 
-                          class="px-4 py-2 bg-red-500/50 text-white rounded-full text-sm font-medium flex items-center gap-2">
+                          class="px-4 py-2 bg-red-600 text-white rounded-full text-sm font-semibold flex items-center gap-2 animate-pulse shadow-lg shadow-red-500/50">
                         <i class="fa-solid fa-microphone-slash"></i>
                         <span>Muted</span>
                     </span>
@@ -102,17 +117,18 @@
                     </span>
                     <button
                         v-if="isConnected"
-                        @click="toggleMute"
+                        @click.stop="toggleMute"
+                        type="button"
                         :class="[
-                            'ml-auto px-5 py-3 rounded-full text-base font-semibold transition-all flex items-center gap-2 shadow-lg',
+                            'ml-auto px-5 py-3 rounded-full text-base font-semibold transition-all flex items-center gap-2 shadow-lg cursor-pointer',
                             isMuted
-                                ? 'bg-red-600 text-white hover:bg-red-700 hover:scale-105 active:scale-95'
+                                ? 'bg-red-600 text-white hover:bg-red-700 hover:scale-105 active:scale-95 animate-pulse shadow-red-500/50'
                                 : 'bg-white/20 text-white hover:bg-white/30 border border-white/20 hover:scale-105 active:scale-95'
                         ]"
                         :title="isMuted ? 'Click to unmute microphone' : 'Click to mute microphone'"
                     >
-                        <i v-if="isMuted" class="fa-solid fa-microphone-slash"></i>
-                        <i v-else class="fa-solid fa-microphone"></i>
+                        <i v-if="isMuted" class="fa-solid fa-microphone-slash text-xl"></i>
+                        <i v-else class="fa-solid fa-microphone text-xl"></i>
                         <span>{{ isMuted ? 'Unmute' : 'Mute' }}</span>
                     </button>
                 </div>
