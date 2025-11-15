@@ -18,10 +18,13 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained();
             $table->foreignId('advisor_id')->constrained('users');
             $table->foreignId('meeting_request_id')->nullable()->constrained('meeting_requests')->nullOnDelete();
-            $table->dateTime('scheduled_at');
+            $table->string('topic')->nullable();
+            $table->text('notes')->nullable();
+            $table->timestamp('scheduled_at');
             $table->string('location')->nullable();
             $table->text('agenda')->nullable();
             $table->enum('status', ['scheduled', 'completed', 'cancelled'])->default('scheduled');
+            $table->string('calendar_event_id')->nullable();
             $table->timestamps();
         });
 
