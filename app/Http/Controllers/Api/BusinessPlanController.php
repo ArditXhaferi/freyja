@@ -9,6 +9,11 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use PhpOffice\PhpWord\TemplateProcessor;
+use PhpOffice\PhpWord\IOFactory;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+use Illuminate\Support\Facades\Storage;
 
 class BusinessPlanController extends Controller
 {
@@ -236,5 +241,174 @@ class BusinessPlanController extends Controller
                 'my_business_comprehensive' => $user->my_business_comprehensive,
             ]
         ], 200);
+    }
+
+    /**
+     * Generate business plan PDF from template.docx
+     */
+    public function generatePdf(): JsonResponse|\Symfony\Component\HttpFoundation\Response
+    {
+        $user = Auth::user();
+
+        if (!$user) {
+            return response()->json(['error' => 'Unauthorized'], 401);
+        }
+
+        try {
+            $templatePath = base_path('template.docx');
+            
+            if (!file_exists($templatePath)) {
+                return response()->json(['error' => 'Template file not found'], 404);
+            }
+
+            // Create template processor
+            $templateProcessor = new TemplateProcessor($templatePath);
+
+            // Prepare data for template (map user fields to template placeholders)
+            $data = $this->prepareTemplateData($user);
+
+            // Replace placeholders in template
+            // PHPWord setValue expects just the variable name without ${} wrapper
+            foreach ($data as $key => $value) {
+                // Remove ${} wrapper if present
+                $placeholder = preg_replace('/^\$\{|\}$/', '', $key);
+                $templateProcessor->setValue($placeholder, $value ?? '');
+            }
+
+            // Save filled template to temporary file
+            $tempDocxPath = storage_path('app/temp/business-plan-' . $user->id . '-' . time() . '.docx');
+            $tempDir = dirname($tempDocxPath);
+            if (!is_dir($tempDir)) {
+                mkdir($tempDir, 0755, true);
+            }
+            $templateProcessor->saveAs($tempDocxPath);
+
+            // Convert DOCX to PDF
+            $pdfPath = $this->convertDocxToPdf($tempDocxPath);
+
+            // Clean up temporary DOCX file
+            if (file_exists($tempDocxPath)) {
+                unlink($tempDocxPath);
+            }
+
+            // Return PDF file
+            $filename = 'business-plan-' . ($user->business_name ?? 'my-business') . '-' . date('Y-m-d') . '.pdf';
+            
+            return response()->file($pdfPath, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+            ])->deleteFileAfterSend(true);
+        } catch (\Exception $e) {
+            Log::error('Error generating business plan PDF: ' . $e->getMessage(), [
+                'exception' => $e,
+                'user_id' => $user->id ?? null,
+            ]);
+
+            return response()->json([
+                'error' => 'Failed to generate business plan PDF',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Prepare user data for template placeholders
+     */
+    private function prepareTemplateData($user): array
+    {
+        // Helper function to format array/object to string
+        $formatValue = function ($value) {
+            if (is_null($value)) {
+                return '';
+            }
+            if (is_array($value)) {
+                return implode(', ', array_filter($value));
+            }
+            if (is_bool($value)) {
+                return $value ? 'Yes' : 'No';
+            }
+            return (string) $value;
+        };
+
+        return [
+            '${name}' => $formatValue($user->name),
+            '${business_name}' => $formatValue($user->business_name),
+            '${company_planned_name}' => $formatValue($user->company_planned_name),
+            '${company_type}' => $formatValue($user->company_type),
+            '${industry}' => $formatValue($user->industry),
+            '${address}' => $formatValue($user->address),
+            '${zip_code}' => $formatValue($user->zip_code),
+            '${postal_district}' => $formatValue($user->postal_district),
+            '${internet_address}' => $formatValue($user->internet_address),
+            '${business_id}' => $formatValue($user->business_id),
+            '${year_of_establishment}' => $formatValue($user->year_of_establishment),
+            '${number_of_employees}' => $formatValue($user->number_of_employees),
+            '${company_contact_info}' => $formatValue($user->company_contact_info),
+            '${company_owners_holdings}' => $formatValue($user->company_owners_holdings),
+            '${business_idea}' => $formatValue($user->business_idea),
+            '${competence_skills}' => $formatValue($user->competence_skills),
+            '${swot_analysis}' => $formatValue($user->swot_analysis),
+            '${products_services_general}' => $formatValue($user->products_services_general),
+            '${products_services_detailed}' => $formatValue($user->products_services_detailed),
+            '${sales_marketing}' => $formatValue($user->sales_marketing),
+            '${production_logistics}' => $formatValue($user->production_logistics),
+            '${distribution_network}' => $formatValue($user->distribution_network),
+            '${target_market_groups}' => $formatValue($user->target_market_groups),
+            '${competitors}' => $formatValue($user->competitors),
+            '${competitive_situation}' => $formatValue($user->competitive_situation),
+            '${third_parties_partners}' => $formatValue($user->third_parties_partners),
+            '${operating_environment_risks}' => $formatValue($user->operating_environment_risks),
+            '${vision_long_term}' => $formatValue($user->vision_long_term),
+            '${industry_future_prospects}' => $formatValue($user->industry_future_prospects),
+            '${permits_notices}' => $formatValue($user->permits_notices),
+            '${insurance_contracts}' => $formatValue($user->insurance_contracts),
+            '${intellectual_property_rights}' => $formatValue($user->intellectual_property_rights),
+            '${support_network}' => $formatValue($user->support_network),
+            '${my_business_comprehensive}' => $formatValue($user->my_business_comprehensive),
+            '${country_of_origin}' => $formatValue($user->country_of_origin),
+            '${generation_date}' => date('F j, Y'),
+        ];
+    }
+
+    /**
+     * Convert DOCX file to PDF
+     */
+    private function convertDocxToPdf(string $docxPath): string
+    {
+        // Load the DOCX file
+        $phpWord = IOFactory::load($docxPath);
+
+        // Set PDF options
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true);
+        $options->set('defaultFont', 'DejaVu Sans');
+
+        // Ensure temp directory exists
+        $tempDir = storage_path('app/temp');
+        if (!is_dir($tempDir)) {
+            mkdir($tempDir, 0755, true);
+        }
+
+        // Convert DOCX to HTML
+        $htmlWriter = IOFactory::createWriter($phpWord, 'HTML');
+        $tempHtmlPath = $tempDir . '/business-plan-' . time() . '.html';
+        $htmlWriter->save($tempHtmlPath);
+        
+        $htmlContent = file_get_contents($tempHtmlPath);
+        unlink($tempHtmlPath);
+
+        // Create PDF from HTML
+        $dompdf = new Dompdf($options);
+        $dompdf->loadHtml($htmlContent);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        // Save PDF to temporary file
+        $pdfPath = $tempDir . '/business-plan-' . time() . '.pdf';
+        $pdfContent = $dompdf->output();
+        file_put_contents($pdfPath, $pdfContent);
+
+        return $pdfPath;
     }
 }

@@ -1,65 +1,14 @@
 # ElevenLabs Client Tools JSON Schemas
 
-## 1. generateMeetingPrep Tool
+## 1. generateBusinessPlan Tool
 
 ```json
 {
-  "name": "generateMeetingPrep",
-  "description": "Generate a meeting preparation PDF document for the user to bring to their advisor meeting. Collects business idea summary, target customers, funding status, and questions for the advisor.",
+  "name": "generateBusinessPlan",
+  "description": "Generate a business plan PDF document from the template.docx file using the user's business plan information. Ask the user if they want to generate the PDF when they are ready.",
   "expects_response": true,
   "response_timeout_secs": 30,
-  "parameters": [
-    {
-      "id": "meeting_prep",
-      "type": "object",
-      "description": "Meeting preparation data",
-      "required": false,
-      "dynamic_variable": "",
-      "constant_value": "",
-      "properties": [
-        {
-          "id": "business_idea",
-          "type": "string",
-          "description": "Summary of the business idea",
-          "required": false,
-          "dynamic_variable": "",
-          "constant_value": ""
-        },
-        {
-          "id": "target_customers",
-          "type": "string",
-          "description": "Description of target customers",
-          "required": false,
-          "dynamic_variable": "",
-          "constant_value": ""
-        },
-        {
-          "id": "funding_status",
-          "type": "string",
-          "description": "Current funding status and needs",
-          "required": false,
-          "dynamic_variable": "",
-          "constant_value": ""
-        },
-        {
-          "id": "questions",
-          "type": "string",
-          "description": "Questions the user has for their advisor",
-          "required": false,
-          "dynamic_variable": "",
-          "constant_value": ""
-        },
-        {
-          "id": "notes",
-          "type": "string",
-          "description": "Additional notes or information",
-          "required": false,
-          "dynamic_variable": "",
-          "constant_value": ""
-        }
-      ]
-    }
-  ],
+  "parameters": [],
   "dynamic_variables": {
     "dynamic_variable_placeholders": []
   }

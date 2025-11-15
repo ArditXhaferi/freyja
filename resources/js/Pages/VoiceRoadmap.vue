@@ -1,16 +1,61 @@
 <template>
-    <Head title="Voice Roadmap Builder" />
+    <Head title="Eppu the Bear" />
     <div class="min-h-screen bg-[#011135] py-6 px-4 pb-24">
         <div class="max-w-6xl mx-auto">
 
-                    <!-- Professional Header -->
-                    <div class="mb-6 bg-[#012169] rounded-lg p-6 text-center shadow-lg">
-                        <h1 class="text-2xl font-bold text-white mb-2">
-                            Voice Roadmap Builder
+                    <!-- Eppu Video (Always Visible, Circular) -->
+                    <div class="mb-6 flex flex-col items-center">
+                        <div class="relative w-64 h-64 rounded-full overflow-hidden border-4 border-white/20 shadow-xl bg-[#012169]">
+                            <video
+                                ref="eppuVideo"
+                                muted
+                                playsinline
+                                class="w-full h-full object-cover"
+                                @ended="onVideoEnded"
+                                @play="isVideoPlaying = true"
+                                @pause="isVideoPlaying = false"
+                                preload="metadata"
+                            >
+                                <source src="/videos/eppu-opening-phone.mp4" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>
+                            <!-- Static fallback when video is paused/not playing -->
+                            <div v-if="!isVideoPlaying" class="absolute inset-0 bg-[#012169] flex items-center justify-center">
+                                <span class="text-6xl">🐻</span>
+                            </div>
+                        </div>
+                        <h1 class="text-3xl font-bold text-white mt-4 mb-2">
+                            Eppu the Bear
                         </h1>
-                        <p class="text-sm font-medium text-white/80">
+                        <p class="text-sm font-medium text-white/80 mb-4">
                             Your AI Startup Coach
                         </p>
+
+                        <!-- Mode Toggle -->
+                        <div class="flex items-center justify-center gap-3">
+                            <button
+                                @click="handleCallMode"
+                                :class="[
+                                    'px-6 py-3 rounded-lg text-base font-semibold transition-all',
+                                    interactionMode === 'voice'
+                                        ? 'bg-green-600 text-white shadow-lg'
+                                        : 'bg-[#011135] text-white/70 hover:text-white hover:bg-white/10 border border-white/20'
+                                ]"
+                            >
+                                📞 Call
+                            </button>
+                            <button
+                                @click="interactionMode = 'chat'"
+                                :class="[
+                                    'px-6 py-3 rounded-lg text-base font-semibold transition-all',
+                                    interactionMode === 'chat'
+                                        ? 'bg-green-600 text-white shadow-lg'
+                                        : 'bg-[#011135] text-white/70 hover:text-white hover:bg-white/10 border border-white/20'
+                                ]"
+                            >
+                                💬 Text
+                            </button>
+                        </div>
                     </div>
 
             <!-- Error Display -->
@@ -33,102 +78,111 @@
                 </div>
             </div>
 
-            <!-- Voice Controls -->
-            <div class="bg-[#012169] rounded-lg shadow-lg border border-[#011135] p-5 mb-6">
-                <div class="flex items-center justify-between flex-wrap gap-4">
-                    <div class="flex items-center gap-4">
-                        <div :class="[
-                            'w-3 h-3 rounded-full',
-                            connectionStatus === 'connected' ? 'bg-green-500' : '',
-                            connectionStatus === 'connecting' ? 'bg-yellow-500 animate-pulse' : '',
-                            connectionStatus === 'disconnected' ? 'bg-gray-400' : ''
-                        ]"></div>
-                        <span class="text-white font-medium">
-                            {{ connectionStatus === 'connected' ? 'Connected' : '' }}
-                            {{ connectionStatus === 'connecting' ? 'Connecting...' : '' }}
-                            {{ connectionStatus === 'disconnected' ? 'Disconnected' : '' }}
-                        </span>
-                        <span v-if="isListening" 
-                              class="px-3 py-1 bg-white/20 text-white rounded-full text-sm font-medium animate-pulse">
-                            🎤 Listening...
-                        </span>
-                        <span v-if="isSpeaking" 
-                              class="px-3 py-1 bg-white/20 text-white rounded-full text-sm font-medium">
-                            🔊 Speaking...
-                        </span>
-                    </div>
-
-                    <div class="flex gap-3">
-                        <button
-                            v-if="!isConnected"
-                            @click="handleConnect"
-                            class="px-6 py-3 bg-[#011135] text-white rounded-lg hover:bg-[#012169] transition-all font-semibold shadow-lg border border-white/20"
-                        >
-                            Connect
-                        </button>
-                        <template v-else>
-                            <button
-                                v-if="!isSessionActive"
-                                @click="handleStartSession"
-                                class="px-6 py-3 bg-[#011135] text-white rounded-lg hover:bg-[#012169] transition-all font-semibold shadow-lg border border-white/20 flex items-center gap-2"
-                            >
-                                <span>🎤</span>
-                                Start Voice Session
-                            </button>
-                            <button
-                                v-else
-                                @click="handleStopSession"
-                                class="px-6 py-3 bg-red-700 text-white rounded-lg hover:bg-red-800 transition-all font-semibold shadow-lg border border-red-600 flex items-center gap-2"
-                            >
-                                <span>⏹️</span>
-                                Stop Session
-                            </button>
-                            <button
-                                @click="handleDisconnect"
-                                class="px-6 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-800 transition-all font-semibold shadow-lg border border-gray-600"
-                            >
-                                Disconnect
-                            </button>
-                        </template>
-                    </div>
+            <!-- Voice Interface (Full Screen) -->
+            <div v-if="interactionMode === 'voice' && activeTab === 'roadmap'" class="bg-[#012169] rounded-lg shadow-lg border border-[#011135] p-6 mb-6 min-h-[600px] flex flex-col">
+                <!-- Call Status -->
+                <div class="flex items-center gap-4 mb-6 pb-4 border-b border-white/20">
+                    <div :class="[
+                        'w-3 h-3 rounded-full',
+                        connectionStatus === 'connected' ? 'bg-green-500' : '',
+                        connectionStatus === 'connecting' ? 'bg-yellow-500 animate-pulse' : '',
+                        connectionStatus === 'disconnected' ? 'bg-gray-400' : ''
+                    ]"></div>
+                    <span class="text-white font-medium">
+                        {{ connectionStatus === 'connected' ? 'Connected' : '' }}
+                        {{ connectionStatus === 'connecting' ? 'Connecting...' : '' }}
+                        {{ connectionStatus === 'disconnected' ? 'Ready to call' : '' }}
+                    </span>
+                    <span v-if="isListening" 
+                          class="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-medium animate-pulse">
+                        🎤 Listening...
+                    </span>
+                    <span v-if="isSpeaking" 
+                          class="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-medium">
+                        🔊 Speaking...
+                    </span>
                 </div>
 
-                <!-- Transcript Display -->
-                <div v-if="transcripts.length > 0" class="mt-6 pt-6 border-t border-white/20">
-                    <h3 class="text-sm font-semibold text-white mb-3">Conversation</h3>
-                    <div class="max-h-48 overflow-y-auto space-y-2">
+                <!-- Transcript Display (Full Screen) -->
+                <div class="flex-1 overflow-y-auto space-y-4 pb-4">
+                    <div v-if="transcripts.length === 0" class="flex items-center justify-center h-full">
+                        <p class="text-white/60 text-lg">Start a conversation with Eppu to see your chat here...</p>
+                    </div>
+                    <div
+                        v-for="(transcript, index) in transcripts"
+                        :key="index"
+                        :class="[
+                            'p-4 rounded-lg text-base',
+                            transcript.type === 'user' 
+                                ? 'bg-[#011135] text-white ml-12 border border-white/10' 
+                                : 'bg-white/10 text-white mr-12 border border-white/10'
+                        ]"
+                    >
+                        <span class="font-medium text-lg">
+                            {{ transcript.type === 'user' ? 'You: ' : 'Eppu: ' }}
+                        </span>
+                        <span class="text-white/90">{{ transcript.text }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chat Interface (Full Screen) -->
+            <div v-if="interactionMode === 'chat' && activeTab === 'roadmap'" class="bg-[#012169] rounded-lg shadow-lg border border-[#011135] p-6 mb-6 min-h-[600px] flex flex-col">
+                <!-- Chat Messages -->
+                <div class="flex-1 overflow-y-auto space-y-4 mb-6 pb-4" ref="chatMessagesContainer">
+                    <div v-if="chatMessages.length === 0" class="flex items-center justify-center h-full">
+                        <p class="text-white/60 text-lg">Start chatting with Eppu...</p>
+                    </div>
+                    <div
+                        v-for="(message, index) in chatMessages"
+                        :key="index"
+                        :class="[
+                            'flex',
+                            message.type === 'user' ? 'justify-end' : 'justify-start'
+                        ]"
+                    >
                         <div
-                            v-for="(transcript, index) in transcripts.slice(-5)"
-                            :key="index"
                             :class="[
-                                'p-3 rounded-lg text-sm',
-                                transcript.type === 'user' 
-                                    ? 'bg-[#011135] text-white ml-8 border border-white/10' 
-                                    : 'bg-white/10 text-white mr-8 border border-white/10'
+                                'max-w-[75%] rounded-lg p-4 text-base',
+                                message.type === 'user'
+                                    ? 'bg-[#011135] text-white border border-white/20'
+                                    : 'bg-white/10 text-white border border-white/20'
                             ]"
                         >
-                            <span class="font-medium">
-                                {{ transcript.type === 'user' ? 'You: ' : 'AI Coach: ' }}
-                            </span>
-                            {{ transcript.text }}
+                            <p class="whitespace-pre-wrap">{{ message.text }}</p>
+                        </div>
+                    </div>
+                    <div v-if="isLoadingChat" class="flex justify-start">
+                        <div class="bg-white/10 text-white border border-white/20 rounded-lg p-4 text-base">
+                            <div class="flex items-center gap-2">
+                                <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                                <span>Eppu is thinking...</span>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Main Content Area - Home page (Eppu the Bear) -->
-            <div v-if="activeTab === 'roadmap'" class="mb-6">
-                <!-- Home page shows only voice agent interface -->
-            </div>
-
-            <!-- Help Text -->
-            <div v-if="!isConnected" class="mt-4 bg-[#012169] rounded-lg p-4 border border-white/20 shadow-md">
-                <div class="flex items-center gap-3">
-                    <p class="text-sm font-semibold text-white">
-                        <span class="text-white/80">Getting Started:</span> Click "Connect" to start building your roadmap!
-                    </p>
+                
+                <!-- Chat Input -->
+                <div class="flex gap-3 border-t border-white/20 pt-4">
+                    <input
+                        v-model="chatInput"
+                        @keyup.enter="sendChatMessage"
+                        type="text"
+                        placeholder="Type your message to Eppu..."
+                        class="flex-1 bg-[#011135] text-white border border-white/20 rounded-lg px-5 py-3 text-base focus:outline-none focus:ring-2 focus:ring-green-500"
+                        :disabled="isLoadingChat"
+                    />
+                    <button
+                        @click="sendChatMessage"
+                        :disabled="!chatInput.trim() || isLoadingChat"
+                        class="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-lg"
+                    >
+                        <span>💬</span>
+                        Send
+                    </button>
                 </div>
             </div>
+
 
             <!-- Document Requests Section (shown in business tab) -->
             <div v-if="pendingDocuments.length > 0 && activeTab === 'business'" class="mt-4 bg-[#012169] rounded-lg shadow-lg border border-white/20 p-5">
@@ -149,11 +203,10 @@
         </div>
 
         <!-- Modals -->
-        <MeetingPrepModal
-            :show="showMeetingPrepModal"
+        <BusinessPlanModal
+            :show="showBusinessPlanModal"
             :business-plan="businessPlanData"
-            :prep-data="meetingPrepData"
-            @close="showMeetingPrepModal = false"
+            @close="showBusinessPlanModal = false"
         />
 
         <ProgressSummaryModal
@@ -501,7 +554,7 @@ import axios from 'axios';
 import useVoiceAgent from '../composables/useVoiceAgent';
 import RoadmapVisualizer from '../components/RoadmapVisualizer.vue';
 import BusinessPlanProgress from '../components/BusinessPlanProgress.vue';
-import MeetingPrepModal from '../components/MeetingPrepModal.vue';
+import BusinessPlanModal from '../components/BusinessPlanModal.vue';
 import ProgressSummaryModal from '../components/ProgressSummaryModal.vue';
 import ResourceCard from '../components/ResourceCard.vue';
 import DocumentRequestCard from '../components/DocumentRequestCard.vue';
@@ -541,9 +594,8 @@ const businessPlanData = ref(props.initialBusinessPlan);
 const recentlyAnsweredFields = ref(new Set()); // Track fields that were just answered
 
 // Modal states
-const showMeetingPrepModal = ref(false);
+const showBusinessPlanModal = ref(false);
 const showProgressSummaryModal = ref(false);
-const meetingPrepData = ref({});
 const progressSummaryData = ref({});
 
 // Resource cards
@@ -573,6 +625,17 @@ const activeTab = ref('roadmap');
 const fieldToHighlight = ref(null);
 const contextualFieldRefs = ref({});
 const showBusinessInfo = ref(false);
+
+// Interaction mode (voice or chat)
+const interactionMode = ref('voice');
+const chatMessages = ref([]);
+const chatInput = ref('');
+const isLoadingChat = ref(false);
+const chatMessagesContainer = ref(null);
+
+// Eppu video
+const eppuVideo = ref(null);
+const isVideoPlaying = ref(false);
 
 // Set refs for contextual fields
 const setContextualFieldRef = (fieldKey, el) => {
@@ -1026,9 +1089,8 @@ const handleError = (errorMessage) => {
 
 // New tool callbacks
 const handleMeetingPrep = (prepData) => {
-    console.log('Meeting prep requested:', prepData);
-    meetingPrepData.value = prepData;
-    showMeetingPrepModal.value = true;
+    console.log('Business plan generation requested:', prepData);
+    showBusinessPlanModal.value = true;
 };
 
 // Load user progress from API
@@ -1279,13 +1341,44 @@ const {
     onProgressSummary: handleProgressSummary
 });
 
+const handleCallMode = () => {
+    interactionMode.value = 'voice';
+    // If not connected, trigger the call
+    if (!isConnected.value) {
+        handleConnect();
+    }
+};
+
 const handleConnect = async () => {
     try {
         error.value = null;
-        await connect();
+        // Play Eppu video
+        if (eppuVideo.value) {
+            eppuVideo.value.currentTime = 0; // Reset to start
+            isVideoPlaying.value = true;
+            eppuVideo.value.play().catch(err => {
+                console.warn('Video autoplay failed:', err);
+                isVideoPlaying.value = false;
+            });
+        }
+        
+        // Connect after a short delay to let video start
+        setTimeout(async () => {
+            await connect();
+        }, 500);
     } catch (err) {
         console.error('Failed to connect:', err);
         error.value = 'Failed to connect to voice agent';
+        isVideoPlaying.value = false;
+    }
+};
+
+const onVideoEnded = () => {
+    // Pause video at end and show fallback
+    if (eppuVideo.value) {
+        eppuVideo.value.pause();
+        eppuVideo.value.currentTime = 0;
+        isVideoPlaying.value = false;
     }
 };
 
@@ -1319,6 +1412,90 @@ const handleStepUpdate = (step) => {
 };
 
 // Navigation handler - toggle drawer behavior
+// Chat message handling
+const sendChatMessage = async () => {
+    if (!chatInput.value.trim() || isLoadingChat.value) return;
+    
+    const userMessage = chatInput.value.trim();
+    chatInput.value = '';
+    
+    // Add user message to chat
+    chatMessages.value.push({
+        type: 'user',
+        text: userMessage
+    });
+    
+    // Scroll to bottom
+    await nextTick();
+    scrollChatToBottom();
+    
+    isLoadingChat.value = true;
+    
+    try {
+        // Send message to API endpoint for chat
+        const response = await axios.post('/api/chat', {
+            message: userMessage,
+            business_plan: businessPlanData.value,
+            roadmap: roadmap.value
+        });
+        
+        // Add AI response to chat
+        if (response.data && response.data.response) {
+            chatMessages.value.push({
+                type: 'assistant',
+                text: response.data.response
+            });
+            
+            // Handle any updates from the response
+            if (response.data.business_plan) {
+                await handleBusinessPlanUpdate(response.data.business_plan);
+            }
+            if (response.data.roadmap) {
+                await handleRoadmapUpdate(response.data.roadmap);
+            }
+        }
+    } catch (err) {
+        console.error('Chat error:', err);
+        chatMessages.value.push({
+            type: 'assistant',
+            text: 'Sorry, I encountered an error. Please try again.'
+        });
+    } finally {
+        isLoadingChat.value = false;
+        await nextTick();
+        scrollChatToBottom();
+    }
+};
+
+const scrollChatToBottom = () => {
+    if (chatMessagesContainer.value) {
+        chatMessagesContainer.value.scrollTop = chatMessagesContainer.value.scrollHeight;
+    }
+};
+
+// Initialize chat with welcome message when switching to chat mode
+watch(() => interactionMode.value, (newMode) => {
+    if (newMode === 'chat' && chatMessages.value.length === 0) {
+        // Play Eppu video for chat mode
+        nextTick(() => {
+            if (eppuVideo.value) {
+                eppuVideo.value.currentTime = 0; // Reset to start
+                isVideoPlaying.value = true;
+                eppuVideo.value.play().catch(err => {
+                    console.warn('Video autoplay failed:', err);
+                    isVideoPlaying.value = false;
+                });
+            }
+        });
+        
+        chatMessages.value.push({
+            type: 'assistant',
+            text: `Hi! I'm Eppu the Bear, your AI startup coach. 🐻\n\nI'm here to help you build your business plan and create a personalized roadmap for your startup journey. You can ask me questions about starting a business in Finland, get advice on your business plan, or work on your roadmap step by step.\n\nWhat would you like to start with?`
+        });
+        nextTick(() => scrollChatToBottom());
+    }
+});
+
 const handleNavigation = (tab) => {
     // If clicking the same tab, close it (toggle behavior)
     if (activeTab.value === tab) {
