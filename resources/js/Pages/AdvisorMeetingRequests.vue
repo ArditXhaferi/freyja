@@ -2,6 +2,7 @@
     <Head title="Meeting Requests" />
     <div class="flex min-h-screen bg-[#f2f7f5] text-slate-700">
         <RequestSidebar :advisor="advisor" active="Meeting Requests" />
+        <AdvisorBottomNav active="Meeting Requests" />
 
         <main class="flex-1 px-4 pb-10 pt-8 sm:px-8">
             <header class="rounded-3xl bg-white/90 px-6 py-5 shadow-sm shadow-emerald-100/40 border border-[#5cc094]">
@@ -39,6 +40,13 @@
                                 >
                                     <path d="M6 9l6 6 6-6" />
                                 </svg>
+                            </button>
+                            <button
+                                type="button"
+                                class="rounded-2xl border border-[#5cc094] bg-[#205274] px-4 py-2 text-xs sm:text-sm font-semibold text-white shadow-sm hover:bg-[#1a425d]"
+                                @click="handleGetPdf(request)"
+                            >
+                                Get PDF
                             </button>
                         </div>
                     </div>
@@ -295,11 +303,13 @@
 
 <script setup>
 import { reactive, ref } from 'vue';
+import jsPDF from 'jspdf';
 import { Head, Link, router } from '@inertiajs/vue3';
 import RequestSidebar from '../components/RequestSidebar.vue';
 import BusinessRoadmapFlow from '../components/BusinessRoadmapFlow.vue';
 import SoftDatePicker from '../components/SoftDatePicker.vue';
 import SoftTimePicker from '../components/SoftTimePicker.vue';
+import AdvisorBottomNav from '../components/AdvisorBottomNav.vue';
 
 const props = defineProps({
     advisor: {
@@ -326,6 +336,105 @@ const scheduleModal = reactive({
     founder: ''
 });
 const today = new Date().toISOString().slice(0, 10);
+
+const deriveInsights = (request) => {
+    const summary = (request.business?.summary || '').toLowerCase();
+    const questions = (request.business?.questions || '').toLowerCase();
+
+    const problems = [];
+    const strengths = [];
+    const interests = [];
+
+    const sourceText = `${summary} ${questions}`;
+
+    if (sourceText.includes('risk') || sourceText.includes('challenge') || sourceText.includes('problem')) {
+        problems.push('Founder explicitly mentions risks or challenges that need to be unpacked in the meeting.');
+    }
+    if (sourceText.includes('funding') || sourceText.includes('investment')) {
+        interests.push('Strong interest in funding / investment topics.');
+    }
+    if (sourceText.includes('market') || sourceText.includes('customers')) {
+        strengths.push('Clear focus on market and customers.');
+    }
+    if (sourceText.includes('team')) {
+        strengths.push('Team and roles are part of the current focus.');
+    }
+
+    if (!problems.length) {
+        problems.push('No explicit problems identified in the prep notes; clarify main obstacles during the call.');
+    }
+    if (!interests.length) {
+        interests.push('General interest in guidance around growth, roadmap, and next steps.');
+    }
+    if (!strengths.length) {
+        strengths.push('Founder has taken time to fill in a structured prep form, which is already a strength.');
+    }
+
+    return { problems, strengths, interests };
+};
+
+const handleGetPdf = (request) => {
+    const doc = new jsPDF();
+    const margin = 20;
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const maxWidth = pageWidth - margin * 2;
+    let yPos = margin;
+
+    const addText = (text, fontSize = 11, bold = false) => {
+        if (!text) return;
+        doc.setFontSize(fontSize);
+        doc.setFont(undefined, bold ? 'bold' : 'normal');
+        const lines = doc.splitTextToSize(text, maxWidth);
+        lines.forEach((line) => {
+            if (yPos > doc.internal.pageSize.getHeight() - 20) {
+                doc.addPage();
+                yPos = margin;
+            }
+            doc.text(line, margin, yPos);
+            yPos += fontSize * 0.5 + 1;
+        });
+        yPos += 3;
+    };
+
+    // Title
+    addText(`Meeting brief · ${request.founder}`, 18, true);
+    addText(new Date().toLocaleString(), 9, false);
+    yPos += 4;
+
+    // Business section
+    addText('Business summary', 13, true);
+    addText(request.business?.summary || 'No summary provided.', 11);
+
+    addText('Target customers', 13, true);
+    addText(request.business?.targets || 'No target customers provided.', 11);
+
+    addText('Questions for advisor', 13, true);
+    addText(request.business?.questions || 'No questions provided.', 11);
+
+    // Roadmap
+    if (request.roadmaps?.length) {
+        const roadmap = request.roadmaps[0];
+        addText('Roadmap overview', 13, true);
+        addText(`Title: ${roadmap.title || 'Founder roadmap'}`, 11);
+        (roadmap.steps || []).forEach((step, index) => {
+            addText(`${index + 1}. ${step.title} (${step.status || 'pending'})`, 10);
+        });
+    }
+
+    // Insights
+    const insights = deriveInsights(request);
+    addText('Advisor insights – problems to explore', 13, true);
+    insights.problems.forEach((p) => addText(`• ${p}`, 10));
+
+    addText('Advisor insights – strengths to leverage', 13, true);
+    insights.strengths.forEach((s) => addText(`• ${s}`, 10));
+
+    addText('Advisor insights – interests / focus areas', 13, true);
+    insights.interests.forEach((i) => addText(`• ${i}`, 10));
+
+    const filenameSafeName = (request.founder || 'founder').toLowerCase().replace(/[^a-z0-9]+/g, '-');
+    doc.save(`meeting-brief-${filenameSafeName}.pdf`);
+};
 
 const ensureDetailState = (id) => {
     if (!detailStates[id]) {

@@ -2,6 +2,7 @@
     <Head title="Advisor Dashboard" />
     <div class="flex min-h-screen bg-[#f2f7f5] text-slate-700">
         <RequestSidebar :advisor="advisor" active="Dashboard" />
+        <AdvisorBottomNav active="Dashboard" />
 
         <main class="flex-1 px-4 pb-10 pt-8 sm:px-8">
             <!-- header -->
@@ -83,8 +84,6 @@
                             </div>
                         </div>
                     </div>
-
-                    <p class="text-xs uppercase tracking-widest text-slate-400">Dashboard</p>
                 </div>
             </header>
 
@@ -245,6 +244,7 @@ import { computed, reactive, ref, onMounted, onBeforeUnmount } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import axios from 'axios';
 import RequestSidebar from '../components/RequestSidebar.vue';
+import AdvisorBottomNav from '../components/AdvisorBottomNav.vue';
 import BaseIcon from '../components/BaseIcon.vue';
 import ReminderModal from '../components/ReminderModal.vue';
 
@@ -606,6 +606,12 @@ const statusPillClass = (status) => {
     width: 12px;
     height: 12px;
     background-color: #e0f5ec;
+}
+
+@media (max-width: 768px) {
+    .tooltip-wrapper {
+        display: none;
+    }
 }
 </style>
 

@@ -2,6 +2,7 @@
     <Head title="Advisor Calendar" />
     <div class="flex min-h-screen bg-[#f2f7f5] text-slate-700">
         <RequestSidebar :advisor="advisor" active="Calendar" />
+        <AdvisorBottomNav active="Calendar" />
 
         <main class="flex-1 px-4 pb-12 pt-8 sm:px-10">
             <div class="flex flex-wrap items-center justify-between gap-4 rounded-3xl bg-white px-6 py-4 shadow-md shadow-emerald-100/60 border border-[#c3d7de]">
@@ -175,6 +176,7 @@
 import { computed, reactive, ref } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import RequestSidebar from '../components/RequestSidebar.vue';
+import AdvisorBottomNav from '../components/AdvisorBottomNav.vue';
 import BaseIcon from '../components/BaseIcon.vue';
 
 const props = defineProps({
