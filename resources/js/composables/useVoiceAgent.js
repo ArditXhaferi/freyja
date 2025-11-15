@@ -297,9 +297,22 @@ export default function useVoiceAgent({
     onUnmounted(() => {
         if (conversationRef.value) {
             try {
-                conversationRef.value.endSession();
+                // Check if connection is still open before ending
+                if (isConnected.value || connectionStatus.value === 'connected') {
+                    conversationRef.value.endSession();
+                }
             } catch (error) {
-                console.error('Error ending conversation:', error);
+                // Ignore errors if WebSocket is already closed
+                if (error.message && (error.message.includes('CLOSING') || error.message.includes('CLOSED'))) {
+                    console.log('WebSocket already closed, ignoring endSession error');
+                } else {
+                    console.error('Error ending conversation:', error);
+                }
+            } finally {
+                // Always clean up the reference
+                conversationRef.value = null;
+                isConnected.value = false;
+                connectionStatus.value = 'disconnected';
             }
         }
     });
@@ -885,6 +898,8 @@ export default function useVoiceAgent({
                         connectionStatus.value = 'disconnected';
                         isListening.value = false;
                         isSpeaking.value = false;
+                        // Clean up reference when disconnected to prevent use after disconnect
+                        // Note: Don't set to null here as it might be needed for cleanup
                     } else if (prop.status === 'connecting') {
                         connectionStatus.value = 'connecting';
                     }
@@ -929,10 +944,17 @@ export default function useVoiceAgent({
                 },
                 onError: (message, context) => {
                     console.error('Conversation error:', message, context);
+                    
+                    // Update connection state immediately to prevent further operations
                     connectionStatus.value = 'disconnected';
                     isConnected.value = false;
                     isListening.value = false;
                     isSpeaking.value = false;
+                    
+                    // Clean up conversation reference to prevent use after error
+                    if (conversationRef.value) {
+                        conversationRef.value = null;
+                    }
                     
                     if (onError) {
                         onError(message || 'Voice agent error');
@@ -959,22 +981,33 @@ export default function useVoiceAgent({
             // (contextWithFirstMessage already includes everything)
             if (contextWithFirstMessage) {
                 try {
-                    // Send as contextual update (this is the proper way to pass context in ElevenLabs)
-                    conversation.sendContextualUpdate(contextWithFirstMessage);
-                    console.log('Full context sent to agent via sendContextualUpdate:', {
-                        businessPlanLength: businessPlanContext.length,
-                        roadmapLength: roadmapContext.length,
-                        firstMessageLength: firstMessage.length,
-                        totalLength: contextWithFirstMessage.length
-                    });
+                    // Check if connection is still open before sending
+                    if (!isConnected.value || connectionStatus.value !== 'connected') {
+                        console.warn('Cannot send context: connection not established');
+                        return;
+                    }
                     
-                    // Give the agent a moment to process the context, then it should speak
-                    // The context includes explicit instructions to speak first
-                    setTimeout(() => {
-                        console.log('Context sent, agent should now speak with first message');
-                    }, 500);
+                    // Send as contextual update (this is the proper way to pass context in ElevenLabs)
+                    if (conversation && typeof conversation.sendContextualUpdate === 'function') {
+                        conversation.sendContextualUpdate(contextWithFirstMessage);
+                        console.log('Full context sent to agent via sendContextualUpdate:', {
+                            businessPlanLength: businessPlanContext.length,
+                            roadmapLength: roadmapContext.length,
+                            firstMessageLength: firstMessage.length,
+                            totalLength: contextWithFirstMessage.length
+                        });
+                        
+                        // Give the agent a moment to process the context, then it should speak
+                        // The context includes explicit instructions to speak first
+                        setTimeout(() => {
+                            console.log('Context sent, agent should now speak with first message');
+                        }, 500);
+                    } else {
+                        console.warn('Cannot send context: conversation object not available or method missing');
+                    }
                 } catch (error) {
                     console.warn('Failed to send context to agent:', error);
+                    // Don't throw - connection might still be usable
                 }
             }
         } catch (error) {
@@ -999,11 +1032,21 @@ export default function useVoiceAgent({
     const disconnect = () => {
         if (conversationRef.value) {
             try {
-                conversationRef.value.endSession();
+                // Only try to end session if we're actually connected
+                if (isConnected.value || connectionStatus.value === 'connected') {
+                    conversationRef.value.endSession();
+                }
             } catch (error) {
-                console.error('Error ending conversation:', error);
+                // Ignore errors if WebSocket is already closed
+                if (error.message && (error.message.includes('CLOSING') || error.message.includes('CLOSED'))) {
+                    console.log('WebSocket already closed during disconnect');
+                } else {
+                    console.error('Error ending conversation:', error);
+                }
+            } finally {
+                // Always clean up references regardless of errors
+                conversationRef.value = null;
             }
-            conversationRef.value = null;
         }
         
         connectionStatus.value = 'disconnected';
@@ -1070,9 +1113,19 @@ export default function useVoiceAgent({
             // Interrupt the conversation
             if (conversationRef.value) {
                 try {
-                    conversationRef.value.interrupt();
+                    // Only interrupt if connection is still active
+                    if (isConnected.value || connectionStatus.value === 'connected') {
+                        if (typeof conversationRef.value.interrupt === 'function') {
+                            conversationRef.value.interrupt();
+                        }
+                    }
                 } catch (error) {
-                    console.error('Error interrupting conversation:', error);
+                    // Ignore errors if WebSocket is already closed
+                    if (error.message && (error.message.includes('CLOSING') || error.message.includes('CLOSED'))) {
+                        console.log('WebSocket already closed during stopSession');
+                    } else {
+                        console.error('Error interrupting conversation:', error);
+                    }
                 }
                 isListening.value = false;
                 isSpeaking.value = false;
@@ -1112,6 +1165,12 @@ export default function useVoiceAgent({
             return;
         }
         
+        // Check if connection is still active before trying to mute/unmute
+        if (!isConnected.value || connectionStatus.value !== 'connected') {
+            console.log('Connection not active, state toggled to:', isMuted.value);
+            return;
+        }
+        
         try {
             // Use ElevenLabs SDK mute method if available
             if (typeof conversationRef.value.setMuted === 'function') {
@@ -1128,8 +1187,10 @@ export default function useVoiceAgent({
             } else {
                 // Fallback: interrupt when muted, resume when unmuted
                 if (isMuted.value) {
-                    conversationRef.value.interrupt();
-                    console.log('Used interrupt() as fallback for mute');
+                    if (typeof conversationRef.value.interrupt === 'function') {
+                        conversationRef.value.interrupt();
+                        console.log('Used interrupt() as fallback for mute');
+                    }
                 }
                 // Note: Unmuting will resume naturally when user speaks
                 console.log('No SDK mute methods available, using state only');
@@ -1137,7 +1198,12 @@ export default function useVoiceAgent({
             
             console.log('Microphone muted:', isMuted.value);
         } catch (error) {
-            console.error('Error toggling mute:', error);
+            // Ignore errors if WebSocket is already closed
+            if (error.message && (error.message.includes('CLOSING') || error.message.includes('CLOSED'))) {
+                console.log('WebSocket already closed during mute toggle');
+            } else {
+                console.error('Error toggling mute:', error);
+            }
             // Don't revert - keep the UI state even if SDK call fails
         }
     };

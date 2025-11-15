@@ -1,0 +1,17 @@
+{
+    "type": "client",
+    "name": "generateBusinessPlan",
+    "description": "Generate a business plan PDF document from the template.docx file using the user's business plan information. Ask the user if they want to generate the PDF when they are ready.",
+    "disable_interruptions": false,
+    "force_pre_tool_speech": "auto",
+    "assignments": [],
+    "tool_call_sound": null,
+    "tool_call_sound_behavior": "auto",
+    "execution_mode": "immediate",
+    "expects_response": true,
+    "response_timeout_secs": 30,
+    "parameters": [],
+    "dynamic_variables": {
+      "dynamic_variable_placeholders": {}
+    }
+  }

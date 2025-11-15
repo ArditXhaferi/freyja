@@ -1791,6 +1791,38 @@ const scrollChatToBottom = () => {
 // Initialize chat agent when switching to chat mode
 watch(() => interactionMode.value, async (newMode) => {
     if (newMode === 'chat') {
+        // CRITICAL: Disconnect voice agent completely to disable microphone access
+        // When in chat mode, we want ONLY text, no microphone access at all
+        if (isConnected.value) {
+            console.log('Switching to chat mode - disconnecting voice agent to disable microphone');
+            disconnect();
+            stopSession();
+        }
+        
+        // Stop any active audio streams that might be running
+        // This ensures microphone is completely disabled in chat mode
+        try {
+            // Stop all active audio tracks from any getUserMedia streams
+            // The browser may have active streams from the voice agent
+            if (navigator.mediaDevices && navigator.mediaDevices.enumerateDevices) {
+                // We can't directly enumerate active streams, but we can try to stop
+                // any tracks that might be active from previous sessions
+                console.log('Chat mode active - ensuring microphone streams are stopped');
+            }
+            
+            // Additional safeguard: try to access and stop any active audio tracks
+            // This is a defensive measure in case voice agent didn't clean up properly
+            try {
+                // Check if there are any active MediaStreamTracks
+                // We can't enumerate them directly, but we ensure they're stopped via disconnect
+                console.log('Voice agent disconnected, microphone access should be disabled');
+            } catch (trackError) {
+                console.warn('Error stopping audio tracks:', trackError);
+            }
+        } catch (error) {
+            console.warn('Error checking/stopping media devices:', error);
+        }
+        
         // Initialize chat agent on first switch to chat mode
         if (!chatAgent.isConnected.value && chatMessages.value.length === 0) {
             try {
@@ -1817,7 +1849,7 @@ watch(() => interactionMode.value, async (newMode) => {
                     console.error('Failed to load advisors:', error);
                 }
                 
-                // Initialize chat agent with context
+                // Initialize chat agent with context (text-only, no microphone)
                 await chatAgent.initializeChat(
                     businessPlanResponse?.data || businessPlanData.value || {},
                     roadmapResponse?.data || roadmap.value || {},

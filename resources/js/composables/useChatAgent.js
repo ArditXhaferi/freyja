@@ -1,5 +1,6 @@
 import { ref, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
+import { VoiceConversation } from '@elevenlabs/client';
 
 /**
  * Strip CHARACTER tags from ElevenLabs Agent responses
@@ -368,66 +369,209 @@ export default function useChatAgent({
                 contextWithFirstMessage += '\n\n⚠️ ACTION REQUIRED: You MUST start the conversation by saying this message (or a natural variation of it) RIGHT NOW. This message is personalized based on the user\'s current data.';
             }
 
-            // For text-only chat, use REST API directly
-            // VoiceConversation SDK is designed for voice, not text chat
-            // Store agent info for REST API calls
-            conversationRef.value = {
-                agent_id: agentId,
-                api_key: apiKey,
-                conversation_id: null, // Will be set after first message
-                text_only: true
+            // Configure for text-only mode with proper structure
+            // Use VoiceConversation with text_only configuration override for chat mode
+            // This ensures no microphone/audio access is requested
+            const conversationConfigOverride = {
+                conversation: {
+                    text_only: true
+                },
+                // Explicitly disable audio input/output in the configuration
+                // Some SDK versions may require this in addition to text_only
+                audio: {
+                    input_enabled: false,
+                    output_enabled: false
+                }
             };
-            isConnected.value = true;
 
-            // Send first message with context to initialize conversation
-            if (firstMessage && contextWithFirstMessage && !contextSent.value) {
-                try {
-                    // Send first message with context via REST API
-                    const response = await axios.post(
-                        'https://api.elevenlabs.io/v1/convai/conversation',
-                        {
-                            agent_id: agentId,
-                            text_only: true,
-                            message: '', // Empty message to trigger agent response
-                            contextual_update: contextWithFirstMessage
-                        },
-                        {
-                            headers: {
-                                'xi-api-key': apiKey,
-                                'Content-Type': 'application/json'
-                            }
-                        }
-                    );
-
-                    if (response.data) {
-                        const agentResponse = response.data.agent_response || response.data.response || firstMessage;
-                        if (onMessage) {
-                            const cleanedResponse = stripCharacterTags(agentResponse);
-                            onMessage({
-                                type: 'assistant',
-                                text: cleanedResponse
-                            });
-                        }
-
-                        // Store conversation ID
-                        if (response.data.conversation_id) {
-                            conversationRef.value.conversation_id = response.data.conversation_id;
-                        }
-                    }
-
-                    contextSent.value = true;
-                    console.log('Context sent to agent via REST API');
-                } catch (error) {
-                    console.warn('Failed to send context to agent:', error);
-                    // Still show first message even if context send fails
+            // Start conversation using VoiceConversation with text_only override for chat mode
+            // The JavaScript SDK uses VoiceConversation for both voice and text-only conversations
+            // With text_only: true, the SDK will NOT request microphone permissions or use audio
+            const conversation = await VoiceConversation.startSession({
+                agentId: agentId,
+                apiKey: apiKey,
+                conversationConfigOverride: conversationConfigOverride,
+                // NOTE: text_only: true in conversationConfigOverride ensures:
+                // - No microphone access is requested
+                // - No audio input/output is used
+                // - All communication is text-only via WebSocket
+                // CRITICAL: agent_response callback is required for chat mode
+                // For chat mode, responses come via agent_response callback
+                callback_agent_response: (response) => {
+                    console.log('Agent response (chat mode):', response);
                     if (onMessage) {
+                        const cleanedResponse = stripCharacterTags(response);
                         onMessage({
                             type: 'assistant',
-                            text: firstMessage
+                            text: cleanedResponse
                         });
                     }
+                },
+                callback_user_transcript: (transcript) => {
+                    console.log('User transcript:', transcript);
+                    if (onMessage) {
+                        onMessage({
+                            type: 'user',
+                            text: transcript
+                        });
+                    }
+                },
+                // Also use onMessage pattern (JavaScript SDK pattern for voice mode compatibility)
+                onMessage: (props) => {
+                    console.log('Message received (onMessage):', props);
+                    if (onMessage && props.message) {
+                        const messageText = stripCharacterTags(props.message || '');
+                        onMessage({
+                            type: props.source === 'user' ? 'user' : 'assistant',
+                            text: messageText
+                        });
+                    }
+                },
+                // Handle tool calls
+                clientTools: {
+                    updateRoadmap: async (parameters) => {
+                        console.log('Agent called updateRoadmap tool:', parameters);
+                        try {
+                            const roadmapData = parameters.roadmap || parameters;
+                            if (roadmapData && onRoadmapUpdate) {
+                                await onRoadmapUpdate(roadmapData);
+                            }
+                            return `Roadmap updated successfully`;
+                        } catch (error) {
+                            console.error('Error in updateRoadmap tool:', error);
+                            return `Error updating roadmap: ${error.message}`;
+                        }
+                    },
+                    updateUserData: async (parameters) => {
+                        console.log('Agent called updateUserData tool:', parameters);
+                        try {
+                            const businessPlanData = parameters.business_plan || parameters.businessPlan || parameters;
+                            if (businessPlanData && onBusinessPlanUpdate) {
+                                await onBusinessPlanUpdate(businessPlanData);
+                            }
+                            return 'Business plan updated successfully';
+                        } catch (error) {
+                            console.error('Error in updateUserData tool:', error);
+                            return `Error updating user data: ${error.message}`;
+                        }
+                    },
+                    markChecklistComplete: async (parameters) => {
+                        console.log('Agent called markChecklistComplete tool:', parameters);
+                        try {
+                            if (onChecklistComplete) {
+                                await onChecklistComplete(parameters);
+                            }
+                            return 'Step marked as complete';
+                        } catch (error) {
+                            console.error('Error in markChecklistComplete tool:', error);
+                            return `Error marking checklist complete: ${error.message}`;
+                        }
+                    },
+                    requestDocument: async (parameters) => {
+                        console.log('Agent called requestDocument tool:', parameters);
+                        try {
+                            if (onDocumentRequest) {
+                                await onDocumentRequest(parameters);
+                            }
+                            return 'Document request created';
+                        } catch (error) {
+                            console.error('Error in requestDocument tool:', error);
+                            return `Error creating document request: ${error.message}`;
+                        }
+                    },
+                    suggestResource: async (parameters) => {
+                        console.log('Agent called suggestResource tool:', parameters);
+                        try {
+                            if (onResourceSuggested) {
+                                await onResourceSuggested(parameters);
+                            }
+                            return 'Resource suggested successfully';
+                        } catch (error) {
+                            console.error('Error in suggestResource tool:', error);
+                            return `Error suggesting resource: ${error.message}`;
+                        }
+                    },
+                    generateProgressSummary: async (parameters) => {
+                        console.log('Agent called generateProgressSummary tool:', parameters);
+                        try {
+                            if (onProgressSummary) {
+                                await onProgressSummary(parameters);
+                            }
+                            return 'Progress summary generated';
+                        } catch (error) {
+                            console.error('Error in generateProgressSummary tool:', error);
+                            return `Error generating progress summary: ${error.message}`;
+                        }
+                    },
+                    scheduleAdvisorMeeting: async (parameters) => {
+                        console.log('Agent called scheduleAdvisorMeeting tool:', parameters);
+                        try {
+                            if (onScheduleMeeting) {
+                                await onScheduleMeeting(parameters);
+                            }
+                            return 'Meeting scheduling modal opened';
+                        } catch (error) {
+                            console.error('Error in scheduleAdvisorMeeting tool:', error);
+                            return `Error opening scheduling modal: ${error.message}`;
+                        }
+                    }
+                },
+                // Handle errors
+                onError: (message, context) => {
+                    console.error('Conversation error:', message, context);
+                    isConnected.value = false;
+                    if (onError) {
+                        onError(message || 'Chat agent error');
+                    }
+                }
+            });
+
+            conversationRef.value = conversation;
+            isConnected.value = true;
+
+            // Explicitly disable microphone/audio input for text-only mode
+            // Even with text_only: true, the SDK might still initialize audio
+            try {
+                // Try to mute/disable audio input immediately after session starts
+                if (typeof conversation.setMuted === 'function') {
+                    conversation.setMuted(true);
+                    console.log('Microphone muted for text-only mode');
+                } else if (typeof conversation.mute === 'function') {
+                    conversation.mute();
+                    console.log('Microphone muted via mute() for text-only mode');
+                } else if (typeof conversation.disableAudioInput === 'function') {
+                    conversation.disableAudioInput();
+                    console.log('Audio input disabled for text-only mode');
+                } else {
+                    console.warn('No mute/disable method found. Available methods:', Object.keys(conversation).join(', '));
+                }
+            } catch (error) {
+                console.warn('Failed to disable microphone (may not be needed with text_only: true):', error);
+            }
+
+            // Send context after session starts
+            if (contextWithFirstMessage && !contextSent.value) {
+                try {
+                    // Use sendContextualUpdate() method as per ElevenLabs SDK
+                    if (typeof conversation.sendContextualUpdate === 'function') {
+                        await conversation.sendContextualUpdate(contextWithFirstMessage);
+                        console.log('Context sent to agent via sendContextualUpdate');
+                    } else if (typeof conversation.send_contextual_update === 'function') {
+                        // Fallback: snake_case version
+                        await conversation.send_contextual_update(contextWithFirstMessage);
+                        console.log('Context sent to agent via send_contextual_update');
+                    } else {
+                        console.warn('sendContextualUpdate not available. Available methods: ' + Object.keys(conversation).join(', '));
+                    }
+                    contextSent.value = true;
+                } catch (error) {
+                    console.error('Failed to send context to agent:', error);
+                    // Continue anyway - agent might still work, but log the error
                 }
             }
+
+            // Agent should respond with first message based on context
+            // The callback_agent_response will handle displaying it
 
         } catch (error) {
             console.error('Failed to initialize chat:', error);
@@ -438,7 +582,7 @@ export default function useChatAgent({
         }
     };
 
-    // Send message using ElevenLabs REST API directly for text chat
+    // Send message using Conversation API send_user_message method
     const sendMessage = async (message) => {
         if (!conversationRef.value || !isConnected.value) {
             // Try to initialize if not connected
@@ -449,130 +593,61 @@ export default function useChatAgent({
         }
 
         try {
-            const apiKey = import.meta.env.VITE_ELEVENLABS_API_KEY;
-            const agentId = import.meta.env.VITE_ELEVENLABS_AGENT_ID;
-            const conversationId = conversationRef.value.conversation_id || conversationRef.value.session_id || null;
-
-            // Use ElevenLabs REST API for text chat
-            const response = await axios.post(
-                'https://api.elevenlabs.io/v1/convai/conversation',
-                {
-                    agent_id: agentId,
-                    text_only: true,
-                    message: message,
-                    ...(conversationId && { conversation_id: conversationId })
-                },
-                {
-                    headers: {
-                        'xi-api-key': apiKey,
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
-
-            // Handle response
-            if (response.data) {
-                const agentResponse = response.data.agent_response || response.data.response || response.data.message;
-                if (agentResponse && onMessage) {
-                    const cleanedResponse = stripCharacterTags(agentResponse);
-                    onMessage({
-                        type: 'assistant',
-                        text: cleanedResponse
-                    });
-                }
-
-                // Update conversation ID if provided
-                if (response.data.conversation_id) {
-                    conversationRef.value.conversation_id = response.data.conversation_id;
-                }
-
-                // Handle tool calls if any (tools are executed server-side by ElevenLabs)
-                if (response.data.tool_calls && Array.isArray(response.data.tool_calls)) {
-                    for (const toolCall of response.data.tool_calls) {
-                        await handleToolCall(toolCall);
-                    }
-                }
-                
-                // Check if response includes updates from tools
-                if (response.data.roadmap && onRoadmapUpdate) {
-                    await onRoadmapUpdate(response.data.roadmap);
-                }
-                if (response.data.business_plan && onBusinessPlanUpdate) {
-                    await onBusinessPlanUpdate(response.data.business_plan);
-                }
+            const conversation = conversationRef.value;
+            
+            // Use sendUserMessage() method (camelCase) as per ElevenLabs SDK
+            if (typeof conversation.sendUserMessage === 'function') {
+                // Send message using Conversation API (correct method name)
+                await conversation.sendUserMessage(message);
+                console.log('Message sent via sendUserMessage:', message);
+            } else if (typeof conversation.send_user_message === 'function') {
+                // Fallback: snake_case version
+                await conversation.send_user_message(message);
+                console.log('Message sent via send_user_message:', message);
+            } else if (typeof conversation.send === 'function') {
+                // Fallback: generic send method
+                await conversation.send(message);
+                console.log('Message sent via send method:', message);
+            } else {
+                throw new Error('No send method available on conversation object. Available methods: ' + Object.keys(conversation).join(', '));
             }
+                
+            // Note: Agent response will be received via callback_agent_response callback
+            // which is already configured in initializeChat
         } catch (error) {
             console.error('Error sending message:', error);
+            isConnected.value = false;
             if (onError) {
-                onError(error.response?.data?.detail?.message || error.message || 'Failed to send message');
+                onError(error.message || 'Failed to send message');
             }
             throw error;
         }
     };
 
-    // Handle tool calls from ElevenLabs agent response
+    // Note: Tool calls are now handled directly in the clientTools configuration
+    // This function is kept for backwards compatibility but may not be needed
     const handleToolCall = async (toolCall) => {
-        const toolName = toolCall.name || toolCall.tool_name;
-        const parameters = toolCall.parameters || toolCall.input || {};
-
-        if (!toolName) {
-            console.warn('Tool call missing name:', toolCall);
-            return;
-        }
-
-        console.log('Handling tool call:', toolName, parameters);
-
-        try {
-            switch (toolName) {
-                case 'updateRoadmap':
-                    if (parameters.roadmap && onRoadmapUpdate) {
-                        await onRoadmapUpdate(parameters.roadmap);
-                    }
-                    break;
-                case 'updateUserData':
-                case 'updateBusinessPlan':
-                    const businessPlanData = parameters.business_plan || parameters.businessPlan || parameters;
-                    if (businessPlanData && onBusinessPlanUpdate) {
-                        await onBusinessPlanUpdate(businessPlanData);
-                    }
-                    break;
-                case 'markChecklistComplete':
-                    if (onChecklistComplete) {
-                        await onChecklistComplete(parameters);
-                    }
-                    break;
-                case 'requestDocument':
-                    if (onDocumentRequest) {
-                        await onDocumentRequest(parameters);
-                    }
-                    break;
-                case 'suggestResource':
-                    if (onResourceSuggested) {
-                        await onResourceSuggested(parameters);
-                    }
-                    break;
-                case 'generateProgressSummary':
-                    if (onProgressSummary) {
-                        await onProgressSummary(parameters);
-                    }
-                    break;
-                case 'scheduleAdvisorMeeting':
-                    if (onScheduleMeeting) {
-                        await onScheduleMeeting(parameters);
-                    }
-                    break;
-                default:
-                    console.warn('Unknown tool call:', toolName);
-            }
-        } catch (error) {
-            console.error(`Error handling tool call ${toolName}:`, error);
-        }
+        console.warn('handleToolCall called - tools should be handled via clientTools configuration:', toolCall);
     };
 
     // Disconnect
     const disconnect = () => {
-        // For REST API, we just need to clear the conversation reference
+        if (conversationRef.value) {
+            try {
+                // End the conversation session if method is available
+                if (typeof conversationRef.value.endSession === 'function') {
+                    conversationRef.value.endSession();
+                } else if (typeof conversationRef.value.end_session === 'function') {
+                    conversationRef.value.end_session();
+                } else if (typeof conversationRef.value.end === 'function') {
+                    conversationRef.value.end();
+                }
+            } catch (error) {
+                console.warn('Error ending conversation session:', error);
+            } finally {
         conversationRef.value = null;
+            }
+        }
         isConnected.value = false;
         contextSent.value = false;
     };
