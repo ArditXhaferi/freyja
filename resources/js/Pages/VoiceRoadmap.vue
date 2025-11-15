@@ -1,11 +1,11 @@
 <template>
     <Head title="Eppu the Bear" />
-    <div class="min-h-screen bg-[#011135] py-6 px-4 pb-24">
+    <div class="min-h-screen bg-gradient-to-b from-[#0b1f30] via-[#102c40] to-[#020b16] py-6 px-4 pb-24">
         <div class="max-w-6xl mx-auto">
 
                     <!-- Eppu Animation (Always Visible, Circular) -->
                     <div class="mb-6 flex flex-col items-center">
-                        <div class="relative w-64 h-64 rounded-full overflow-hidden border-4 shadow-xl bg-[#012169] transition-all duration-300"
+                        <div class="relative w-64 h-64 rounded-full overflow-hidden border-4 shadow-xl bg-[#205274] transition-all duration-300"
                              :class="[
                                  isConnected && isMuted 
                                      ? 'border-red-500 shadow-red-500/50' 
@@ -39,10 +39,10 @@
                             <button
                                 @click="handleCallMode"
                                 :class="[
-                                    'px-6 py-3 rounded-lg text-base font-semibold transition-all flex items-center gap-2',
+                                    'px-6 py-3 rounded-lg text-base font-semibold transition-all flex items-center gap-2 border',
                                     interactionMode === 'voice'
-                                        ? 'bg-green-600 text-white shadow-lg'
-                                        : 'bg-[#011135] text-white/70 hover:text-white hover:bg-white/10 border border-white/20'
+                                        ? 'bg-[#205274] text-white border-[#5cc094] shadow-lg shadow-[#205274]/40'
+                                        : 'bg-white text-[#205274] border-[#205274] hover:bg-[#5cc094] hover:text-[#205274]'
                                 ]"
                             >
                                 <i v-if="isConnected" class="fa-solid fa-phone-slash"></i>
@@ -52,10 +52,10 @@
                             <button
                                 @click="interactionMode = 'chat'"
                                 :class="[
-                                    'px-6 py-3 rounded-lg text-base font-semibold transition-all flex items-center gap-2',
+                                    'px-6 py-3 rounded-lg text-base font-semibold transition-all flex items-center gap-2 border',
                                     interactionMode === 'chat'
-                                        ? 'bg-green-600 text-white shadow-lg'
-                                        : 'bg-[#011135] text-white/70 hover:text-white hover:bg-white/10 border border-white/20'
+                                        ? 'bg-[#205274] text-white border-[#5cc094] shadow-lg shadow-[#205274]/40'
+                                        : 'bg-white text-[#205274] border-[#205274] hover:bg-[#5cc094] hover:text-[#205274]'
                                 ]"
                             >
                                 <i class="fa-solid fa-comments"></i>
@@ -86,7 +86,10 @@
             </div>
 
             <!-- Voice Interface (Full Screen) -->
-            <div v-if="interactionMode === 'voice' && activeTab === 'roadmap'" class="bg-[#012169] rounded-lg shadow-lg border border-[#011135] p-6 mb-6 min-h-[600px] flex flex-col">
+            <div
+                v-if="interactionMode === 'voice' && activeTab === 'roadmap'"
+                class="bg-[#205274] rounded-3xl shadow-xl shadow-black/30 border border-[#5cc094] p-6 mb-6 min-h-[600px] flex flex-col"
+            >
                 <!-- Call Status -->
                 <div class="flex items-center gap-4 mb-6 pb-4 border-b border-white/20">
                     <div :class="[
@@ -100,18 +103,24 @@
                         {{ connectionStatus === 'connecting' ? 'Connecting...' : '' }}
                         {{ connectionStatus === 'disconnected' ? 'Ready to call' : '' }}
                     </span>
-                    <span v-if="isListening && !isMuted" 
-                          class="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-medium animate-pulse flex items-center gap-2">
+                    <span
+                        v-if="isListening && !isMuted" 
+                        class="px-4 py-2 bg-white/15 text-white rounded-full text-sm font-medium animate-pulse flex items-center gap-2"
+                    >
                         <i class="fa-solid fa-microphone"></i>
                         <span>Listening...</span>
                     </span>
-                    <span v-if="isMuted" 
-                          class="px-4 py-2 bg-red-600 text-white rounded-full text-sm font-semibold flex items-center gap-2 animate-pulse shadow-lg shadow-red-500/50">
+                    <span
+                        v-if="isMuted" 
+                        class="px-4 py-2 bg-red-600 text-white rounded-full text-sm font-semibold flex items-center gap-2 animate-pulse shadow-lg shadow-red-500/50"
+                    >
                         <i class="fa-solid fa-microphone-slash"></i>
                         <span>Muted</span>
                     </span>
-                    <span v-if="isSpeaking" 
-                          class="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-medium flex items-center gap-2">
+                    <span
+                        v-if="isSpeaking" 
+                        class="px-4 py-2 bg-white/15 text-white rounded-full text-sm font-medium flex items-center gap-2"
+                    >
                         <i class="fa-solid fa-volume-high"></i>
                         <span>Speaking...</span>
                     </span>
@@ -123,7 +132,7 @@
                             'ml-auto px-5 py-3 rounded-full text-base font-semibold transition-all flex items-center gap-2 shadow-lg cursor-pointer',
                             isMuted
                                 ? 'bg-red-600 text-white hover:bg-red-700 hover:scale-105 active:scale-95 animate-pulse shadow-red-500/50'
-                                : 'bg-white/20 text-white hover:bg-white/30 border border-white/20 hover:scale-105 active:scale-95'
+                                : 'bg-white/10 text-white hover:bg-white/20 border border-white/30 hover:scale-105 active:scale-95'
                         ]"
                         :title="isMuted ? 'Click to unmute microphone' : 'Click to mute microphone'"
                     >
@@ -142,10 +151,10 @@
                         v-for="(transcript, index) in transcripts"
                         :key="index"
                         :class="[
-                            'p-4 rounded-lg text-base',
+                            'p-4 rounded-2xl text-base shadow-sm',
                             transcript.type === 'user' 
-                                ? 'bg-[#011135] text-white ml-12 border border-white/10' 
-                                : 'bg-white/10 text-white mr-12 border border-white/10'
+                                ? 'bg-[#205274] text-white ml-12 border border-[#5cc094]'
+                                : 'bg-white/5 text-white mr-12 border border-[#5cc094]/40'
                         ]"
                     >
                         <span class="font-medium text-lg">
@@ -157,7 +166,10 @@
             </div>
 
             <!-- Chat Interface (Full Screen) -->
-            <div v-if="interactionMode === 'chat' && activeTab === 'roadmap'" class="bg-[#012169] rounded-lg shadow-lg border border-[#011135] p-6 mb-6 min-h-[600px] flex flex-col">
+            <div
+                v-if="interactionMode === 'chat' && activeTab === 'roadmap'"
+                class="bg-[#205274] rounded-3xl shadow-xl shadow-black/30 border border-[#5cc094] p-6 mb-6 min-h-[600px] flex flex-col"
+            >
                 <!-- Chat Messages -->
                 <div class="flex-1 overflow-y-auto space-y-4 mb-6 pb-4" ref="chatMessagesContainer">
                     <div v-if="chatMessages.length === 0" class="flex items-center justify-center h-full">
@@ -173,17 +185,17 @@
                     >
                         <div
                             :class="[
-                                'max-w-[75%] rounded-lg p-4 text-base',
+                                'max-w-[75%] rounded-2xl p-4 text-base shadow-sm',
                                 message.type === 'user'
-                                    ? 'bg-[#011135] text-white border border-white/20'
-                                    : 'bg-white/10 text-white border border-white/20'
+                                    ? 'bg-[#205274] text-white border border-[#5cc094]'
+                                    : 'bg-white/5 text-white border border-[#5cc094]/40'
                             ]"
                         >
                             <p class="whitespace-pre-wrap">{{ message.text }}</p>
                         </div>
                     </div>
                     <div v-if="isLoadingChat" class="flex justify-start">
-                        <div class="bg-white/10 text-white border border-white/20 rounded-lg p-4 text-base">
+                        <div class="bg-white/5 text-white border border-[#5cc094]/40 rounded-2xl p-4 text-base">
                             <div class="flex items-center gap-2">
                                 <div class="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                                 <span>Eppu is thinking...</span>
@@ -199,13 +211,13 @@
                         @keyup.enter="sendChatMessage"
                         type="text"
                         placeholder="Type your message to Eppu..."
-                        class="flex-1 bg-[#011135] text-white border border-white/20 rounded-lg px-5 py-3 text-base focus:outline-none focus:ring-2 focus:ring-green-500"
+                        class="flex-1 bg-white/5 text-white border border-[#205274] rounded-2xl px-5 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#5cc094]"
                         :disabled="isLoadingChat"
                     />
                     <button
                         @click="sendChatMessage"
                         :disabled="!chatInput.trim() || isLoadingChat"
-                        class="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-lg"
+                        class="px-8 py-3 bg-[#205274] text-white rounded-2xl border border-[#5cc094] hover:bg-[#5cc094] hover:text-[#205274] transition-all font-semibold shadow-lg shadow-[#205274]/40 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-lg"
                     >
                         <i class="fa-solid fa-paper-plane"></i>
                         <span>Send</span>
@@ -650,8 +662,8 @@
         <div v-if="activeTab === 'roadmap-tab'" 
              class="fixed inset-0 z-40 flex items-end drawer-overlay"
              @click.self="activeTab = 'roadmap'">
-            <div class="bg-[#012169] rounded-t-lg shadow-2xl w-full max-h-[85vh] overflow-y-auto drawer-content">
-                <div class="sticky top-0 bg-[#011135] p-5 flex items-center justify-between rounded-t-lg shadow-md z-10 border-b border-white/20">
+            <div class="bg-white rounded-t-3xl shadow-2xl w-full max-h-[85vh] overflow-y-auto drawer-content border border-[#205274]/60">
+                <div class="sticky top-0 bg-[#205274] p-5 flex items-center justify-between rounded-t-3xl shadow-md z-10 border-b border-white/20">
                     <h2 class="text-xl font-bold text-white">Your Roadmap</h2>
                     <button @click="activeTab = 'roadmap'" class="text-white/80 hover:text-white transition-colors">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -662,7 +674,7 @@
                 <div class="p-6 pb-24">
                     <!-- Roadmap Visualization -->
                     <div v-if="roadmap && roadmap.steps && roadmap.steps.filter(s => !s.isQuestion).length > 0" 
-                         class="bg-[#011135] rounded-lg shadow-lg border border-white/20 p-5">
+                         class="bg-[#205274] rounded-2xl shadow-lg border border-[#5cc094] p-5 text-white">
                         <RoadmapVisualizer 
                             :roadmap="roadmap"
                             @step-update="handleStepUpdate"

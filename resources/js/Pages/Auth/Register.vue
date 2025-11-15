@@ -52,7 +52,23 @@
                     <p class="text-sm text-slate-500">Tell us who you are so we can tailor the workspace to your role.</p>
                 </div>
 
-                <form @submit.prevent="submit" class="mt-8 space-y-6">
+                <div class="mt-8 space-y-4">
+                    <button
+                        type="button"
+                        @click.prevent="continueWithGoogle"
+                        class="flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white py-3 text-sm font-semibold text-slate-600 transition hover:border-[#205274] hover:text-[#205274] cursor-pointer"
+                    >
+                        <img src="/storage/google.png" alt="Google" class="h-5 w-5" />
+                        Continue with Google
+                    </button>
+                    <div class="flex items-center gap-4 text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-300">
+                        <span class="h-px flex-1 bg-slate-200"></span>
+                        Or use email
+                        <span class="h-px flex-1 bg-slate-200"></span>
+                    </div>
+                </div>
+
+                <form @submit.prevent="submit" class="mt-6 space-y-6">
                     <div v-if="Object.keys($page.props.errors).length" class="rounded-2xl border border-rose-100 bg-rose-50/80 p-4 text-sm text-rose-600">
                         <ul class="space-y-1">
                             <li v-for="(error, key) in $page.props.errors" :key="key">{{ error }}</li>
@@ -206,5 +222,10 @@ const form = useForm({
 
 const submit = () => {
     form.post('/register');
+};
+
+const continueWithGoogle = () => {
+    const role = form.role || 'entrepreneur';
+    window.location.href = `/auth/google/redirect?role=${role}`;
 };
 </script>
