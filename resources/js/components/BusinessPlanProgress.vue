@@ -60,12 +60,14 @@
                         :ref="el => setFieldRef(fieldKey, el)"
                         :id="`field-${fieldKey}`"
                         :class="[
-                            'p-1.5 rounded-lg text-xs transition-all border',
+                            'p-1.5 rounded-lg text-xs transition-all border cursor-pointer hover:bg-white/10',
                             isFieldFilled(fieldKey) 
                                 ? 'bg-green-600/20 border-green-500/50' 
                                 : 'bg-white/5 border-white/20',
-                            fieldToHighlight === fieldKey ? 'field-highlight' : ''
+                            fieldToHighlight === fieldKey ? 'field-highlight' : '',
+                            editingField === fieldKey ? 'bg-[#012169] border-white/50' : ''
                         ]"
+                        @click="startEditing(fieldKey)"
                     >
                         <div class="flex items-start gap-2">
                             <div :class="[
@@ -78,14 +80,39 @@
                                 <span v-else class="text-[8px]">○</span>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <div class="font-medium text-white mb-0.5">
-                                    {{ getFieldLabel(fieldKey) }}
+                                <div class="font-medium text-white mb-0.5 flex items-center justify-between">
+                                    <span>{{ getFieldLabel(fieldKey) }}</span>
+                                    <i class="fa-solid fa-pen text-[8px] text-white/50 ml-2"></i>
                                 </div>
-                                <div v-if="isFieldFilled(fieldKey)" class="text-[10px] text-white line-clamp-2">
+                                <div v-if="editingField === fieldKey" class="mt-1" @click.stop>
+                                    <textarea
+                                        v-if="isTextField(fieldKey)"
+                                        v-model="editValue"
+                                        @blur="saveField(fieldKey)"
+                                        @keydown.enter.ctrl="saveField(fieldKey)"
+                                        @keydown.esc="cancelEditing"
+                                        @click.stop
+                                        class="w-full bg-[#011135] text-white text-[10px] p-2 rounded border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
+                                        rows="3"
+                                        ref="editInput"
+                                    ></textarea>
+                                    <input
+                                        v-else
+                                        v-model="editValue"
+                                        @blur="saveField(fieldKey)"
+                                        @keydown.enter="saveField(fieldKey)"
+                                        @keydown.esc="cancelEditing"
+                                        @click.stop
+                                        type="text"
+                                        class="w-full bg-[#011135] text-white text-[10px] p-2 rounded border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                        ref="editInput"
+                                    />
+                                </div>
+                                <div v-else-if="isFieldFilled(fieldKey)" class="text-[10px] text-white line-clamp-2">
                                     {{ formatFieldValue(fieldKey) }}
                                 </div>
                                 <div v-else class="text-[10px] text-white/60 italic">
-                                    Not provided
+                                    Not provided - Click to edit
                                 </div>
                             </div>
                         </div>
@@ -123,6 +150,7 @@
 
 <script setup>
 import { computed, watch, ref, nextTick, onMounted } from 'vue';
+import axios from 'axios';
 
 const props = defineProps({
     businessPlan: {
@@ -139,8 +167,13 @@ const props = defineProps({
     }
 });
 
+const emit = defineEmits(['update']);
+
 const updateTrigger = ref(0);
 const fieldRefs = ref({});
+const editingField = ref(null);
+const editValue = ref('');
+const editInput = ref(null);
 
 const setFieldRef = (fieldKey, el) => {
     if (el) {
@@ -373,6 +406,78 @@ const formatFieldValue = (fieldKey) => {
     }
     
     return String(value);
+};
+
+const isTextField = (fieldKey) => {
+    // Fields that should use textarea (long text fields)
+    const textareaFields = [
+        'business_idea', 'competence_skills', 'swot_analysis', 'products_services_general',
+        'products_services_detailed', 'sales_marketing', 'production_logistics',
+        'distribution_network', 'target_market_groups', 'competitors', 'competitive_situation',
+        'operating_environment_risks', 'vision_long_term', 'industry_future_prospects',
+        'permits_notices', 'insurance_contracts', 'intellectual_property_rights',
+        'support_network', 'my_business_comprehensive', 'company_owners_holdings',
+        'company_contact_info'
+    ];
+    return textareaFields.includes(fieldKey);
+};
+
+const startEditing = async (fieldKey) => {
+    if (editingField.value === fieldKey) return; // Already editing this field
+    
+    editingField.value = fieldKey;
+    const value = props.businessPlan?.[fieldKey];
+    editValue.value = value !== null && value !== undefined ? String(value) : '';
+    
+    await nextTick();
+    if (editInput.value) {
+        if (Array.isArray(editInput.value)) {
+            editInput.value[0]?.focus();
+        } else {
+            editInput.value.focus();
+        }
+    }
+};
+
+const cancelEditing = () => {
+    editingField.value = null;
+    editValue.value = '';
+};
+
+const saveField = async (fieldKey) => {
+    if (editingField.value !== fieldKey) return;
+    
+    const newValue = editValue.value.trim();
+    const oldValue = props.businessPlan?.[fieldKey];
+    
+    // Only save if value changed
+    if (newValue !== String(oldValue || '')) {
+        try {
+            const updateData = {
+                [fieldKey]: newValue || null
+            };
+            
+            // Convert to number if it's a numeric field
+            const numericFields = ['year_of_establishment', 'number_of_employees', 'years_in_finland'];
+            if (numericFields.includes(fieldKey) && newValue) {
+                const numValue = parseInt(newValue);
+                if (!isNaN(numValue)) {
+                    updateData[fieldKey] = numValue;
+                }
+            }
+            
+            // Emit update event to parent
+            emit('update', updateData);
+            
+            // Also save to backend
+            await axios.post('/api/business-plan/update', updateData);
+        } catch (err) {
+            console.error('Failed to save field:', err);
+            alert('Failed to save. Please try again.');
+        }
+    }
+    
+    cancelEditing();
 };
 </script>
 

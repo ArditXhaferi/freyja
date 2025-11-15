@@ -24,24 +24,27 @@
                             <button
                                 @click="handleCallMode"
                                 :class="[
-                                    'px-6 py-3 rounded-lg text-base font-semibold transition-all',
+                                    'px-6 py-3 rounded-lg text-base font-semibold transition-all flex items-center gap-2',
                                     interactionMode === 'voice'
                                         ? 'bg-green-600 text-white shadow-lg'
                                         : 'bg-[#011135] text-white/70 hover:text-white hover:bg-white/10 border border-white/20'
                                 ]"
                             >
-                                {{ isConnected ? '❌ Cancel Call' : '📞 Call' }}
+                                <i v-if="isConnected" class="fa-solid fa-phone-slash"></i>
+                                <i v-else class="fa-solid fa-phone"></i>
+                                <span>{{ isConnected ? 'Cancel Call' : 'Call' }}</span>
                             </button>
                             <button
                                 @click="interactionMode = 'chat'"
                                 :class="[
-                                    'px-6 py-3 rounded-lg text-base font-semibold transition-all',
+                                    'px-6 py-3 rounded-lg text-base font-semibold transition-all flex items-center gap-2',
                                     interactionMode === 'chat'
                                         ? 'bg-green-600 text-white shadow-lg'
                                         : 'bg-[#011135] text-white/70 hover:text-white hover:bg-white/10 border border-white/20'
                                 ]"
                             >
-                                💬 Text
+                                <i class="fa-solid fa-comments"></i>
+                                <span>Text</span>
                             </button>
                         </div>
                     </div>
@@ -50,17 +53,18 @@
             <div v-if="error" class="mb-4 bg-red-900/80 border border-red-600 rounded-lg p-4 shadow-lg">
                 <div class="flex items-center">
                     <div class="flex-shrink-0">
-                        <span class="text-red-500 text-xl">⚠️</span>
+                        <i class="fa-solid fa-triangle-exclamation text-red-500 text-xl"></i>
                     </div>
                     <div class="ml-3 flex-1">
-                        <p class="text-sm text-red-700">{{ error }}</p>
+                        <p class="text-sm text-red-200">{{ error }}</p>
                     </div>
                     <div class="ml-auto">
                         <button
                             @click="error = null"
-                            class="text-red-500 hover:text-red-700"
+                            class="text-red-400 hover:text-red-200 hover:bg-red-800/50 rounded-full p-1 transition-all w-6 h-6 flex items-center justify-center"
+                            title="Dismiss"
                         >
-                            ✕
+                            <i class="fa-solid fa-times text-sm"></i>
                         </button>
                     </div>
                 </div>
@@ -82,33 +86,39 @@
                         {{ connectionStatus === 'disconnected' ? 'Ready to call' : '' }}
                     </span>
                     <span v-if="isListening && !isMuted" 
-                          class="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-medium animate-pulse">
-                        🎤 Listening...
+                          class="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-medium animate-pulse flex items-center gap-2">
+                        <i class="fa-solid fa-microphone"></i>
+                        <span>Listening...</span>
                     </span>
                     <span v-if="isMuted" 
-                          class="px-4 py-2 bg-red-500/50 text-white rounded-full text-sm font-medium">
-                        🔇 Muted
+                          class="px-4 py-2 bg-red-500/50 text-white rounded-full text-sm font-medium flex items-center gap-2">
+                        <i class="fa-solid fa-microphone-slash"></i>
+                        <span>Muted</span>
                     </span>
                     <span v-if="isSpeaking" 
-                          class="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-medium">
-                        🔊 Speaking...
+                          class="px-4 py-2 bg-white/20 text-white rounded-full text-sm font-medium flex items-center gap-2">
+                        <i class="fa-solid fa-volume-high"></i>
+                        <span>Speaking...</span>
                     </span>
                     <button
                         v-if="isConnected"
                         @click="toggleMute"
                         :class="[
-                            'ml-auto px-4 py-2 rounded-lg text-sm font-semibold transition-all',
+                            'ml-auto px-5 py-3 rounded-full text-base font-semibold transition-all flex items-center gap-2 shadow-lg',
                             isMuted
-                                ? 'bg-red-600 text-white hover:bg-red-700'
-                                : 'bg-white/20 text-white hover:bg-white/30 border border-white/20'
+                                ? 'bg-red-600 text-white hover:bg-red-700 hover:scale-105 active:scale-95'
+                                : 'bg-white/20 text-white hover:bg-white/30 border border-white/20 hover:scale-105 active:scale-95'
                         ]"
+                        :title="isMuted ? 'Click to unmute microphone' : 'Click to mute microphone'"
                     >
-                        {{ isMuted ? '🔇 Unmute' : '🎤 Mute' }}
+                        <i v-if="isMuted" class="fa-solid fa-microphone-slash"></i>
+                        <i v-else class="fa-solid fa-microphone"></i>
+                        <span>{{ isMuted ? 'Unmute' : 'Mute' }}</span>
                     </button>
                 </div>
 
                 <!-- Transcript Display (Full Screen) -->
-                <div class="flex-1 overflow-y-auto space-y-4 pb-4">
+                <div ref="transcriptContainer" class="flex-1 overflow-y-auto space-y-4 pb-4">
                     <div v-if="transcripts.length === 0" class="flex items-center justify-center h-full">
                         <p class="text-white/60 text-lg">Start a conversation with Eppu to see your chat here...</p>
                     </div>
@@ -181,8 +191,8 @@
                         :disabled="!chatInput.trim() || isLoadingChat"
                         class="px-8 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-lg"
                     >
-                        <span>💬</span>
-                        Send
+                        <i class="fa-solid fa-paper-plane"></i>
+                        <span>Send</span>
                     </button>
                 </div>
             </div>
@@ -274,109 +284,260 @@
                             Your Background Information
                         </h3>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- Country of Origin -->
                             <div 
                                 :ref="el => setContextualFieldRef('country_of_origin', el)"
                                 :id="'contextual-field-country_of_origin'"
                                 :class="[
-                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all',
-                                    fieldToHighlight === 'country_of_origin' ? 'field-highlight' : ''
+                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all cursor-pointer hover:bg-[#011135]',
+                                    fieldToHighlight === 'country_of_origin' ? 'field-highlight' : '',
+                                    editingContextualField === 'country_of_origin' ? 'border-white/50' : ''
                                 ]"
+                                @click="startEditingContextual('country_of_origin')"
                             >
-                                <p class="text-xs font-semibold text-white/70 mb-1">Country of Origin</p>
-                                <p class="text-sm font-bold text-white">{{ businessPlanData?.country_of_origin || 'Not provided' }}</p>
+                                <p class="text-xs font-semibold text-white/70 mb-1 flex items-center justify-between">
+                                    <span>Country of Origin</span>
+                                    <i class="fa-solid fa-pen text-[8px] text-white/50"></i>
+                                </p>
+                                <input
+                                    v-if="editingContextualField === 'country_of_origin'"
+                                    v-model="contextualEditValue"
+                                    @blur="saveContextualField('country_of_origin')"
+                                    @keydown.enter="saveContextualField('country_of_origin')"
+                                    @keydown.esc="cancelEditingContextual"
+                                    @click.stop
+                                    type="text"
+                                    class="w-full bg-[#011135] text-white text-sm p-2 rounded border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    ref="contextualEditInput"
+                                />
+                                <p v-else class="text-sm font-bold text-white">{{ businessPlanData?.country_of_origin || 'Not provided - Click to edit' }}</p>
                             </div>
+                            
+                            <!-- EU Resident -->
                             <div 
                                 :ref="el => setContextualFieldRef('is_eu_resident', el)"
                                 :id="'contextual-field-is_eu_resident'"
                                 :class="[
-                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all',
-                                    fieldToHighlight === 'is_eu_resident' ? 'field-highlight' : ''
+                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all cursor-pointer hover:bg-[#011135]',
+                                    fieldToHighlight === 'is_eu_resident' ? 'field-highlight' : '',
+                                    editingContextualField === 'is_eu_resident' ? 'border-white/50' : ''
                                 ]"
+                                @click="startEditingContextual('is_eu_resident')"
                             >
-                                <p class="text-xs font-semibold text-white/70 mb-1">EU Resident</p>
-                                <p class="text-sm font-bold text-white">
+                                <p class="text-xs font-semibold text-white/70 mb-1 flex items-center justify-between">
+                                    <span>EU Resident</span>
+                                    <i class="fa-solid fa-pen text-[8px] text-white/50"></i>
+                                </p>
+                                <select
+                                    v-if="editingContextualField === 'is_eu_resident'"
+                                    v-model="contextualEditValue"
+                                    @blur="saveContextualField('is_eu_resident')"
+                                    @change="saveContextualField('is_eu_resident')"
+                                    @click.stop
+                                    class="w-full bg-[#011135] text-white text-sm p-2 rounded border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    ref="contextualEditInput"
+                                >
+                                    <option value="">Not provided</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                                <p v-else class="text-sm font-bold text-white">
                                     <span v-if="businessPlanData?.is_eu_resident === true" class="text-green-400">Yes</span>
                                     <span v-else-if="businessPlanData?.is_eu_resident === false" class="text-red-400">No</span>
-                                    <span v-else class="text-white/50">Not provided</span>
+                                    <span v-else class="text-white/50">Not provided - Click to edit</span>
                                 </p>
                             </div>
+                            
+                            <!-- Newcomer to Finland -->
                             <div 
                                 :ref="el => setContextualFieldRef('is_newcomer_to_finland', el)"
                                 :id="'contextual-field-is_newcomer_to_finland'"
                                 :class="[
-                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all',
-                                    fieldToHighlight === 'is_newcomer_to_finland' ? 'field-highlight' : ''
+                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all cursor-pointer hover:bg-[#011135]',
+                                    fieldToHighlight === 'is_newcomer_to_finland' ? 'field-highlight' : '',
+                                    editingContextualField === 'is_newcomer_to_finland' ? 'border-white/50' : ''
                                 ]"
+                                @click="startEditingContextual('is_newcomer_to_finland')"
                             >
-                                <p class="text-xs font-semibold text-white/70 mb-1">Newcomer to Finland</p>
-                                <p class="text-sm font-bold text-white">
+                                <p class="text-xs font-semibold text-white/70 mb-1 flex items-center justify-between">
+                                    <span>Newcomer to Finland</span>
+                                    <i class="fa-solid fa-pen text-[8px] text-white/50"></i>
+                                </p>
+                                <select
+                                    v-if="editingContextualField === 'is_newcomer_to_finland'"
+                                    v-model="contextualEditValue"
+                                    @blur="saveContextualField('is_newcomer_to_finland')"
+                                    @change="saveContextualField('is_newcomer_to_finland')"
+                                    @click.stop
+                                    class="w-full bg-[#011135] text-white text-sm p-2 rounded border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    ref="contextualEditInput"
+                                >
+                                    <option value="">Not provided</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                                <p v-else class="text-sm font-bold text-white">
                                     <span v-if="businessPlanData?.is_newcomer_to_finland === true" class="text-green-400">Yes</span>
                                     <span v-else-if="businessPlanData?.is_newcomer_to_finland === false" class="text-gray-400">No</span>
-                                    <span v-else class="text-white/50">Not provided</span>
+                                    <span v-else class="text-white/50">Not provided - Click to edit</span>
                                 </p>
                             </div>
+                            
+                            <!-- Residence Permit -->
                             <div 
                                 :ref="el => setContextualFieldRef('has_residence_permit', el)"
                                 :id="'contextual-field-has_residence_permit'"
                                 :class="[
-                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all',
-                                    fieldToHighlight === 'has_residence_permit' ? 'field-highlight' : ''
+                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all cursor-pointer hover:bg-[#011135]',
+                                    fieldToHighlight === 'has_residence_permit' ? 'field-highlight' : '',
+                                    editingContextualField === 'has_residence_permit' ? 'border-white/50' : ''
                                 ]"
+                                @click="startEditingContextual('has_residence_permit')"
                             >
-                                <p class="text-xs font-semibold text-white/70 mb-1">Residence Permit</p>
-                                <p class="text-sm font-bold text-white">
+                                <p class="text-xs font-semibold text-white/70 mb-1 flex items-center justify-between">
+                                    <span>Residence Permit</span>
+                                    <i class="fa-solid fa-pen text-[8px] text-white/50"></i>
+                                </p>
+                                <select
+                                    v-if="editingContextualField === 'has_residence_permit'"
+                                    v-model="contextualEditValue"
+                                    @blur="saveContextualField('has_residence_permit')"
+                                    @change="saveContextualField('has_residence_permit')"
+                                    @click.stop
+                                    class="w-full bg-[#011135] text-white text-sm p-2 rounded border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    ref="contextualEditInput"
+                                >
+                                    <option value="">Not provided</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                                <p v-else class="text-sm font-bold text-white">
                                     <span v-if="businessPlanData?.has_residence_permit === true" class="text-green-400">Yes</span>
                                     <span v-else-if="businessPlanData?.has_residence_permit === false" class="text-red-400">No</span>
-                                    <span v-else class="text-white/50">Not provided</span>
+                                    <span v-else class="text-white/50">Not provided - Click to edit</span>
                                 </p>
                             </div>
+                            
+                            <!-- Residence Permit Type -->
                             <div 
                                 :ref="el => setContextualFieldRef('residence_permit_type', el)"
                                 :id="'contextual-field-residence_permit_type'"
                                 :class="[
-                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all',
-                                    fieldToHighlight === 'residence_permit_type' ? 'field-highlight' : ''
+                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all cursor-pointer hover:bg-[#011135]',
+                                    fieldToHighlight === 'residence_permit_type' ? 'field-highlight' : '',
+                                    editingContextualField === 'residence_permit_type' ? 'border-white/50' : ''
                                 ]"
+                                @click="startEditingContextual('residence_permit_type')"
                             >
-                                <p class="text-xs font-semibold text-white/70 mb-1">Residence Permit Type</p>
-                                <p class="text-sm font-bold text-white">{{ businessPlanData?.residence_permit_type || 'Not provided' }}</p>
+                                <p class="text-xs font-semibold text-white/70 mb-1 flex items-center justify-between">
+                                    <span>Residence Permit Type</span>
+                                    <i class="fa-solid fa-pen text-[8px] text-white/50"></i>
+                                </p>
+                                <input
+                                    v-if="editingContextualField === 'residence_permit_type'"
+                                    v-model="contextualEditValue"
+                                    @blur="saveContextualField('residence_permit_type')"
+                                    @keydown.enter="saveContextualField('residence_permit_type')"
+                                    @keydown.esc="cancelEditingContextual"
+                                    @click.stop
+                                    type="text"
+                                    class="w-full bg-[#011135] text-white text-sm p-2 rounded border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    ref="contextualEditInput"
+                                />
+                                <p v-else class="text-sm font-bold text-white">{{ businessPlanData?.residence_permit_type || 'Not provided - Click to edit' }}</p>
                             </div>
+                            
+                            <!-- Years in Finland -->
                             <div 
                                 :ref="el => setContextualFieldRef('years_in_finland', el)"
                                 :id="'contextual-field-years_in_finland'"
                                 :class="[
-                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all',
-                                    fieldToHighlight === 'years_in_finland' ? 'field-highlight' : ''
+                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all cursor-pointer hover:bg-[#011135]',
+                                    fieldToHighlight === 'years_in_finland' ? 'field-highlight' : '',
+                                    editingContextualField === 'years_in_finland' ? 'border-white/50' : ''
                                 ]"
+                                @click="startEditingContextual('years_in_finland')"
                             >
-                                <p class="text-xs font-semibold text-white/70 mb-1">Years in Finland</p>
-                                <p class="text-sm font-bold text-white">{{ businessPlanData?.years_in_finland !== null && businessPlanData?.years_in_finland !== undefined ? businessPlanData.years_in_finland + ' years' : 'Not provided' }}</p>
+                                <p class="text-xs font-semibold text-white/70 mb-1 flex items-center justify-between">
+                                    <span>Years in Finland</span>
+                                    <i class="fa-solid fa-pen text-[8px] text-white/50"></i>
+                                </p>
+                                <input
+                                    v-if="editingContextualField === 'years_in_finland'"
+                                    v-model="contextualEditValue"
+                                    @blur="saveContextualField('years_in_finland')"
+                                    @keydown.enter="saveContextualField('years_in_finland')"
+                                    @keydown.esc="cancelEditingContextual"
+                                    @click.stop
+                                    type="number"
+                                    class="w-full bg-[#011135] text-white text-sm p-2 rounded border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    ref="contextualEditInput"
+                                />
+                                <p v-else class="text-sm font-bold text-white">{{ businessPlanData?.years_in_finland !== null && businessPlanData?.years_in_finland !== undefined ? businessPlanData.years_in_finland + ' years' : 'Not provided - Click to edit' }}</p>
                             </div>
+                            
+                            <!-- Business Experience -->
                             <div 
                                 :ref="el => setContextualFieldRef('has_business_experience', el)"
                                 :id="'contextual-field-has_business_experience'"
                                 :class="[
-                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all',
-                                    fieldToHighlight === 'has_business_experience' ? 'field-highlight' : ''
+                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all cursor-pointer hover:bg-[#011135]',
+                                    fieldToHighlight === 'has_business_experience' ? 'field-highlight' : '',
+                                    editingContextualField === 'has_business_experience' ? 'border-white/50' : ''
                                 ]"
+                                @click="startEditingContextual('has_business_experience')"
                             >
-                                <p class="text-xs font-semibold text-white/70 mb-1">Business Experience</p>
-                                <p class="text-sm font-bold text-white">
+                                <p class="text-xs font-semibold text-white/70 mb-1 flex items-center justify-between">
+                                    <span>Business Experience</span>
+                                    <i class="fa-solid fa-pen text-[8px] text-white/50"></i>
+                                </p>
+                                <select
+                                    v-if="editingContextualField === 'has_business_experience'"
+                                    v-model="contextualEditValue"
+                                    @blur="saveContextualField('has_business_experience')"
+                                    @change="saveContextualField('has_business_experience')"
+                                    @click.stop
+                                    class="w-full bg-[#011135] text-white text-sm p-2 rounded border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    ref="contextualEditInput"
+                                >
+                                    <option value="">Not provided</option>
+                                    <option value="true">Yes</option>
+                                    <option value="false">No</option>
+                                </select>
+                                <p v-else class="text-sm font-bold text-white">
                                     <span v-if="businessPlanData?.has_business_experience === true" class="text-green-400">Yes</span>
                                     <span v-else-if="businessPlanData?.has_business_experience === false" class="text-gray-400">No</span>
-                                    <span v-else class="text-white/50">Not provided</span>
+                                    <span v-else class="text-white/50">Not provided - Click to edit</span>
                                 </p>
                             </div>
+                            
+                            <!-- Preferred Language -->
                             <div 
                                 :ref="el => setContextualFieldRef('language', el)"
                                 :id="'contextual-field-language'"
                                 :class="[
-                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all',
-                                    fieldToHighlight === 'language' ? 'field-highlight' : ''
+                                    'bg-[#012169] rounded-lg p-3 border border-white/10 transition-all cursor-pointer hover:bg-[#011135]',
+                                    fieldToHighlight === 'language' ? 'field-highlight' : '',
+                                    editingContextualField === 'language' ? 'border-white/50' : ''
                                 ]"
+                                @click="startEditingContextual('language')"
                             >
-                                <p class="text-xs font-semibold text-white/70 mb-1">Preferred Language</p>
-                                <p class="text-sm font-bold text-white">{{ businessPlanData?.language || 'Not provided' }}</p>
+                                <p class="text-xs font-semibold text-white/70 mb-1 flex items-center justify-between">
+                                    <span>Preferred Language</span>
+                                    <i class="fa-solid fa-pen text-[8px] text-white/50"></i>
+                                </p>
+                                <input
+                                    v-if="editingContextualField === 'language'"
+                                    v-model="contextualEditValue"
+                                    @blur="saveContextualField('language')"
+                                    @keydown.enter="saveContextualField('language')"
+                                    @keydown.esc="cancelEditingContextual"
+                                    @click.stop
+                                    type="text"
+                                    class="w-full bg-[#011135] text-white text-sm p-2 rounded border border-white/20 focus:outline-none focus:ring-2 focus:ring-green-500"
+                                    ref="contextualEditInput"
+                                />
+                                <p v-else class="text-sm font-bold text-white">{{ businessPlanData?.language || 'Not provided - Click to edit' }}</p>
                             </div>
                         </div>
                     </div>
@@ -386,6 +547,7 @@
                         :business-plan="businessPlanData"
                         :recently-answered-fields="recentlyAnsweredFields"
                         :field-to-highlight="fieldToHighlight"
+                        @update="handleBusinessPlanFieldUpdate"
                     />
                     
                     <!-- Document Requests Section -->
@@ -402,40 +564,6 @@
                                 @dismiss="handleDocumentDismiss"
                                 @provided="handleDocumentProvided"
                             />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Manual Add Drawer -->
-        <div v-if="activeTab === 'add'" 
-             class="fixed inset-0 z-40 flex items-end drawer-overlay"
-             @click.self="activeTab = 'roadmap'">
-            <div class="bg-[#012169] rounded-t-lg shadow-2xl w-full max-h-[85vh] overflow-y-auto drawer-content">
-                <div class="sticky top-0 bg-[#011135] p-5 flex items-center justify-between rounded-t-lg shadow-md z-10 border-b border-white/20">
-                    <h2 class="text-xl font-bold text-white">Manual Entry</h2>
-                    <button @click="activeTab = 'roadmap'" class="text-white/80 hover:text-white transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-                <div class="p-6 pb-24">
-                    <!-- Manual Add content embedded directly -->
-                    <div class="space-y-6">
-                        <p class="text-white/80 mb-6">Here you can manually add or update business plan fields or roadmap steps.</p>
-                        <div class="bg-[#011135] rounded-lg p-4 border border-white/20">
-                            <h3 class="font-bold text-white mb-3">
-                                Add Business Plan Field
-                            </h3>
-                            <p class="text-sm text-white/70 mb-4">Coming soon! You'll be able to manually add business plan information here.</p>
-                        </div>
-                        <div class="bg-[#011135] rounded-lg p-4 border border-white/20">
-                            <h3 class="font-bold text-white mb-3">
-                                Add Roadmap Step
-                            </h3>
-                            <p class="text-sm text-white/70 mb-4">Coming soon! You'll be able to manually add roadmap steps here.</p>
                         </div>
                     </div>
                 </div>
@@ -581,7 +709,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick, computed, watch } from 'vue';
+import { ref, onMounted, onUnmounted, nextTick, computed, watch } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import useVoiceAgent from '../composables/useVoiceAgent';
@@ -628,6 +756,7 @@ const transcripts = ref([]);
 const isSessionActive = ref(false);
 const businessPlanData = ref(props.initialBusinessPlan);
 const recentlyAnsweredFields = ref(new Set()); // Track fields that were just answered
+const transcriptContainer = ref(null);
 
 // Modal states
 const showBusinessPlanModal = ref(false);
@@ -668,6 +797,14 @@ const fieldToHighlight = ref(null);
 const contextualFieldRefs = ref({});
 const showBusinessInfo = ref(false);
 const networkView = ref('discover');
+
+// Inline editing state for contextual fields
+const editingContextualField = ref(null);
+const contextualEditValue = ref('');
+const contextualEditInput = ref(null);
+
+// Timeout ref for auto-closing business tab
+let businessTabTimeout = null;
 
 // Interaction mode (voice or chat)
 const interactionMode = ref('voice');
@@ -838,9 +975,6 @@ const handleRoadmapUpdate = async (roadmapData) => {
             return;
         }
 
-        // Switch to roadmap tab to show the update
-        activeTab.value = 'roadmap-tab';
-
         // Merge with existing roadmap instead of replacing
         if (roadmap.value && roadmap.value.steps && Array.isArray(roadmap.value.steps)) {
             const existingSteps = roadmap.value.steps.filter(step => !step.isQuestion); // Exclude question steps
@@ -888,51 +1022,6 @@ const handleRoadmapUpdate = async (roadmapData) => {
 
         // Switch to roadmap tab to show the update
         activeTab.value = 'roadmap-tab';
-
-        // Merge with existing roadmap instead of replacing
-        if (roadmap.value && roadmap.value.steps && Array.isArray(roadmap.value.steps)) {
-            const existingSteps = roadmap.value.steps.filter(step => !step.isQuestion); // Exclude question steps
-            const newSteps = roadmapData.steps || [];
-            
-            // Merge new steps with existing ones
-            const mergedSteps = [...existingSteps];
-            newSteps.forEach(newStep => {
-                const key = newStep.id !== undefined ? newStep.id : newStep.order;
-                const existingIndex = mergedSteps.findIndex(s => 
-                    (s.id !== undefined && s.id === newStep.id) || 
-                    (s.order === newStep.order && newStep.id === undefined)
-                );
-                
-                if (existingIndex >= 0) {
-                    // Update existing step
-                    mergedSteps[existingIndex] = {
-                        ...mergedSteps[existingIndex],
-                        ...newStep,
-                        // Preserve original id if new step doesn't have one
-                        id: newStep.id !== undefined ? newStep.id : mergedSteps[existingIndex].id
-                    };
-                } else {
-                    // Add new step
-                    mergedSteps.push(newStep);
-                }
-            });
-            
-            // Sort by order
-            mergedSteps.sort((a, b) => (a.order || 0) - (b.order || 0));
-            
-            // Update roadmap with merged data
-            roadmap.value = {
-                ...roadmap.value,
-                title: roadmapData.title || roadmap.value.title,
-                steps: mergedSteps
-            };
-        } else {
-            // No existing roadmap, use new data as-is
-            roadmap.value = roadmapData;
-        }
-        
-        // Don't merge question steps - roadmap only shows action steps
-        // Question steps are handled separately in BusinessPlanProgress component
 
         // Save to backend (only roadmap action steps, no question steps)
         const roadmapToSave = {
@@ -957,6 +1046,11 @@ const handleRoadmapUpdate = async (roadmapData) => {
         console.error('Failed to process roadmap update:', err);
         error.value = 'Failed to process roadmap update. Please try again.';
     }
+};
+
+const handleBusinessPlanFieldUpdate = async (updateData) => {
+    // Handle inline field updates from BusinessPlanProgress component
+    await handleBusinessPlanUpdate(updateData);
 };
 
 const handleBusinessPlanUpdate = async (businessPlanUpdateData) => {
@@ -992,9 +1086,31 @@ const handleBusinessPlanUpdate = async (businessPlanUpdateData) => {
             }, 5000);
         }
         
+        // Clear any existing timeout for business tab
+        if (businessTabTimeout) {
+            clearTimeout(businessTabTimeout);
+            businessTabTimeout = null;
+        }
+
         // Switch to business tab to show the update
         activeTab.value = 'business';
         showBusinessInfo.value = false; // Close modal if open, show inline instead
+
+        // Auto-close the tab after 3 seconds to let user focus back on voice
+        businessTabTimeout = setTimeout(() => {
+            // Only close if we're still on the business tab (user might have navigated away)
+            if (activeTab.value === 'business') {
+                activeTab.value = 'roadmap';
+                
+                // Scroll to bottom of transcript after closing tab
+                nextTick(() => {
+                    if (transcriptContainer.value) {
+                        transcriptContainer.value.scrollTop = transcriptContainer.value.scrollHeight;
+                    }
+                });
+            }
+            businessTabTimeout = null;
+        }, 3000);
 
         // Merge with existing business plan data - create new object reference for reactivity
         if (businessPlanData.value) {
@@ -1704,6 +1820,84 @@ const handleNavigation = (tab) => {
     }
 };
 
+// Contextual field editing functions
+const startEditingContextual = async (fieldKey) => {
+    if (editingContextualField.value === fieldKey) return; // Already editing this field
+    
+    editingContextualField.value = fieldKey;
+    const value = businessPlanData.value?.[fieldKey];
+    
+    // Handle boolean fields
+    if (typeof value === 'boolean') {
+        contextualEditValue.value = value ? 'true' : 'false';
+    } else if (value === null || value === undefined) {
+        contextualEditValue.value = '';
+    } else {
+        contextualEditValue.value = String(value);
+    }
+    
+    await nextTick();
+    if (contextualEditInput.value) {
+        if (Array.isArray(contextualEditInput.value)) {
+            contextualEditInput.value[0]?.focus();
+        } else {
+            contextualEditInput.value.focus();
+        }
+    }
+};
+
+const cancelEditingContextual = () => {
+    editingContextualField.value = null;
+    contextualEditValue.value = '';
+};
+
+const saveContextualField = async (fieldKey) => {
+    if (editingContextualField.value !== fieldKey) return;
+    
+    let newValue = contextualEditValue.value.trim();
+    const oldValue = businessPlanData.value?.[fieldKey];
+    
+    // Handle boolean fields
+    const booleanFields = ['is_eu_resident', 'is_newcomer_to_finland', 'has_residence_permit', 'has_business_experience'];
+    if (booleanFields.includes(fieldKey)) {
+        if (newValue === 'true') {
+            newValue = true;
+        } else if (newValue === 'false') {
+            newValue = false;
+        } else {
+            newValue = null;
+        }
+    } else if (fieldKey === 'years_in_finland') {
+        // Handle numeric field
+        if (newValue) {
+            const numValue = parseInt(newValue);
+            newValue = !isNaN(numValue) ? numValue : null;
+        } else {
+            newValue = null;
+        }
+    } else {
+        // Handle string fields
+        newValue = newValue || null;
+    }
+    
+    // Only save if value changed
+    if (newValue !== oldValue) {
+        try {
+            const updateData = {
+                [fieldKey]: newValue
+            };
+            
+            // Use the existing business plan update handler
+            await handleBusinessPlanUpdate(updateData);
+        } catch (err) {
+            console.error('Failed to save contextual field:', err);
+            error.value = 'Failed to save. Please try again.';
+        }
+    }
+    
+    cancelEditingContextual();
+};
+
 onMounted(async () => {
     // Load user progress on mount
     await loadUserProgress();
@@ -1713,6 +1907,14 @@ onMounted(async () => {
     // Roadmap only shows action steps, no question steps
     // Question steps are handled separately in BusinessPlanProgress component
     console.log('Roadmap loaded:', roadmap.value);
+});
+
+onUnmounted(() => {
+    // Clean up timeouts to prevent memory leaks
+    if (businessTabTimeout) {
+        clearTimeout(businessTabTimeout);
+        businessTabTimeout = null;
+    }
 });
 </script>
 

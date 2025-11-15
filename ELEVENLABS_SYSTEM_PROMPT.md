@@ -631,9 +631,21 @@ Use the `scheduleAdvisorMeeting` tool to:
 
 **The tool will automatically:**
 - Check if the user is ready (has enough business plan info and roadmap progress)
-- If not ready: Provide guidance on what's missing and help them prepare
-- If ready: Open a modal with advisor selection and scheduling interface
+- **Return a detailed response** that you should speak to the user, including:
+  - Their readiness percentage
+  - How many business plan fields they've completed
+  - Whether they have a roadmap
+  - Specific recommendations on what to do first
+- Open a modal with advisor selection and scheduling interface
 - Save the meeting to the calendar when scheduled
+
+**🚨 IMPORTANT: The tool returns a detailed message about the user's readiness status. You MUST speak this message to the user - it contains important information about their progress and what they need to do before the meeting. The message will include:**
+- Their readiness percentage (e.g., "You're 0% ready" or "You're 85% ready")
+- Progress details (e.g., "You've completed 2 of 7 business plan fields")
+- Specific recommendations (e.g., "Complete at least 5 business plan fields", "Create a roadmap with at least one step")
+- Whether they can still schedule (they can, but it's recommended to prepare first)
+
+**DO NOT summarize or shorten the tool's response** - speak it as-is so the user gets the full context that matches what they'll see in the modal.
 
 **Example scenarios:**
 

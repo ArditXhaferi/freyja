@@ -819,6 +819,17 @@ export default function useVoiceAgent({
                                 return 'Error: Invalid meeting data format';
                             }
                             
+                            // Check readiness first
+                            let readinessResponse;
+                            try {
+                                const readinessResult = await axios.get('/api/meetings/readiness');
+                                readinessResponse = readinessResult.data;
+                            } catch (readinessError) {
+                                console.error('Error checking readiness:', readinessError);
+                                // Continue anyway if readiness check fails
+                            }
+                            
+                            // Open the modal
                             if (onScheduleMeeting) {
                                 onScheduleMeeting({
                                     advisor_id: meetingData.advisor_id || null,
@@ -826,8 +837,37 @@ export default function useVoiceAgent({
                                     topic: meetingData.topic || null
                                 });
                             }
-                            console.log('Advisor meeting scheduling modal opened');
-                            return 'I\'ve opened the scheduling modal. You can select an advisor and choose a date and time for your meeting.';
+                            
+                            // Return detailed response based on readiness
+                            if (!readinessResponse.is_ready) {
+                                const readinessScore = readinessResponse.readiness_score || 0;
+                                const filledCount = readinessResponse.filled_fields_count || 0;
+                                const totalCount = readinessResponse.total_fields_count || 7;
+                                const hasRoadmap = readinessResponse.has_roadmap || false;
+                                const recommendations = readinessResponse.recommendations || [];
+                                
+                                let responseMessage = `I've opened the scheduling modal for you. However, you're currently ${readinessScore}% ready for an advisor meeting. `;
+                                responseMessage += `You've completed ${filledCount} of ${totalCount} business plan fields. `;
+                                
+                                if (!hasRoadmap) {
+                                    responseMessage += `You also need to create a roadmap with at least one step. `;
+                                }
+                                
+                                if (recommendations.length > 0) {
+                                    responseMessage += `Here's what you should do first: `;
+                                    recommendations.forEach((rec, index) => {
+                                        responseMessage += `${index + 1}. ${rec}. `;
+                                    });
+                                }
+                                
+                                responseMessage += `You can still schedule the meeting if you'd like, but I recommend completing these steps first to make the most of your advisor session.`;
+                                
+                                console.log('Advisor meeting scheduling modal opened (not ready)');
+                                return responseMessage;
+                            } else {
+                                console.log('Advisor meeting scheduling modal opened (ready)');
+                                return `Great! You're ready to schedule a meeting with an advisor. I've opened the scheduling modal where you can select an advisor and choose a date and time for your meeting.`;
+                            }
                         } catch (error) {
                             console.error('Error in scheduleAdvisorMeeting tool:', error);
                             return `Error opening scheduling modal: ${error.message}`;

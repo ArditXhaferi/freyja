@@ -30,20 +30,6 @@
                     <span class="text-xs font-semibold">Roadmap</span>
                 </button>
 
-                <!-- Manual Add -->
-                <button
-                    @click="navigate('add')"
-                    :class="[
-                        'flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-lg transition-all duration-300',
-                        activeTab === 'add' 
-                            ? 'bg-[#012169] text-white' 
-                            : 'text-white/70 hover:text-white hover:bg-white/10'
-                    ]"
-                >
-                    <i :class="activeTab === 'add' ? 'fa-solid fa-plus' : 'fa-solid fa-pen'" class="text-lg"></i>
-                    <span class="text-xs font-semibold">Add</span>
-                </button>
-
                 <!-- Home -->
                 <button
                     @click="navigate('roadmap')"
