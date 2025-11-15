@@ -125,6 +125,7 @@
 
 <script setup>
 import { ref, watch } from 'vue';
+import { ref, watch } from 'vue';
 
 const props = defineProps({
     roadmap: {
@@ -137,13 +138,54 @@ const emit = defineEmits(['stepUpdate']);
 
 const animatedSteps = ref([]);
 const previousStepIds = ref(new Set());
+const previousStepIds = ref(new Set());
 
 watch(() => props.roadmap, (newRoadmap) => {
     if (!newRoadmap) {
+    if (!newRoadmap) {
+        animatedSteps.value = [];
+        previousStepIds.value = new Set();
+        previousStepIds.value = new Set();
+        return;
+    }
+    
+    const allSteps = newRoadmap.steps || (newRoadmap.roadmap_json && newRoadmap.roadmap_json.steps) || [];
+    
+    if (!allSteps || allSteps.length === 0) {
         animatedSteps.value = [];
         previousStepIds.value = new Set();
         return;
     }
+
+    const roadmapSteps = allSteps.filter(step => !step.isQuestion);
+    
+    if (roadmapSteps.length === 0) {
+        animatedSteps.value = [];
+        previousStepIds.value = new Set();
+        return;
+    }
+
+    const currentStepIds = new Set(roadmapSteps.map(s => s.id || `${s.order}_${s.title}`));
+    const newlyAddedIds = new Set();
+    
+    roadmapSteps.forEach(step => {
+        const stepId = step.id || `${step.order}_${step.title}`;
+        if (!previousStepIds.value.has(stepId)) {
+            newlyAddedIds.add(stepId);
+        }
+    });
+
+    animatedSteps.value = roadmapSteps.map((step) => {
+        const stepId = step.id || `${step.order}_${step.title}`;
+        return {
+            ...step,
+            isNewlyAdded: newlyAddedIds.has(stepId),
+            _stepId: stepId
+        };
+    });
+    
+    previousStepIds.value = currentStepIds;
+}, { immediate: true, deep: true });
     
     const allSteps = newRoadmap.steps || (newRoadmap.roadmap_json && newRoadmap.roadmap_json.steps) || [];
     
@@ -189,6 +231,12 @@ const handleStepClick = (step) => {
 </script>
 
 <style scoped>
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 .line-clamp-2 {
     display: -webkit-box;
     -webkit-line-clamp: 2;

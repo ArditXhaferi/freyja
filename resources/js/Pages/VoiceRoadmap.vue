@@ -64,7 +64,7 @@
                             @click="handleConnect"
                             class="px-6 py-3 bg-[#011135] text-white rounded-lg hover:bg-[#012169] transition-all font-semibold shadow-lg border border-white/20"
                         >
-                            Connect
+                            ✨ Connect
                         </button>
                         <template v-else>
                             <button
@@ -72,7 +72,7 @@
                                 @click="handleStartSession"
                                 class="px-6 py-3 bg-[#011135] text-white rounded-lg hover:bg-[#012169] transition-all font-semibold shadow-lg border border-white/20 flex items-center gap-2"
                             >
-                                <span>🎤</span>
+                                <span class="text-xl">🎤</span>
                                 Start Voice Session
                             </button>
                             <button
@@ -80,7 +80,7 @@
                                 @click="handleStopSession"
                                 class="px-6 py-3 bg-red-700 text-white rounded-lg hover:bg-red-800 transition-all font-semibold shadow-lg border border-red-600 flex items-center gap-2"
                             >
-                                <span>⏹️</span>
+                                <span class="text-xl">⏹️</span>
                                 Stop Session
                             </button>
                             <button
@@ -496,10 +496,23 @@
 
 <script setup>
 import { ref, onMounted, nextTick, computed, watch } from 'vue';
+import { ref, onMounted, nextTick, computed, watch } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import useVoiceAgent from '../composables/useVoiceAgent';
 import RoadmapVisualizer from '../components/RoadmapVisualizer.vue';
+import BusinessPlanProgress from '../components/BusinessPlanProgress.vue';
+import MeetingPrepModal from '../components/MeetingPrepModal.vue';
+import ProgressSummaryModal from '../components/ProgressSummaryModal.vue';
+import ResourceCard from '../components/ResourceCard.vue';
+import DocumentRequestCard from '../components/DocumentRequestCard.vue';
+import RewardAnimation from '../components/RewardAnimation.vue';
+import XPLevelHeader from '../components/XPLevelHeader.vue';
+import BottomNavigation from '../components/BottomNavigation.vue';
+import BusinessInfoModal from '../components/BusinessInfoModal.vue';
+import ManualAddModal from '../components/ManualAddModal.vue';
+import AdvisorsModal from '../components/AdvisorsModal.vue';
+import CalendarModal from '../components/CalendarModal.vue';
 import BusinessPlanProgress from '../components/BusinessPlanProgress.vue';
 import MeetingPrepModal from '../components/MeetingPrepModal.vue';
 import ProgressSummaryModal from '../components/ProgressSummaryModal.vue';
@@ -532,6 +545,7 @@ const props = defineProps({
     }
 });
 
+const roadmap = ref(props.initialRoadmap || { steps: [] });
 const roadmap = ref(props.initialRoadmap || { steps: [] });
 const loading = ref(false);
 const error = ref(null);
@@ -789,10 +803,66 @@ const handleRoadmapUpdate = async (roadmapData) => {
             steps: roadmap.value.steps.filter(step => !step.isQuestion)
         };
         
+        // Switch to roadmap tab to show the update
+        activeTab.value = 'roadmap-tab';
+
+        // Merge with existing roadmap instead of replacing
+        if (roadmap.value && roadmap.value.steps && Array.isArray(roadmap.value.steps)) {
+            const existingSteps = roadmap.value.steps.filter(step => !step.isQuestion); // Exclude question steps
+            const newSteps = roadmapData.steps || [];
+            
+            // Merge new steps with existing ones
+            const mergedSteps = [...existingSteps];
+            newSteps.forEach(newStep => {
+                const key = newStep.id !== undefined ? newStep.id : newStep.order;
+                const existingIndex = mergedSteps.findIndex(s => 
+                    (s.id !== undefined && s.id === newStep.id) || 
+                    (s.order === newStep.order && newStep.id === undefined)
+                );
+                
+                if (existingIndex >= 0) {
+                    // Update existing step
+                    mergedSteps[existingIndex] = {
+                        ...mergedSteps[existingIndex],
+                        ...newStep,
+                        // Preserve original id if new step doesn't have one
+                        id: newStep.id !== undefined ? newStep.id : mergedSteps[existingIndex].id
+                    };
+                } else {
+                    // Add new step
+                    mergedSteps.push(newStep);
+                }
+            });
+            
+            // Sort by order
+            mergedSteps.sort((a, b) => (a.order || 0) - (b.order || 0));
+            
+            // Update roadmap with merged data
+            roadmap.value = {
+                ...roadmap.value,
+                title: roadmapData.title || roadmap.value.title,
+                steps: mergedSteps
+            };
+        } else {
+            // No existing roadmap, use new data as-is
+            roadmap.value = roadmapData;
+        }
+        
+        // Don't merge question steps - roadmap only shows action steps
+        // Question steps are handled separately in BusinessPlanProgress component
+
+        // Save to backend (only roadmap action steps, no question steps)
+        const roadmapToSave = {
+            ...roadmap.value,
+            steps: roadmap.value.steps.filter(step => !step.isQuestion)
+        };
+        
         try {
             await axios.post('/api/roadmap/update', {
                 roadmap_json: roadmapToSave
+                roadmap_json: roadmapToSave
             });
+            console.log('Roadmap saved to backend successfully');
             console.log('Roadmap saved to backend successfully');
         } catch (err) {
             console.error('Failed to update roadmap in backend:', err);
@@ -805,6 +875,213 @@ const handleRoadmapUpdate = async (roadmapData) => {
     } catch (err) {
         console.error('Failed to process roadmap update:', err);
         error.value = 'Failed to process roadmap update. Please try again.';
+    }
+};
+
+const handleBusinessPlanUpdate = async (businessPlanUpdateData) => {
+    try {
+        console.log('handleBusinessPlanUpdate called with:', JSON.stringify(businessPlanUpdateData, null, 2));
+        
+        if (!businessPlanUpdateData || typeof businessPlanUpdateData !== 'object') {
+            console.warn('Invalid business plan data received:', businessPlanUpdateData);
+            return;
+        }
+
+        // If data is nested in business_plan, unwrap it
+        const flatData = businessPlanUpdateData.business_plan || businessPlanUpdateData;
+        console.log('Flat business plan data:', JSON.stringify(flatData, null, 2));
+        console.log('Flat data keys:', Object.keys(flatData));
+        console.log('Flat data values:', Object.values(flatData));
+
+        // Track which fields were updated to highlight them
+        const updatedFieldKeys = Object.keys(flatData);
+        console.log('Updated field keys:', updatedFieldKeys);
+        
+        // Ensure we have data to send
+        if (updatedFieldKeys.length === 0) {
+            console.error('No fields to update! flatData is empty:', flatData);
+            return;
+        }
+        if (updatedFieldKeys.length > 0) {
+            // Highlight the first updated field
+            fieldToHighlight.value = updatedFieldKeys[0];
+            // Clear highlight after 5 seconds
+            setTimeout(() => {
+                fieldToHighlight.value = null;
+            }, 5000);
+        }
+        
+        // Switch to business tab to show the update
+        activeTab.value = 'business';
+        showBusinessInfo.value = false; // Close modal if open, show inline instead
+
+        // Merge with existing business plan data - create new object reference for reactivity
+        if (businessPlanData.value) {
+            businessPlanData.value = {
+                ...businessPlanData.value,
+                ...flatData,
+                _updated: Date.now() // Force reactivity
+            };
+        } else {
+            businessPlanData.value = {
+                ...flatData,
+                _updated: Date.now()
+            };
+        }
+        
+        console.log('Updated businessPlanData.value:', JSON.stringify(businessPlanData.value, null, 2));
+
+        console.log('Business plan data after merge:', {
+            business_name: businessPlanData.value.business_name,
+            allFields: Object.keys(businessPlanData.value),
+            updateData: businessPlanUpdateData
+        });
+
+        // Track which fields were just answered (for reward animation)
+        const previousQuestionIds = new Set(
+            roadmap.value.steps?.filter(s => s.isQuestion).map(s => s.fieldKey) || []
+        );
+        
+        console.log('Previous question IDs before merge:', Array.from(previousQuestionIds));
+        
+        // Immediately update roadmap to reflect new question steps (removes filled questions, adds new ones)
+        // Force reactivity by creating a new object reference
+        const updatedRoadmap = mergeRoadmapWithQuestions(roadmap.value, businessPlanData.value);
+        roadmap.value = updatedRoadmap;
+        
+        // Find which questions were just answered
+        const currentQuestionIds = new Set(
+            roadmap.value.steps?.filter(s => s.isQuestion).map(s => s.fieldKey) || []
+        );
+        const newlyAnsweredFields = Array.from(previousQuestionIds).filter(
+            id => !currentQuestionIds.has(id)
+        );
+        
+        // Award XP for filling business plan fields (5 XP per field)
+        if (newlyAnsweredFields.length > 0) {
+            await awardXP(newlyAnsweredFields.length * 5, 'Filled business plan fields');
+        }
+        
+        // Add to recently answered set and trigger reward animation
+        if (newlyAnsweredFields.length > 0) {
+            newlyAnsweredFields.forEach(field => recentlyAnsweredFields.value.add(field));
+            // Clear after animation
+            setTimeout(() => {
+                newlyAnsweredFields.forEach(field => recentlyAnsweredFields.value.delete(field));
+            }, 3000);
+        }
+        
+        // Wait for Vue to process the update
+        await nextTick();
+        
+        console.log('Business plan updated, question steps refreshed:', {
+            filledFields: Object.keys(flatData),
+            questionStepsCount: roadmap.value.steps.filter(s => s.isQuestion).length,
+            allStepsCount: roadmap.value.steps.length,
+            updatedFields: flatData,
+            newlyAnsweredFields: newlyAnsweredFields,
+            previousQuestionIds: Array.from(previousQuestionIds),
+            currentQuestionIds: Array.from(currentQuestionIds),
+            businessPlanSnapshot: { ...businessPlanData.value }
+        });
+
+        // Send partial update to backend (only fields provided will be updated)
+        try {
+            // Ensure boolean values are properly formatted
+            // Create a new object with all fields from flatData
+            // IMPORTANT: Include all fields, even if they are null, false, 0, or empty string
+            // The backend validation will handle what's valid
+            const dataToSend = {};
+            Object.keys(flatData).forEach(key => {
+                // Include all fields except undefined (null, false, 0, and empty strings are valid)
+                if (flatData[key] !== undefined) {
+                    dataToSend[key] = flatData[key];
+                }
+            });
+            
+            // If dataToSend is empty but flatData has keys, something went wrong
+            if (Object.keys(dataToSend).length === 0 && Object.keys(flatData).length > 0) {
+                console.error('ERROR: dataToSend is empty but flatData has keys!', {
+                    flatData,
+                    flatDataKeys: Object.keys(flatData),
+                    flatDataValues: Object.values(flatData).map(v => ({ value: v, type: typeof v }))
+                });
+            }
+            
+            console.log('dataToSend before boolean conversion:', JSON.stringify(dataToSend, null, 2));
+            console.log('dataToSend keys:', Object.keys(dataToSend));
+            // Convert boolean strings to actual booleans if needed
+            if (dataToSend.has_residence_permit !== undefined) {
+                if (typeof dataToSend.has_residence_permit === 'string') {
+                    dataToSend.has_residence_permit = dataToSend.has_residence_permit === 'true' || dataToSend.has_residence_permit === '1';
+                }
+            }
+            if (dataToSend.is_eu_resident !== undefined) {
+                if (typeof dataToSend.is_eu_resident === 'string') {
+                    dataToSend.is_eu_resident = dataToSend.is_eu_resident === 'true' || dataToSend.is_eu_resident === '1';
+                }
+            }
+            if (dataToSend.is_newcomer_to_finland !== undefined) {
+                if (typeof dataToSend.is_newcomer_to_finland === 'string') {
+                    dataToSend.is_newcomer_to_finland = dataToSend.is_newcomer_to_finland === 'true' || dataToSend.is_newcomer_to_finland === '1';
+                }
+            }
+            if (dataToSend.has_business_experience !== undefined) {
+                if (typeof dataToSend.has_business_experience === 'string') {
+                    dataToSend.has_business_experience = dataToSend.has_business_experience === 'true' || dataToSend.has_business_experience === '1';
+                }
+            }
+            
+            console.log('Sending to backend:', JSON.stringify(dataToSend, null, 2));
+            console.log('Data types:', {
+                has_residence_permit: typeof dataToSend.has_residence_permit,
+                residence_permit_type: typeof dataToSend.residence_permit_type,
+                is_eu_resident: typeof dataToSend.is_eu_resident,
+            });
+            console.log('Request payload size:', JSON.stringify(dataToSend).length, 'bytes');
+            console.log('Request payload keys count:', Object.keys(dataToSend).length);
+            
+            // Ensure we're sending data
+            if (Object.keys(dataToSend).length === 0) {
+                console.error('CRITICAL ERROR: Attempting to send empty dataToSend!', {
+                    flatData,
+                    dataToSend,
+                    businessPlanUpdateData
+                });
+                error.value = 'No data to send. Please try again.';
+                return;
+            }
+            
+            const response = await axios.post('/api/business-plan/update', dataToSend, {
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            });
+            console.log('Business plan updated successfully in backend:', response.data);
+            
+            // Update local state with response data to ensure sync
+            if (response.data && response.data.business_plan) {
+                businessPlanData.value = {
+                    ...businessPlanData.value,
+                    ...response.data.business_plan
+                };
+                console.log('Updated businessPlanData from backend response:', JSON.stringify(businessPlanData.value, null, 2));
+            }
+        } catch (err) {
+            console.error('Failed to update business plan in backend:', err);
+            console.error('Error response:', err.response?.data);
+            if (err.response?.status === 401) {
+                error.value = 'Authentication required. Please log in to save your business plan.';
+            } else if (err.response?.status >= 500) {
+                error.value = 'Server error. Your business plan changes may not be saved.';
+            } else if (err.response?.status === 422) {
+                console.error('Validation errors:', err.response.data);
+                error.value = 'Validation error: ' + JSON.stringify(err.response.data);
+            }
+        }
+    } catch (err) {
+        console.error('Failed to process business plan update:', err);
+        error.value = 'Failed to process business plan update. Please try again.';
     }
 };
 
@@ -1270,7 +1547,15 @@ const {
     onRoadmapUpdate: handleRoadmapUpdate,
     onBusinessPlanUpdate: handleBusinessPlanUpdate,
     userName: props.userName,
+    onBusinessPlanUpdate: handleBusinessPlanUpdate,
+    userName: props.userName,
     onTranscript: handleTranscript,
+    onError: handleError,
+    onMeetingPrep: handleMeetingPrep,
+    onChecklistComplete: handleChecklistComplete,
+    onDocumentRequest: handleDocumentRequest,
+    onResourceSuggested: handleResourceSuggested,
+    onProgressSummary: handleProgressSummary
     onError: handleError,
     onMeetingPrep: handleMeetingPrep,
     onChecklistComplete: handleChecklistComplete,
@@ -1316,6 +1601,16 @@ const handleDisconnect = () => {
 
 const handleStepUpdate = (step) => {
     console.log('Step updated:', step);
+};
+
+// Navigation handler - toggle drawer behavior
+const handleNavigation = (tab) => {
+    // If clicking the same tab, close it (toggle behavior)
+    if (activeTab.value === tab) {
+        activeTab.value = 'roadmap'; // Return to home
+    } else {
+        activeTab.value = tab; // Open the drawer
+    }
 };
 
 // Navigation handler - toggle drawer behavior

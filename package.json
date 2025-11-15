@@ -17,6 +17,7 @@
     },
     "dependencies": {
         "@elevenlabs/client": "^0.11.0",
+        "@elevenlabs/client": "^0.11.0",
         "@elevenlabs/elevenlabs-js": "^2.24.1",
         "@inertiajs/vue3": "^1.0.15",
         "@openai/agents": "^0.1.0",
