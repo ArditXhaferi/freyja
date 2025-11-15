@@ -657,22 +657,18 @@ export default function useVoiceAgent({
                             return `Error updating user data: ${error.message}`;
                         }
                     },
-                    generateMeetingPrep: async (parameters) => {
-                        console.log('Agent called generateMeetingPrep tool:', parameters);
+                    generateBusinessPlan: async (parameters) => {
+                        console.log('Agent called generateBusinessPlan tool:', parameters);
                         try {
-                            const prepData = parameters.meeting_prep || parameters;
-                            if (!prepData || typeof prepData !== 'object') {
-                                console.warn('Invalid meeting prep data from tool call:', parameters);
-                                return 'Error: Invalid meeting prep data format';
-                            }
+                            // Trigger the business plan generation modal
                             if (onMeetingPrep) {
-                                onMeetingPrep(prepData);
+                                onMeetingPrep({}); // Pass empty object to trigger modal
                             }
-                            console.log('Meeting prep generated successfully');
-                            return 'Meeting prep document is ready. Check the popup to download your PDF.';
+                            console.log('Business plan generation requested');
+                            return 'Business plan PDF generation is ready. A popup will appear to generate and download your business plan PDF.';
                         } catch (error) {
-                            console.error('Error in generateMeetingPrep tool:', error);
-                            return `Error generating meeting prep: ${error.message}`;
+                            console.error('Error in generateBusinessPlan tool:', error);
+                            return `Error generating business plan: ${error.message}`;
                         }
                     },
                     markChecklistComplete: async (parameters) => {

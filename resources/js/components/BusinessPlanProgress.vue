@@ -78,13 +78,13 @@
                                 <span v-else class="text-[8px]">○</span>
                             </div>
                             <div class="flex-1 min-w-0">
-                                <div class="font-medium text-white/90 mb-0.5">
+                                <div class="font-medium text-white mb-0.5">
                                     {{ getFieldLabel(fieldKey) }}
                                 </div>
-                                <div v-if="isFieldFilled(fieldKey)" class="text-[10px] text-white/70 line-clamp-2">
+                                <div v-if="isFieldFilled(fieldKey)" class="text-[10px] text-white line-clamp-2">
                                     {{ formatFieldValue(fieldKey) }}
                                 </div>
-                                <div v-else class="text-[10px] text-white/40 italic">
+                                <div v-else class="text-[10px] text-white/60 italic">
                                     Not provided
                                 </div>
                             </div>

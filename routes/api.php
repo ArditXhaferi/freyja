@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\VoiceSessionController;
 use App\Http\Controllers\Api\BusinessPlanController;
 use App\Http\Controllers\Api\UserProgressController;
 use App\Http\Controllers\Api\AdvisorController;
+use App\Http\Controllers\Api\ChatController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,6 +35,7 @@ Route::middleware(['web', 'auth'])->group(function () {
 Route::middleware(['web', 'auth'])->group(function () {
     Route::get('/business-plan', [BusinessPlanController::class, 'show']);
     Route::post('/business-plan/update', [BusinessPlanController::class, 'update']);
+    Route::post('/business-plan/generate-pdf', [BusinessPlanController::class, 'generatePdf']);
 });
 
 // User progress routes (require authentication)
@@ -46,5 +48,10 @@ Route::middleware(['web', 'auth'])->group(function () {
 Route::middleware(['web', 'auth'])->group(function () {
     Route::get('/advisors', [AdvisorController::class, 'index']);
     Route::post('/advisors/match', [AdvisorController::class, 'matchByStep']);
+});
+
+// Chat routes (require authentication)
+Route::middleware(['web', 'auth'])->group(function () {
+    Route::post('/chat', [ChatController::class, 'chat']);
 });
 
