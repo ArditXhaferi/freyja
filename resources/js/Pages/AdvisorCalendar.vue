@@ -25,13 +25,14 @@
                         <article
                             v-for="event in upcomingList"
                             :key="event.id"
-                            class="rounded-2xl bg-[#f0f8ff] p-4 text-sm text-[#0f2e5a] shadow-sm shadow-blue-50"
+                            class="rounded-2xl border border-slate-100 bg-[#f6fbff] p-4 text-sm text-[#0f2e5a] shadow-sm shadow-blue-50 transition hover:shadow-md cursor-pointer"
+                            @click="openMeetingModal(event)"
                         >
                             <p class="text-xs font-semibold uppercase tracking-widest text-[#1c75c5]">
                                 {{ event.timeRange }}
                             </p>
                             <p class="mt-1 text-base font-semibold text-[#0f2e5a]">{{ event.title }}</p>
-                            <p class="text-xs text-slate-500">{{ event.subtitle }}</p>
+                            <p class="text-xs text-slate-500 line-clamp-2">{{ event.subtitle }}</p>
                         </article>
                         <p v-if="!upcomingList.length" class="text-sm text-slate-400">No upcoming meetings.</p>
                     </div>
@@ -91,8 +92,9 @@
                                 <div
                                     v-for="event in day.events"
                                     :key="event.id"
-                                    class="rounded-xl px-3 py-2 text-xs font-semibold text-[#0f2e5a]"
+                                    class="rounded-xl px-3 py-2 text-xs font-semibold text-[#0f2e5a] transition hover:scale-[1.02] hover:shadow cursor-pointer"
                                     :class="event.color"
+                                    @click="openMeetingModal(event)"
                                 >
                                     <p>{{ event.title }}</p>
                                     <p class="text-[10px] font-normal">{{ event.time }}</p>
@@ -104,6 +106,69 @@
             </section>
         </main>
     </div>
+
+    <transition name="fade">
+        <div
+            v-if="selectedMeeting"
+            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4"
+        >
+            <div class="w-full max-w-md rounded-3xl bg-white p-6 shadow-2xl">
+                <header class="flex items-center justify-between">
+                    <div>
+                        <p class="text-xs uppercase tracking-[0.5em] text-slate-400">Meeting details</p>
+                        <h2 class="mt-1 text-2xl font-semibold text-[#0f2e5a]">{{ selectedMeeting.title }}</h2>
+                    </div>
+                    <button
+                        class="rounded-full bg-slate-100 p-2 text-slate-500 hover:text-[#0f2e5a]"
+                        @click="closeMeetingModal"
+                    >
+                        ✕
+                    </button>
+                </header>
+                <div class="mt-4 space-y-4 text-sm text-slate-600">
+                    <div class="rounded-2xl bg-[#f6f9ff] px-4 py-3">
+                        <p class="text-xs font-semibold uppercase tracking-widest text-slate-400">Schedule</p>
+                        <p class="text-base text-[#0f2e5a]">
+                            {{ selectedMeeting.rawDate.toLocaleDateString(undefined, { weekday: 'long', month: 'short', day: 'numeric' }) }}
+                        </p>
+                        <p class="text-sm text-slate-500">
+                            {{ selectedMeeting.rawDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) }}
+                        </p>
+                    </div>
+                    <div class="rounded-2xl border border-dashed border-slate-200 px-4 py-3">
+                        <p class="text-xs font-semibold uppercase tracking-widest text-slate-400">Agenda / Notes</p>
+                        <p class="mt-1 text-sm text-slate-600">
+                            {{ selectedMeeting.subtitle || 'No agenda provided.' }}
+                        </p>
+                    </div>
+                    <div class="rounded-2xl bg-gradient-to-r from-[#8fc9ff] to-[#4da0ff] px-4 py-4 text-white shadow">
+                        <p class="text-xs font-semibold uppercase tracking-widest text-white/70">Google Meet</p>
+                        <p class="mt-2 text-base font-semibold">You can join through the Google Meet link</p>
+                        <a
+                            :href="selectedMeeting.meetLink"
+                            target="_blank"
+                            rel="noopener"
+                            class="mt-3 inline-flex items-center gap-2 rounded-2xl bg-white/90 px-4 py-2 text-sm font-semibold text-[#0f4f8b] transition hover:scale-[1.01]"
+                        >
+                            {{ selectedMeeting.meetLink }}
+                            <svg
+                                viewBox="0 0 24 24"
+                                class="h-4 w-4"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.6"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                            >
+                                <path d="M7 17L17 7" />
+                                <path d="M7 7h10v10" />
+                            </svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </transition>
 </template>
 
 <script setup>
@@ -155,10 +220,8 @@ const upcomingList = computed(() =>
         .sort((a, b) => a.rawDate - b.rawDate)
         .slice(0, 3)
         .map((event) => ({
-            id: event.id,
-            timeRange: event.rawDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-            title: event.title,
-            subtitle: event.subtitle
+            ...event,
+            timeRange: event.rawDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
         }))
 );
 
@@ -226,6 +289,28 @@ function colorForEvent(index) {
     const palette = ['bg-[#dff4ff]', 'bg-[#cfeaff]', 'bg-[#e6f9ff]', 'bg-[#d2f1ff]'];
     return palette[index % palette.length];
 }
+
+const selectedMeeting = ref(null);
+
+const generateMeetLink = () => {
+    const chars = 'abcdefghijklmnopqrstuvwxyz';
+    const segment = () =>
+        Array.from({ length: 3 })
+            .map(() => chars[Math.floor(Math.random() * chars.length)])
+            .join('');
+    return `https://meet.google.com/${segment()}-${segment()}-${segment()}`;
+};
+
+const openMeetingModal = (event) => {
+    selectedMeeting.value = {
+        ...event,
+        meetLink: generateMeetLink()
+    };
+};
+
+const closeMeetingModal = () => {
+    selectedMeeting.value = null;
+};
 </script>
 
 

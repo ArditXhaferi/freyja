@@ -7,6 +7,7 @@ use App\Http\Controllers\AdvisorDashboardController;
 use App\Http\Controllers\AdvisorMeetingRequestController;
 use App\Http\Controllers\AdvisorCalendarController;
 use App\Http\Controllers\AdvisorReminderController;
+use App\Http\Controllers\AdvisorNetworkController;
 use App\Http\Controllers\MeetingRequestController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -14,7 +15,7 @@ use App\Models\Roadmap;
 use App\Models\User;
 
 Route::get('/', function () {
-    return Inertia::render('Welcome');
+    return redirect('/register');
 })->name('home');
 
 // Authentication Routes
@@ -27,7 +28,9 @@ Route::middleware('guest')->group(function () {
 
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
-    Route::get('/voice-roadmap', function () {
+
+    Route::middleware('role:entrepreneur')->group(function () {
+        Route::get('/voice-roadmap', function () {
         $user = Auth::user();
         
         // Fetch roadmap
@@ -94,25 +97,30 @@ Route::middleware('auth')->group(function () {
         ]);
     })->name('voice-roadmap');
 
-    Route::get('/advisor/dashboard', AdvisorDashboardController::class)
-        ->name('advisor.dashboard');
-    Route::get('/advisor/calendar', AdvisorCalendarController::class)
-        ->name('advisor.calendar');
+        Route::get('/meetings/request', [MeetingRequestController::class, 'create'])
+            ->name('meetings.request.create');
+        Route::post('/meetings/request', [MeetingRequestController::class, 'store'])
+            ->name('meetings.request.store');
+    });
 
-    Route::get('/meetings/request', [MeetingRequestController::class, 'create'])
-        ->name('meetings.request.create');
-    Route::post('/meetings/request', [MeetingRequestController::class, 'store'])
-        ->name('meetings.request.store');
+    Route::middleware('role:advisor')->group(function () {
+        Route::get('/advisor/dashboard', AdvisorDashboardController::class)
+            ->name('advisor.dashboard');
+        Route::get('/advisor/calendar', AdvisorCalendarController::class)
+            ->name('advisor.calendar');
+        Route::get('/advisor/network', AdvisorNetworkController::class)
+            ->name('advisor.network');
 
-    Route::get('/advisor/meeting-requests', [AdvisorMeetingRequestController::class, 'index'])
-        ->name('advisor.meeting-requests.index');
-    Route::post('/advisor/meeting-requests/{meetingRequest}/accept', [AdvisorMeetingRequestController::class, 'accept'])
-        ->name('advisor.meeting-requests.accept');
-    Route::post('/advisor/meeting-requests/{meetingRequest}/reject', [AdvisorMeetingRequestController::class, 'reject'])
-        ->name('advisor.meeting-requests.reject');
+        Route::get('/advisor/meeting-requests', [AdvisorMeetingRequestController::class, 'index'])
+            ->name('advisor.meeting-requests.index');
+        Route::post('/advisor/meeting-requests/{meetingRequest}/accept', [AdvisorMeetingRequestController::class, 'accept'])
+            ->name('advisor.meeting-requests.accept');
+        Route::post('/advisor/meeting-requests/{meetingRequest}/reject', [AdvisorMeetingRequestController::class, 'reject'])
+            ->name('advisor.meeting-requests.reject');
 
-    Route::get('/advisor/reminders', [AdvisorReminderController::class, 'index'])
-        ->name('advisor.reminders.index');
-    Route::post('/advisor/reminders/acknowledge', [AdvisorReminderController::class, 'acknowledge'])
-        ->name('advisor.reminders.acknowledge');
+        Route::get('/advisor/reminders', [AdvisorReminderController::class, 'index'])
+            ->name('advisor.reminders.index');
+        Route::post('/advisor/reminders/acknowledge', [AdvisorReminderController::class, 'acknowledge'])
+            ->name('advisor.reminders.acknowledge');
+    });
 });

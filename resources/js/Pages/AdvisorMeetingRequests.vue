@@ -23,15 +23,6 @@
                             <p class="text-xs text-slate-400">{{ preferredSlot(request.preferred_date, request.preferred_time) }}</p>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span
-                                class="inline-flex items-center gap-2 rounded-full px-4 py-1 text-xs font-semibold"
-                                :class="request.status === 'pending' ? 'bg-[#e1f1ff] text-[#0d4f8b]' : 'bg-[#f2f2f5] text-slate-500'"
-                            >
-                                <svg viewBox="0 0 20 20" class="h-4 w-4" :fill="request.status === 'pending' ? 'currentColor' : '#9ca3af'">
-                                    <circle cx="10" cy="10" r="9" />
-                                </svg>
-                                {{ request.status === 'pending' ? 'Pending' : 'Rejected' }}
-                            </span>
                             <button
                                 class="rounded-full border border-slate-200 p-2 text-slate-500 transition hover:text-[#0f2e5a] cursor-pointer"
                                 @click="toggleCardCollapse(request.id)"

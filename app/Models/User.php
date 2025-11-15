@@ -176,4 +176,9 @@ class User extends Authenticatable
     {
         return $this->hasMany(Meeting::class);
     }
+    
+    public function meetingPreps()
+    {
+        return $this->hasMany(MeetingPrep::class);
+    }
 }

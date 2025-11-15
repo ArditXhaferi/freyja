@@ -5,43 +5,86 @@
 
         <main class="flex-1 px-4 pb-10 pt-8 sm:px-8">
             <!-- header -->
-            <header class="flex flex-col gap-4 rounded-3xl bg-white/90 px-6 py-5 shadow-sm shadow-blue-200/40 lg:flex-row lg:items-center lg:justify-between">
-                <div>
+            <header class="rounded-3xl px-6 py-5">
+                <div class="flex flex-col gap-3">
+                    <div class="flex items-center justify-between gap-6">
+                        <!-- Left: beer + tooltip -->
+                        <div class="flex items-center gap-3 flex-1 min-w-0">
+                            <div class="relative flex items-center gap-3">
+                                <img :key="beerFrameKey" :src="beerGif" alt="Cheers" class="h-[65px] w-[65px] rounded-2xl object-cover ring-4 ring-[#ecf5ff]" />
+                                <div class="tooltip-wrapper" aria-live="polite">
+                                    <transition name="fade-scale">
+                                        <div
+                                            v-if="showTooltip"
+                                            class="tooltip-beer relative rounded-2xl px-4 py-2 text-sm font-semibold text-[#0f2e5a] shadow-lg"
+                                        >
+                                            <span class="typewriter">{{ welcomeText }}</span>
+                                            <span class="tooltip-tail"></span>
+                                        </div>
+                                    </transition>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right: navbar controls (fixed width) -->
+                        <div class="flex justify-end w-[360px] shrink-0">
+                            <div
+                                class="flex w-full items-center justify-end gap-3 rounded-3xl border border-slate-100 bg-white px-4 py-2 shadow-sm shadow-blue-100"
+                            >
+                                <!-- Reminders / notifications -->
+                                <button
+                                    type="button"
+                                    @click="handleReminderClick"
+                                    class="relative inline-flex items-center justify-center rounded-full border border-slate-100 bg-white px-3 py-2 text-slate-600 shadow-sm hover:bg-slate-50"
+                                >
+                                    <BaseIcon name="bell" class="h-4 w-4 text-[#0f2e5a]" />
+                                    <span
+                                        v-if="reminderCount"
+                                        class="absolute -right-1 -top-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#ff4d6a] text-[10px] font-bold text-white"
+                                    >
+                                        {{ reminderCount }}
+                                    </span>
+                                </button>
+
+                                <!-- Small icon container (e.g. for quick actions) -->
+                                <button
+                                    type="button"
+                                    class="hidden sm:inline-flex h-9 w-9 items-center justify-center rounded-full border border-slate-100 bg-white text-slate-500 shadow-sm hover:bg-slate-50"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        stroke-width="1.8"
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        class="h-4 w-4"
+                                    >
+                                        <rect x="3" y="4" width="18" height="17" rx="3" />
+                                        <path d="M3 9h18" />
+                                        <path d="M9 3v3" />
+                                        <path d="M15 3v3" />
+                                    </svg>
+                                </button>
+
+                                <!-- Profile chip -->
+                                <div
+                                    class="hidden sm:flex items-center gap-2 rounded-full border border-slate-100 bg-white px-3 py-1 text-xs shadow-sm shadow-blue-50"
+                                >
+                                    <div class="h-7 w-7 rounded-full bg-gradient-to-br from-[#4da0ff] to-[#0f2e5a]" />
+                                    <div class="flex flex-col leading-tight">
+                                        <span class="font-semibold text-[#0f2e5a] truncate max-w-[120px]">
+                                            {{ advisor.name }}
+                                        </span>
+                                        <span class="text-[10px] uppercase tracking-wide text-slate-400">Advisor</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <p class="text-xs uppercase tracking-widest text-slate-400">Dashboard</p>
-                    <h1 class="text-2xl font-semibold text-[#0f2e5a]">Welcome back, {{ advisor.name }}</h1>
-                    <p class="text-sm text-slate-400">{{ hero.tagline }}</p>
-                </div>
-                <div class="flex flex-1 items-center gap-3 lg:max-w-xl">
-                    <div class="flex items-center gap-2 rounded-2xl border border-slate-100 bg-slate-50/50 px-3">
-                        <BaseIcon name="search" class="h-5 w-5 text-slate-400" />
-                        <input type="text" placeholder="Search leads, questions, notes..." class="w-full bg-transparent px-2 py-2 text-sm text-slate-600 placeholder:text-slate-400 focus:outline-none" />
-                    </div>
-                    <button class="flex items-center gap-2 rounded-2xl border border-slate-200 px-3 py-2 text-sm font-semibold text-slate-500">
-                        <BaseIcon name="filter" class="h-4 w-4 text-slate-400" />
-                        Filter
-                    </button>
-                    <button
-                        class="relative rounded-2xl border border-slate-200 p-3 text-slate-500 transition hover:text-[#0f2e5a]"
-                        :disabled="reminderLoading"
-                        @click="handleReminderClick"
-                    >
-                        <BaseIcon name="bell" class="h-5 w-5" />
-                        <span
-                            v-if="reminderCount > 0"
-                            class="absolute -right-1 -top-1 inline-flex h-5 min-w-[20px] items-center justify-center rounded-full bg-[#0f8af0] px-1 text-[10px] font-semibold text-white"
-                        >
-                            {{ reminderCount }}
-                        </span>
-                    </button>
-                    <div class="flex items-center gap-3 rounded-2xl border border-slate-100 bg-white px-3 py-2">
-                        <div class="h-10 w-10 rounded-2xl bg-gradient-to-br from-[#cde8ff] to-[#95c5ff] text-[#0f2e5a] flex items-center justify-center font-semibold">
-                            {{ advisor.initials }}
-                        </div>
-                        <div>
-                            <p class="text-sm font-semibold text-[#0f2e5a]">{{ advisor.name }}</p>
-                            <p class="text-xs text-slate-400">Advisor</p>
-                        </div>
-                    </div>
                 </div>
             </header>
 
@@ -194,7 +237,7 @@
 </template>
 
 <script setup>
-import { computed, reactive, ref, onMounted } from 'vue';
+import { computed, reactive, ref, onMounted, onBeforeUnmount } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import axios from 'axios';
 import RequestSidebar from '../components/RequestSidebar.vue';
@@ -248,6 +291,56 @@ const props = defineProps({
     }
 });
 
+const beerGif = '/storage/beer.gif';
+const beerGifDuration = 2000; // ms
+const showTooltip = ref(false);
+const beerFrameKey = ref(0);
+const welcomeText = ref('');
+let beerInterval = null;
+let tooltipTimeout = null;
+let typewriterTimeout = null;
+const fullWelcomeText = computed(() => `Welcome back, ${props.advisor.name}!`);
+
+const animateWelcomeText = () => {
+    // reset text
+    welcomeText.value = '';
+
+    const text = fullWelcomeText.value;
+    let index = 0;
+    const step = beerGifDuration / Math.max(text.length, 1);
+
+    // clear any previous timer
+    if (typewriterTimeout) {
+        clearTimeout(typewriterTimeout);
+        typewriterTimeout = null;
+    }
+
+    const typeNext = () => {
+        welcomeText.value = text.slice(0, index + 1);
+        index += 1;
+
+        if (index < text.length) {
+            typewriterTimeout = setTimeout(typeNext, step);
+        }
+    };
+
+    // start immediately with the first character
+    typewriterTimeout = setTimeout(typeNext, 0);
+};
+
+const restartBeerLoop = () => {
+    beerFrameKey.value += 1; // restart GIF
+    showTooltip.value = true;
+    animateWelcomeText();
+
+    if (tooltipTimeout) {
+        clearTimeout(tooltipTimeout);
+    }
+
+    tooltipTimeout = setTimeout(() => {
+        showTooltip.value = false;
+    }, beerGifDuration);
+};
 
 const summaryCards = computed(() => [
     {
@@ -432,7 +525,21 @@ const acknowledgeReminders = async () => {
 };
 
 onMounted(() => {
+    restartBeerLoop();
+    beerInterval = setInterval(restartBeerLoop, beerGifDuration);
     syncReminders();
+});
+
+onBeforeUnmount(() => {
+    if (beerInterval) {
+        clearInterval(beerInterval);
+    }
+    if (tooltipTimeout) {
+        clearTimeout(tooltipTimeout);
+    }
+    if (typewriterTimeout) {
+        clearTimeout(typewriterTimeout);
+    }
 });
 
 const statusPillClass = (status) => {
@@ -445,5 +552,57 @@ const statusPillClass = (status) => {
     return mapping[status] ?? 'bg-slate-100 text-slate-500';
 };
 </script>
+
+<style scoped>
+@keyframes tooltipFloat {
+    0% {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.95);
+    }
+    10% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+    90% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-8px) scale(0.95);
+    }
+}
+
+.fade-scale-enter-active,
+.fade-scale-leave-active {
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.fade-scale-enter-from,
+.fade-scale-leave-to {
+    opacity: 0;
+    transform: translateY(-6px) scale(0.95);
+}
+
+.tooltip-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+.tooltip-beer {
+    pointer-events: none;
+    max-width: 260px;
+    white-space: nowrap;
+    background-color: #d4e7ff;
+}
+
+.tooltip-tail {
+    position: absolute;
+    left: -2px;
+    top: 50%;
+    transform: translateY(-50%) rotate(45deg);
+    width: 12px;
+    height: 12px;
+    background-color: #d4e7ff;
+}
+</style>
 
 

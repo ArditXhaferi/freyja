@@ -76,6 +76,7 @@ const props = defineProps({
 const computedMenu = computed(() => [
     { label: 'Dashboard', icon: 'dashboard', href: '/advisor/dashboard', active: props.active === 'Dashboard' },
     { label: 'Calendar', icon: 'calendar', href: '/advisor/calendar', active: props.active === 'Calendar' },
+    { label: 'Network', icon: 'team', href: '/advisor/network', active: props.active === 'Network' },
     {
         label: 'Meeting Requests',
         icon: 'tasks',
