@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\BusinessPlanController;
 use App\Http\Controllers\Api\UserProgressController;
 use App\Http\Controllers\Api\AdvisorController;
 use App\Http\Controllers\Api\ChatController;
+use App\Http\Controllers\Api\MeetingController;
 
 /*
 |--------------------------------------------------------------------------
@@ -53,5 +54,20 @@ Route::middleware(['web', 'auth'])->group(function () {
 // Chat routes (require authentication)
 Route::middleware(['web', 'auth'])->group(function () {
     Route::post('/chat', [ChatController::class, 'chat']);
+});
+
+// Meeting routes (require authentication)
+Route::middleware(['web', 'auth'])->group(function () {
+    Route::get('/meetings/readiness', [MeetingController::class, 'checkReadiness']);
+    Route::get('/meetings', [MeetingController::class, 'index']);
+    Route::post('/meetings', [MeetingController::class, 'store']);
+});
+
+// Network routes (require authentication)
+Route::middleware(['web', 'auth'])->group(function () {
+    Route::get('/network/companies', [\App\Http\Controllers\Api\NetworkController::class, 'index']);
+    Route::post('/network/swipe', [\App\Http\Controllers\Api\NetworkController::class, 'swipe']);
+    Route::get('/network/matches', [\App\Http\Controllers\Api\NetworkController::class, 'matches']);
+    Route::get('/network/liked', [\App\Http\Controllers\Api\NetworkController::class, 'liked']);
 });
 

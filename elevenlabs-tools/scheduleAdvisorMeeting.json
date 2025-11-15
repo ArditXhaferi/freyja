@@ -1,0 +1,51 @@
+{
+  "name": "scheduleAdvisorMeeting",
+  "description": "Check if the user is ready to meet with an advisor, help them prepare if not ready, and open a scheduling modal to select an advisor and schedule a meeting date/time. The meeting will be saved to the calendar.",
+  "expects_response": true,
+  "type": "client",
+  "response_timeout_secs": 30,
+  "parameters": [
+    {
+      "id": "meeting",
+      "type": "object",
+      "description": "Meeting scheduling information",
+      "required": true,
+      "dynamic_variable": "",
+      "constant_value": "",
+      "properties": [
+        {
+          "id": "advisor_id",
+          "type": "integer",
+          "description": "Preselected advisor ID (optional - user can change in modal)",
+          "required": false,
+          "dynamic_variable": "",
+          "constant_value": ""
+        },
+        {
+          "id": "specialization",
+          "type": "string",
+          "description": "Advisor specialization to filter by (e.g., 'funding', 'residence_permit', 'business_registration', 'tax', 'legal', 'marketing') - used to suggest relevant advisors if advisor_id not provided",
+          "required": false,
+          "dynamic_variable": "",
+          "constant_value": ""
+        },
+        {
+          "id": "topic",
+          "type": "string",
+          "description": "Meeting topic or purpose (e.g., 'funding application', 'residence permit', 'business registration')",
+          "required": false,
+          "dynamic_variable": "",
+          "constant_value": ""
+        }
+      ]
+    }
+  ],
+  "dynamic_variables": {
+    "dynamic_variable_placeholders": {
+      "advisor_id": "The ID of the advisor to schedule a meeting with",
+      "specialization": "The specialization of the advisor to schedule a meeting with",
+      "topic": "The topic of the meeting to schedule"
+    }
+  }
+}
+

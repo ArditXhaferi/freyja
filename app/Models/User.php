@@ -160,4 +160,20 @@ class User extends Authenticatable
     {
         return $query->where('specialization', $specialization);
     }
+
+    /**
+     * Get the user's roadmap.
+     */
+    public function roadmap()
+    {
+        return $this->hasOne(Roadmap::class);
+    }
+
+    /**
+     * Get the user's meetings.
+     */
+    public function meetings()
+    {
+        return $this->hasMany(Meeting::class);
+    }
 }

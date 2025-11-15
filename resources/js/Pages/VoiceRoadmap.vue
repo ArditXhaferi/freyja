@@ -3,26 +3,14 @@
     <div class="min-h-screen bg-[#011135] py-6 px-4 pb-24">
         <div class="max-w-6xl mx-auto">
 
-                    <!-- Eppu Video (Always Visible, Circular) -->
+                    <!-- Eppu Animation (Always Visible, Circular) -->
                     <div class="mb-6 flex flex-col items-center">
                         <div class="relative w-64 h-64 rounded-full overflow-hidden border-4 border-white/20 shadow-xl bg-[#012169]">
-                            <video
-                                ref="eppuVideo"
-                                muted
-                                playsinline
+                            <img
+                                :src="isTalking ? '/images/video6.gif' : '/images/video5.gif'"
+                                alt="Eppu the Bear"
                                 class="w-full h-full object-cover"
-                                @ended="onVideoEnded"
-                                @play="isVideoPlaying = true"
-                                @pause="isVideoPlaying = false"
-                                preload="metadata"
-                            >
-                                <source src="/videos/eppu-opening-phone.mp4" type="video/mp4">
-                                Your browser does not support the video tag.
-                            </video>
-                            <!-- Static fallback when video is paused/not playing -->
-                            <div v-if="!isVideoPlaying" class="absolute inset-0 bg-[#012169] flex items-center justify-center">
-                                <span class="text-6xl">🐻</span>
-                            </div>
+                            />
                         </div>
                         <h1 class="text-3xl font-bold text-white mt-4 mb-2">
                             Eppu the Bear
@@ -215,6 +203,16 @@
             :roadmap="roadmap"
             :summary-data="progressSummaryData"
             @close="showProgressSummaryModal = false"
+        />
+
+        <AdvisorMeetingModal
+            :show="showAdvisorMeetingModal"
+            :preselected-advisor-id="advisorMeetingData.advisor_id"
+            :specialization="advisorMeetingData.specialization"
+            :topic="advisorMeetingData.topic"
+            :advisors="advisors"
+            @close="showAdvisorMeetingModal = false"
+            @scheduled="handleMeetingScheduled"
         />
 
         <!-- Reward Animation -->
@@ -544,15 +542,34 @@
                 </div>
             </div>
         </div>
+
+        <!-- Network Drawer -->
+        <div v-if="activeTab === 'network'" 
+             class="fixed inset-0 z-40 flex items-end drawer-overlay"
+             @click.self="activeTab = 'roadmap'">
+            <div class="bg-[#012169] rounded-t-lg shadow-2xl w-full h-[90vh] overflow-hidden drawer-content flex flex-col">
+                <div class="sticky top-0 bg-[#011135] p-5 flex items-center justify-between rounded-t-lg shadow-md z-10 border-b border-white/20">
+                    <h2 class="text-xl font-bold text-white">B2B Network</h2>
+                    <button @click="activeTab = 'roadmap'" class="text-white/80 hover:text-white transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                <div class="flex-1 overflow-y-auto p-6 pb-24">
+                    <Network :current-view="networkView" @view="networkView = $event" />
+                </div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script setup>
 import { ref, onMounted, nextTick, computed, watch } from 'vue';
-import { ref, onMounted, nextTick, computed, watch } from 'vue';
 import { Head } from '@inertiajs/vue3';
 import axios from 'axios';
 import useVoiceAgent from '../composables/useVoiceAgent';
+import useChatAgent from '../composables/useChatAgent';
 import RoadmapVisualizer from '../components/RoadmapVisualizer.vue';
 import BusinessPlanProgress from '../components/BusinessPlanProgress.vue';
 import BusinessPlanModal from '../components/BusinessPlanModal.vue';
@@ -566,6 +583,8 @@ import BusinessInfoModal from '../components/BusinessInfoModal.vue';
 import ManualAddModal from '../components/ManualAddModal.vue';
 import AdvisorsModal from '../components/AdvisorsModal.vue';
 import CalendarModal from '../components/CalendarModal.vue';
+import AdvisorMeetingModal from '../components/AdvisorMeetingModal.vue';
+import Network from '../components/Network.vue';
 
 const props = defineProps({
     initialRoadmap: {
@@ -587,7 +606,6 @@ const props = defineProps({
 });
 
 const roadmap = ref(props.initialRoadmap || { steps: [] });
-const roadmap = ref(props.initialRoadmap || { steps: [] });
 const loading = ref(false);
 const error = ref(null);
 const transcripts = ref([]);
@@ -599,6 +617,12 @@ const recentlyAnsweredFields = ref(new Set()); // Track fields that were just an
 const showBusinessPlanModal = ref(false);
 const showProgressSummaryModal = ref(false);
 const progressSummaryData = ref({});
+const showAdvisorMeetingModal = ref(false);
+const advisorMeetingData = ref({
+    advisor_id: null,
+    specialization: null,
+    topic: null
+});
 
 // Resource cards
 const suggestedResources = ref([]);
@@ -627,6 +651,7 @@ const activeTab = ref('roadmap');
 const fieldToHighlight = ref(null);
 const contextualFieldRefs = ref({});
 const showBusinessInfo = ref(false);
+const networkView = ref('discover');
 
 // Interaction mode (voice or chat)
 const interactionMode = ref('voice');
@@ -634,10 +659,7 @@ const chatMessages = ref([]);
 const chatInput = ref('');
 const isLoadingChat = ref(false);
 const chatMessagesContainer = ref(null);
-
-// Eppu video
-const eppuVideo = ref(null);
-const isVideoPlaying = ref(false);
+const chatConversationId = ref(null); // Store conversation ID for ElevenLabs
 
 // Set refs for contextual fields
 const setContextualFieldRef = (fieldKey, el) => {
@@ -848,12 +870,6 @@ const handleRoadmapUpdate = async (roadmapData) => {
         // Don't merge question steps - roadmap only shows action steps
         // Question steps are handled separately in BusinessPlanProgress component
 
-        // Save to backend (only roadmap action steps, no question steps)
-        const roadmapToSave = {
-            ...roadmap.value,
-            steps: roadmap.value.steps.filter(step => !step.isQuestion)
-        };
-        
         // Switch to roadmap tab to show the update
         activeTab.value = 'roadmap-tab';
 
@@ -911,9 +927,7 @@ const handleRoadmapUpdate = async (roadmapData) => {
         try {
             await axios.post('/api/roadmap/update', {
                 roadmap_json: roadmapToSave
-                roadmap_json: roadmapToSave
             });
-            console.log('Roadmap saved to backend successfully');
             console.log('Roadmap saved to backend successfully');
         } catch (err) {
             console.error('Failed to update roadmap in backend:', err);
@@ -926,213 +940,6 @@ const handleRoadmapUpdate = async (roadmapData) => {
     } catch (err) {
         console.error('Failed to process roadmap update:', err);
         error.value = 'Failed to process roadmap update. Please try again.';
-    }
-};
-
-const handleBusinessPlanUpdate = async (businessPlanUpdateData) => {
-    try {
-        console.log('handleBusinessPlanUpdate called with:', JSON.stringify(businessPlanUpdateData, null, 2));
-        
-        if (!businessPlanUpdateData || typeof businessPlanUpdateData !== 'object') {
-            console.warn('Invalid business plan data received:', businessPlanUpdateData);
-            return;
-        }
-
-        // If data is nested in business_plan, unwrap it
-        const flatData = businessPlanUpdateData.business_plan || businessPlanUpdateData;
-        console.log('Flat business plan data:', JSON.stringify(flatData, null, 2));
-        console.log('Flat data keys:', Object.keys(flatData));
-        console.log('Flat data values:', Object.values(flatData));
-
-        // Track which fields were updated to highlight them
-        const updatedFieldKeys = Object.keys(flatData);
-        console.log('Updated field keys:', updatedFieldKeys);
-        
-        // Ensure we have data to send
-        if (updatedFieldKeys.length === 0) {
-            console.error('No fields to update! flatData is empty:', flatData);
-            return;
-        }
-        if (updatedFieldKeys.length > 0) {
-            // Highlight the first updated field
-            fieldToHighlight.value = updatedFieldKeys[0];
-            // Clear highlight after 5 seconds
-            setTimeout(() => {
-                fieldToHighlight.value = null;
-            }, 5000);
-        }
-        
-        // Switch to business tab to show the update
-        activeTab.value = 'business';
-        showBusinessInfo.value = false; // Close modal if open, show inline instead
-
-        // Merge with existing business plan data - create new object reference for reactivity
-        if (businessPlanData.value) {
-            businessPlanData.value = {
-                ...businessPlanData.value,
-                ...flatData,
-                _updated: Date.now() // Force reactivity
-            };
-        } else {
-            businessPlanData.value = {
-                ...flatData,
-                _updated: Date.now()
-            };
-        }
-        
-        console.log('Updated businessPlanData.value:', JSON.stringify(businessPlanData.value, null, 2));
-
-        console.log('Business plan data after merge:', {
-            business_name: businessPlanData.value.business_name,
-            allFields: Object.keys(businessPlanData.value),
-            updateData: businessPlanUpdateData
-        });
-
-        // Track which fields were just answered (for reward animation)
-        const previousQuestionIds = new Set(
-            roadmap.value.steps?.filter(s => s.isQuestion).map(s => s.fieldKey) || []
-        );
-        
-        console.log('Previous question IDs before merge:', Array.from(previousQuestionIds));
-        
-        // Immediately update roadmap to reflect new question steps (removes filled questions, adds new ones)
-        // Force reactivity by creating a new object reference
-        const updatedRoadmap = mergeRoadmapWithQuestions(roadmap.value, businessPlanData.value);
-        roadmap.value = updatedRoadmap;
-        
-        // Find which questions were just answered
-        const currentQuestionIds = new Set(
-            roadmap.value.steps?.filter(s => s.isQuestion).map(s => s.fieldKey) || []
-        );
-        const newlyAnsweredFields = Array.from(previousQuestionIds).filter(
-            id => !currentQuestionIds.has(id)
-        );
-        
-        // Award XP for filling business plan fields (5 XP per field)
-        if (newlyAnsweredFields.length > 0) {
-            await awardXP(newlyAnsweredFields.length * 5, 'Filled business plan fields');
-        }
-        
-        // Add to recently answered set and trigger reward animation
-        if (newlyAnsweredFields.length > 0) {
-            newlyAnsweredFields.forEach(field => recentlyAnsweredFields.value.add(field));
-            // Clear after animation
-            setTimeout(() => {
-                newlyAnsweredFields.forEach(field => recentlyAnsweredFields.value.delete(field));
-            }, 3000);
-        }
-        
-        // Wait for Vue to process the update
-        await nextTick();
-        
-        console.log('Business plan updated, question steps refreshed:', {
-            filledFields: Object.keys(flatData),
-            questionStepsCount: roadmap.value.steps.filter(s => s.isQuestion).length,
-            allStepsCount: roadmap.value.steps.length,
-            updatedFields: flatData,
-            newlyAnsweredFields: newlyAnsweredFields,
-            previousQuestionIds: Array.from(previousQuestionIds),
-            currentQuestionIds: Array.from(currentQuestionIds),
-            businessPlanSnapshot: { ...businessPlanData.value }
-        });
-
-        // Send partial update to backend (only fields provided will be updated)
-        try {
-            // Ensure boolean values are properly formatted
-            // Create a new object with all fields from flatData
-            // IMPORTANT: Include all fields, even if they are null, false, 0, or empty string
-            // The backend validation will handle what's valid
-            const dataToSend = {};
-            Object.keys(flatData).forEach(key => {
-                // Include all fields except undefined (null, false, 0, and empty strings are valid)
-                if (flatData[key] !== undefined) {
-                    dataToSend[key] = flatData[key];
-                }
-            });
-            
-            // If dataToSend is empty but flatData has keys, something went wrong
-            if (Object.keys(dataToSend).length === 0 && Object.keys(flatData).length > 0) {
-                console.error('ERROR: dataToSend is empty but flatData has keys!', {
-                    flatData,
-                    flatDataKeys: Object.keys(flatData),
-                    flatDataValues: Object.values(flatData).map(v => ({ value: v, type: typeof v }))
-                });
-            }
-            
-            console.log('dataToSend before boolean conversion:', JSON.stringify(dataToSend, null, 2));
-            console.log('dataToSend keys:', Object.keys(dataToSend));
-            // Convert boolean strings to actual booleans if needed
-            if (dataToSend.has_residence_permit !== undefined) {
-                if (typeof dataToSend.has_residence_permit === 'string') {
-                    dataToSend.has_residence_permit = dataToSend.has_residence_permit === 'true' || dataToSend.has_residence_permit === '1';
-                }
-            }
-            if (dataToSend.is_eu_resident !== undefined) {
-                if (typeof dataToSend.is_eu_resident === 'string') {
-                    dataToSend.is_eu_resident = dataToSend.is_eu_resident === 'true' || dataToSend.is_eu_resident === '1';
-                }
-            }
-            if (dataToSend.is_newcomer_to_finland !== undefined) {
-                if (typeof dataToSend.is_newcomer_to_finland === 'string') {
-                    dataToSend.is_newcomer_to_finland = dataToSend.is_newcomer_to_finland === 'true' || dataToSend.is_newcomer_to_finland === '1';
-                }
-            }
-            if (dataToSend.has_business_experience !== undefined) {
-                if (typeof dataToSend.has_business_experience === 'string') {
-                    dataToSend.has_business_experience = dataToSend.has_business_experience === 'true' || dataToSend.has_business_experience === '1';
-                }
-            }
-            
-            console.log('Sending to backend:', JSON.stringify(dataToSend, null, 2));
-            console.log('Data types:', {
-                has_residence_permit: typeof dataToSend.has_residence_permit,
-                residence_permit_type: typeof dataToSend.residence_permit_type,
-                is_eu_resident: typeof dataToSend.is_eu_resident,
-            });
-            console.log('Request payload size:', JSON.stringify(dataToSend).length, 'bytes');
-            console.log('Request payload keys count:', Object.keys(dataToSend).length);
-            
-            // Ensure we're sending data
-            if (Object.keys(dataToSend).length === 0) {
-                console.error('CRITICAL ERROR: Attempting to send empty dataToSend!', {
-                    flatData,
-                    dataToSend,
-                    businessPlanUpdateData
-                });
-                error.value = 'No data to send. Please try again.';
-                return;
-            }
-            
-            const response = await axios.post('/api/business-plan/update', dataToSend, {
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
-            console.log('Business plan updated successfully in backend:', response.data);
-            
-            // Update local state with response data to ensure sync
-            if (response.data && response.data.business_plan) {
-                businessPlanData.value = {
-                    ...businessPlanData.value,
-                    ...response.data.business_plan
-                };
-                console.log('Updated businessPlanData from backend response:', JSON.stringify(businessPlanData.value, null, 2));
-            }
-        } catch (err) {
-            console.error('Failed to update business plan in backend:', err);
-            console.error('Error response:', err.response?.data);
-            if (err.response?.status === 401) {
-                error.value = 'Authentication required. Please log in to save your business plan.';
-            } else if (err.response?.status >= 500) {
-                error.value = 'Server error. Your business plan changes may not be saved.';
-            } else if (err.response?.status === 422) {
-                console.error('Validation errors:', err.response.data);
-                error.value = 'Validation error: ' + JSON.stringify(err.response.data);
-            }
-        }
-    } catch (err) {
-        console.error('Failed to process business plan update:', err);
-        error.value = 'Failed to process business plan update. Please try again.';
     }
 };
 
@@ -1584,6 +1391,22 @@ const handleProgressSummary = (summaryData) => {
     showProgressSummaryModal.value = true;
 };
 
+const handleScheduleMeeting = (meetingData) => {
+    console.log('Schedule meeting requested:', meetingData);
+    advisorMeetingData.value = {
+        advisor_id: meetingData.advisor_id || null,
+        specialization: meetingData.specialization || null,
+        topic: meetingData.topic || null
+    };
+    showAdvisorMeetingModal.value = true;
+};
+
+const handleMeetingScheduled = (meeting) => {
+    console.log('Meeting scheduled:', meeting);
+    // Optionally show a success message or update UI
+    showAdvisorMeetingModal.value = false;
+};
+
 const {
     isConnected,
     isListening,
@@ -1605,8 +1428,76 @@ const {
     onChecklistComplete: handleChecklistComplete,
     onDocumentRequest: handleDocumentRequest,
     onResourceSuggested: handleResourceSuggested,
-    onProgressSummary: handleProgressSummary
+    onProgressSummary: handleProgressSummary,
+    onScheduleMeeting: handleScheduleMeeting
 });
+
+// Initialize chat agent (after handler functions are defined)
+const chatAgent = useChatAgent({
+    onRoadmapUpdate: handleRoadmapUpdate,
+    onBusinessPlanUpdate: handleBusinessPlanUpdate,
+    onMessage: (message) => {
+        chatMessages.value.push(message);
+        nextTick(() => scrollChatToBottom());
+    },
+    onError: (error) => {
+        console.error('Chat agent error:', error);
+        chatMessages.value.push({
+            type: 'assistant',
+            text: error || 'Sorry, I encountered an error. Please try again.'
+        });
+        isLoadingChat.value = false;
+        nextTick(() => scrollChatToBottom());
+    },
+    onMeetingPrep: (data) => {
+        // Handle meeting prep if needed
+    },
+    onChecklistComplete: (data) => {
+        // Handle checklist completion
+        if (data && data.stepId) {
+            handleRoadmapUpdate(roadmap.value);
+        }
+    },
+    onDocumentRequest: (doc) => {
+        // Add document request card
+        if (doc && doc.title) {
+            pendingDocuments.value.push({
+                id: documentIdCounter++,
+                type: doc.type || 'general',
+                title: doc.title,
+                description: doc.description || 'Additional information needed',
+                required: doc.required !== false,
+                field: doc.field || null
+            });
+        }
+    },
+    onResourceSuggested: (resource) => {
+        // Add resource card
+        if (resource && resource.title) {
+            suggestedResources.value.push({
+                id: resourceIdCounter++,
+                title: resource.title,
+                description: resource.description || resource.preview || '',
+                url: resource.url || '',
+                category: resource.category || 'general',
+                icon: resource.icon || '📚',
+                preview: resource.preview || resource.description || ''
+            });
+        }
+    },
+    onProgressSummary: (data) => {
+        progressSummaryData.value = data || {};
+        showProgressSummaryModal.value = true;
+    },
+    onScheduleMeeting: (data) => {
+        // Handle meeting scheduling
+        showAdvisorMeetingModal.value = true;
+    },
+    userName: props.userName
+});
+
+// Eppu animation state
+const isTalking = computed(() => isListening.value || isSpeaking.value);
 
 const handleCallMode = () => {
     interactionMode.value = 'voice';
@@ -1619,33 +1510,10 @@ const handleCallMode = () => {
 const handleConnect = async () => {
     try {
         error.value = null;
-        // Play Eppu video
-        if (eppuVideo.value) {
-            eppuVideo.value.currentTime = 0; // Reset to start
-            isVideoPlaying.value = true;
-            eppuVideo.value.play().catch(err => {
-                console.warn('Video autoplay failed:', err);
-                isVideoPlaying.value = false;
-            });
-        }
-        
-        // Connect after a short delay to let video start
-        setTimeout(async () => {
-            await connect();
-        }, 500);
+        await connect();
     } catch (err) {
         console.error('Failed to connect:', err);
         error.value = 'Failed to connect to voice agent';
-        isVideoPlaying.value = false;
-    }
-};
-
-const onVideoEnded = () => {
-    // Pause video at end and show fallback
-    if (eppuVideo.value) {
-        eppuVideo.value.pause();
-        eppuVideo.value.currentTime = 0;
-        isVideoPlaying.value = false;
     }
 };
 
@@ -1699,34 +1567,51 @@ const sendChatMessage = async () => {
     isLoadingChat.value = true;
     
     try {
-        // Send message to API endpoint for chat
-        const response = await axios.post('/api/chat', {
-            message: userMessage,
-            business_plan: businessPlanData.value,
-            roadmap: roadmap.value
-        });
-        
-        // Add AI response to chat
-        if (response.data && response.data.response) {
-            chatMessages.value.push({
-                type: 'assistant',
-                text: response.data.response
-            });
+        // Initialize chat agent if not already initialized
+        if (!chatAgent.isConnected.value) {
+            // Load required data first
+            let businessPlanResponse = null;
+            let roadmapResponse = null;
+            let advisorsResponse = null;
             
-            // Handle any updates from the response
-            if (response.data.business_plan) {
-                await handleBusinessPlanUpdate(response.data.business_plan);
+            try {
+                businessPlanResponse = await axios.get('/api/business-plan');
+            } catch (error) {
+                console.error('Failed to load business plan:', error);
             }
-            if (response.data.roadmap) {
-                await handleRoadmapUpdate(response.data.roadmap);
+            
+            try {
+                roadmapResponse = await axios.get('/api/roadmap');
+            } catch (error) {
+                console.error('Failed to load roadmap:', error);
             }
+            
+            try {
+                advisorsResponse = await axios.get('/api/advisors');
+            } catch (error) {
+                console.error('Failed to load advisors:', error);
+            }
+            
+            // Initialize chat agent with context
+            await chatAgent.initializeChat(
+                businessPlanResponse?.data || businessPlanData.value || {},
+                roadmapResponse?.data || roadmap.value || {},
+                advisorsResponse?.data?.advisors || advisors.value || []
+            );
         }
+        
+        // Send message using chat agent
+        await chatAgent.sendMessage(userMessage);
+        
     } catch (err) {
         console.error('Chat error:', err);
+        const errorMessage = err.message || 'Sorry, I encountered an error. Please try again.';
         chatMessages.value.push({
             type: 'assistant',
-            text: 'Sorry, I encountered an error. Please try again.'
+            text: errorMessage
         });
+        await nextTick();
+        scrollChatToBottom();
     } finally {
         isLoadingChat.value = false;
         await nextTick();
@@ -1740,26 +1625,54 @@ const scrollChatToBottom = () => {
     }
 };
 
-// Initialize chat with welcome message when switching to chat mode
-watch(() => interactionMode.value, (newMode) => {
-    if (newMode === 'chat' && chatMessages.value.length === 0) {
-        // Play Eppu video for chat mode
-        nextTick(() => {
-            if (eppuVideo.value) {
-                eppuVideo.value.currentTime = 0; // Reset to start
-                isVideoPlaying.value = true;
-                eppuVideo.value.play().catch(err => {
-                    console.warn('Video autoplay failed:', err);
-                    isVideoPlaying.value = false;
+// Initialize chat agent when switching to chat mode
+watch(() => interactionMode.value, async (newMode) => {
+    if (newMode === 'chat') {
+        // Initialize chat agent on first switch to chat mode
+        if (!chatAgent.isConnected.value && chatMessages.value.length === 0) {
+            try {
+                // Load required data
+                let businessPlanResponse = null;
+                let roadmapResponse = null;
+                let advisorsResponse = null;
+                
+                try {
+                    businessPlanResponse = await axios.get('/api/business-plan');
+                } catch (error) {
+                    console.error('Failed to load business plan:', error);
+                }
+                
+                try {
+                    roadmapResponse = await axios.get('/api/roadmap');
+                } catch (error) {
+                    console.error('Failed to load roadmap:', error);
+                }
+                
+                try {
+                    advisorsResponse = await axios.get('/api/advisors');
+                } catch (error) {
+                    console.error('Failed to load advisors:', error);
+                }
+                
+                // Initialize chat agent with context
+                await chatAgent.initializeChat(
+                    businessPlanResponse?.data || businessPlanData.value || {},
+                    roadmapResponse?.data || roadmap.value || {},
+                    advisorsResponse?.data?.advisors || advisors.value || []
+                );
+            } catch (error) {
+                console.error('Failed to initialize chat agent:', error);
+                chatMessages.value.push({
+                    type: 'assistant',
+                    text: 'Sorry, I encountered an error initializing the chat. Please try again.'
                 });
             }
-        });
-        
-        chatMessages.value.push({
-            type: 'assistant',
-            text: `Hi! I'm Eppu the Bear, your AI startup coach. 🐻\n\nI'm here to help you build your business plan and create a personalized roadmap for your startup journey. You can ask me questions about starting a business in Finland, get advice on your business plan, or work on your roadmap step by step.\n\nWhat would you like to start with?`
-        });
-        nextTick(() => scrollChatToBottom());
+        }
+    } else if (newMode === 'voice') {
+        // Disconnect chat agent when switching to voice
+        if (chatAgent.isConnected.value) {
+            chatAgent.disconnect();
+        }
     }
 });
 

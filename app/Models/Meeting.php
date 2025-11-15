@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,41 +12,50 @@ class Meeting extends Model
 {
     use HasFactory;
 
+    /**
+     * The attributes that are mass assignable.
+     *
+     * @var array
+     */
     protected $fillable = [
         'user_id',
         'advisor_id',
-        'meeting_request_id',
+        'topic',
+        'notes',
         'scheduled_at',
-        'location',
-        'agenda',
         'status',
+        'calendar_event_id',
     ];
 
+    /**
+     * Get the attributes that should be cast.
+     *
+     * @return array<string, string>
+     */
     protected function casts(): array
     {
         return [
             'id' => 'integer',
             'user_id' => 'integer',
             'advisor_id' => 'integer',
-            'meeting_request_id' => 'integer',
             'scheduled_at' => 'datetime',
+            'status' => 'string',
         ];
     }
 
+    /**
+     * Get the user that owns the meeting.
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * Get the advisor for the meeting.
+     */
     public function advisor(): BelongsTo
     {
         return $this->belongsTo(User::class, 'advisor_id');
     }
-
-    public function meetingRequest(): BelongsTo
-    {
-        return $this->belongsTo(MeetingRequest::class);
-    }
 }
-
-

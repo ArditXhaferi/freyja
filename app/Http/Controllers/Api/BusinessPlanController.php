@@ -269,11 +269,27 @@ class BusinessPlanController extends Controller
 
             // Replace placeholders in template
             // PHPWord setValue expects just the variable name without ${} wrapper
+            // The template should have placeholders like: ${variable}
+            $replacedCount = 0;
             foreach ($data as $key => $value) {
-                // Remove ${} wrapper if present
+                // Remove ${} wrapper if present from our key format
                 $placeholder = preg_replace('/^\$\{|\}$/', '', $key);
-                $templateProcessor->setValue($placeholder, $value ?? '');
+                try {
+                    // Replace with empty string if value is empty/null
+                    $replacementValue = $value ?? '';
+                    $templateProcessor->setValue($placeholder, $replacementValue);
+                    $replacedCount++;
+                } catch (\Exception $e) {
+                    // Placeholder might not exist in template, log but continue
+                    Log::debug("Placeholder '{$placeholder}' not found in template or error replacing: " . $e->getMessage());
+                }
             }
+            
+            Log::info("Business plan PDF generation", [
+                'user_id' => $user->id,
+                'placeholders_replaced' => $replacedCount,
+                'total_placeholders' => count($data),
+            ]);
 
             // Save filled template to temporary file
             $tempDocxPath = storage_path('app/temp/business-plan-' . $user->id . '-' . time() . '.docx');
@@ -292,11 +308,14 @@ class BusinessPlanController extends Controller
             }
 
             // Return PDF file
-            $filename = 'business-plan-' . ($user->business_name ?? 'my-business') . '-' . date('Y-m-d') . '.pdf';
+            // Sanitize filename to avoid special characters
+            $businessName = $user->business_name ?? 'my-business';
+            $businessName = preg_replace('/[^a-zA-Z0-9_-]/', '-', $businessName);
+            $businessName = preg_replace('/-+/', '-', $businessName); // Replace multiple dashes with single
+            $filename = 'business-plan-' . $businessName . '-' . date('Y-m-d') . '.pdf';
             
-            return response()->file($pdfPath, [
+            return response()->download($pdfPath, $filename, [
                 'Content-Type' => 'application/pdf',
-                'Content-Disposition' => 'attachment; filename="' . $filename . '"',
             ])->deleteFileAfterSend(true);
         } catch (\Exception $e) {
             Log::error('Error generating business plan PDF: ' . $e->getMessage(), [

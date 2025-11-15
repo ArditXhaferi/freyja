@@ -16,6 +16,7 @@ export default function useVoiceAgent({
     onDocumentRequest,
     onResourceSuggested,
     onProgressSummary,
+    onScheduleMeeting,
     userName = null // Optional: user's name from backend
 }) {
     const isConnected = ref(false);
@@ -781,6 +782,30 @@ export default function useVoiceAgent({
                         } catch (error) {
                             console.error('Error in generateProgressSummary tool:', error);
                             return `Error generating progress summary: ${error.message}`;
+                        }
+                    },
+                    scheduleAdvisorMeeting: async (parameters) => {
+                        console.log('Agent called scheduleAdvisorMeeting tool:', parameters);
+                        try {
+                            const meetingData = parameters.meeting || parameters;
+                            
+                            if (!meetingData || typeof meetingData !== 'object') {
+                                console.warn('Invalid meeting data from tool call:', parameters);
+                                return 'Error: Invalid meeting data format';
+                            }
+                            
+                            if (onScheduleMeeting) {
+                                onScheduleMeeting({
+                                    advisor_id: meetingData.advisor_id || null,
+                                    specialization: meetingData.specialization || null,
+                                    topic: meetingData.topic || null
+                                });
+                            }
+                            console.log('Advisor meeting scheduling modal opened');
+                            return 'I\'ve opened the scheduling modal. You can select an advisor and choose a date and time for your meeting.';
+                        } catch (error) {
+                            console.error('Error in scheduleAdvisorMeeting tool:', error);
+                            return `Error opening scheduling modal: ${error.message}`;
                         }
                     }
                 },

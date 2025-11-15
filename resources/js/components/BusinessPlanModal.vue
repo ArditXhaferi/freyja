@@ -126,11 +126,17 @@ const generatePDF = async () => {
         
         // Extract filename from Content-Disposition header if available
         const contentDisposition = response.headers['content-disposition'];
-        let filename = 'business-plan.pdf';
+        let filename = 'business-plan-' + new Date().toISOString().split('T')[0] + '.pdf';
         if (contentDisposition) {
-            const filenameMatch = contentDisposition.match(/filename="?(.+)"?/i);
+            // Try to extract filename from Content-Disposition header
+            const filenameMatch = contentDisposition.match(/filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/i);
             if (filenameMatch && filenameMatch[1]) {
-                filename = filenameMatch[1];
+                // Remove quotes if present and trim
+                filename = filenameMatch[1].replace(/['"]/g, '').trim();
+                // Ensure it ends with .pdf
+                if (!filename.endsWith('.pdf')) {
+                    filename = filename.replace(/\.pdf_?$/i, '') + '.pdf';
+                }
             }
         }
         

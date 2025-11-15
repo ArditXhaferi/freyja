@@ -12,7 +12,7 @@
                             : 'text-white/70 hover:text-white hover:bg-white/10'
                     ]"
                 >
-                    <div class="text-xl">{{ activeTab === 'business' ? '📋' : '📄' }}</div>
+                    <i :class="activeTab === 'business' ? 'fa-solid fa-clipboard-list' : 'fa-regular fa-file'" class="text-lg"></i>
                     <span class="text-xs font-semibold">Business</span>
                 </button>
 
@@ -26,7 +26,7 @@
                             : 'text-white/70 hover:text-white hover:bg-white/10'
                     ]"
                 >
-                    <div class="text-xl">{{ activeTab === 'roadmap-tab' ? '🗺️' : '📍' }}</div>
+                    <i :class="activeTab === 'roadmap-tab' ? 'fa-solid fa-map' : 'fa-solid fa-map-pin'" class="text-lg"></i>
                     <span class="text-xs font-semibold">Roadmap</span>
                 </button>
 
@@ -40,7 +40,7 @@
                             : 'text-white/70 hover:text-white hover:bg-white/10'
                     ]"
                 >
-                    <div class="text-xl">{{ activeTab === 'add' ? '➕' : '✏️' }}</div>
+                    <i :class="activeTab === 'add' ? 'fa-solid fa-plus' : 'fa-solid fa-pen'" class="text-lg"></i>
                     <span class="text-xs font-semibold">Add</span>
                 </button>
 
@@ -54,7 +54,7 @@
                             : 'text-white/70 hover:text-white hover:bg-white/10'
                     ]"
                 >
-                    <div class="text-xl">{{ activeTab === 'roadmap' ? '🏠' : '🏠' }}</div>
+                    <i class="fa-solid fa-house text-lg"></i>
                     <span class="text-xs font-semibold">Home</span>
                 </button>
 
@@ -68,7 +68,7 @@
                             : 'text-white/70 hover:text-white hover:bg-white/10'
                     ]"
                 >
-                    <div class="text-xl">{{ activeTab === 'advisors' ? '👥' : '💼' }}</div>
+                    <i :class="activeTab === 'advisors' ? 'fa-solid fa-users' : 'fa-solid fa-briefcase'" class="text-lg"></i>
                     <span class="text-xs font-semibold">Advisors</span>
                 </button>
 
@@ -82,8 +82,22 @@
                             : 'text-white/70 hover:text-white hover:bg-white/10'
                     ]"
                 >
-                    <div class="text-xl">{{ activeTab === 'calendar' ? '📅' : '🗓️' }}</div>
+                    <i :class="activeTab === 'calendar' ? 'fa-solid fa-calendar-days' : 'fa-regular fa-calendar'" class="text-lg"></i>
                     <span class="text-xs font-semibold">Calendar</span>
+                </button>
+
+                <!-- Network -->
+                <button
+                    @click="navigate('network')"
+                    :class="[
+                        'flex flex-col items-center justify-center gap-1 px-3 py-2 rounded-lg transition-all duration-300',
+                        activeTab === 'network' 
+                            ? 'bg-[#012169] text-white' 
+                            : 'text-white/70 hover:text-white hover:bg-white/10'
+                    ]"
+                >
+                    <i :class="activeTab === 'network' ? 'fa-solid fa-network-wired' : 'fa-solid fa-building'" class="text-lg"></i>
+                    <span class="text-xs font-semibold">Network</span>
                 </button>
             </div>
         </div>
