@@ -82,7 +82,7 @@
                     <div class="text-center">
                         <p class="text-sm text-gray-600">
                             Don't have an account?
-                            <Link :href="route('register')" class="font-medium text-blue-600 hover:text-blue-500">
+                            <Link href="/register" class="font-medium text-blue-600 hover:text-blue-500">
                                 Sign up
                             </Link>
                         </p>
@@ -91,7 +91,7 @@
             </div>
 
             <div class="text-center">
-                <Link :href="route('home')" class="text-sm text-gray-600 hover:text-gray-900">
+                <Link href="/" class="text-sm text-gray-600 hover:text-gray-900">
                     ← Back to home
                 </Link>
             </div>
@@ -109,7 +109,7 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route('login'), {
+    form.post('/login', {
         onFinish: () => form.reset('password'),
     });
 };

@@ -16,9 +16,12 @@
         "vite": "^7.0.7"
     },
     "dependencies": {
+        "@elevenlabs/client": "^0.11.0",
         "@elevenlabs/elevenlabs-js": "^2.24.1",
         "@inertiajs/vue3": "^1.0.15",
         "@openai/agents": "^0.1.0",
+        "canvas-confetti": "^1.9.4",
+        "jspdf": "^3.0.3",
         "vue": "^3.5.13"
     }
 }

@@ -5,12 +5,12 @@
             <nav class="flex items-center justify-end gap-4">
                 <Link
                     v-if="$page.props.auth.user"
-                    :href="route('voice-roadmap')"
+                    href="/voice-roadmap"
                     class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal"
                 >
                     My Roadmap
                 </Link>
-                <form v-if="$page.props.auth.user" method="POST" :action="route('logout')" class="inline">
+                <form v-if="$page.props.auth.user" method="POST" action="/logout" class="inline">
                     <input type="hidden" name="_token" :value="$page.props.csrf_token" />
                     <button
                         type="submit"
@@ -21,13 +21,13 @@
                 </form>
                 <template v-else>
                     <Link
-                        :href="route('login')"
+                        href="/login"
                         class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] text-[#1b1b18] border border-transparent hover:border-[#19140035] dark:hover:border-[#3E3E3A] rounded-sm text-sm leading-normal"
                     >
                         Log in
                     </Link>
                     <Link
-                        :href="route('register')"
+                        href="/register"
                         class="inline-block px-5 py-1.5 dark:text-[#EDEDEC] border-[#19140035] hover:border-[#1915014a] border text-[#1b1b18] dark:border-[#3E3E3A] dark:hover:border-[#62605b] rounded-sm text-sm leading-normal"
                     >
                         Register
@@ -42,14 +42,14 @@
                     <p class="mb-6">Voice-driven startup roadmap builder for entrepreneurs in Espoo, Finland.</p>
                     <Link
                         v-if="!$page.props.auth.user"
-                        :href="route('register')"
+                        href="/register"
                         class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                     >
                         Get Started
                     </Link>
                     <Link
                         v-else
-                        :href="route('voice-roadmap')"
+                        href="/voice-roadmap"
                         class="inline-block px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                     >
                         Build Your Roadmap

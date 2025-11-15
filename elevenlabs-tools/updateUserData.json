@@ -1,0 +1,570 @@
+{
+  "type": "client",
+  "name": "updateUserData",
+  "description": "Updates the user's information including personal background (EU residency, newcomer status, residence permit, years in Finland, etc.) and business plan details (company info, products, market, competitors, etc.). Use this tool whenever the user provides ANY information about themselves or their business. You can call this tool multiple times with partial updates as the user provides information during the conversation. CRITICAL: Always include actual field values - never call with an empty business_plan object {}. When the user answers your questions, IMMEDIATELY call this tool to save their response.",
+  "disable_interruptions": false,
+  "force_pre_tool_speech": "auto",
+  "assignments": [],
+  "tool_call_sound": null,
+  "tool_call_sound_behavior": "auto",
+  "execution_mode": "immediate",
+  "expects_response": false,
+  "response_timeout_secs": 1,
+  "parameters": [
+    {
+      "id": "business_plan",
+      "type": "object",
+      "description": "The business plan data object containing any combination of business plan fields AND personal background/contextual fields. CRITICAL: Extract numeric values from text (e.g., '3 years' → 3), extract booleans from yes/no (e.g., 'yes' → true, 'no' → false). Always include actual values - never send an empty object.",
+      "properties": [
+        {
+          "id": "country_of_origin",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "Country of origin (e.g., 'Germany', 'India', 'USA'). Extract from user's response when they mention where they're from.",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "is_eu_resident",
+          "type": "boolean",
+          "value_type": "llm_prompt",
+          "description": "EU/EEA citizenship status. true if EU/EEA citizen, false if non-EU. Extract from user's response (e.g., 'I'm from Germany' → true, 'I'm from India' → false).",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "is_newcomer_to_finland",
+          "type": "boolean",
+          "value_type": "llm_prompt",
+          "description": "Whether the user is new to Finland. true if newcomer, false if not. Extract from user's response (e.g., 'I just moved here' → true, 'I've been here for 3 years' → false).",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "has_residence_permit",
+          "type": "boolean",
+          "value_type": "llm_prompt",
+          "description": "Whether the user has a residence permit. true if yes, false if no. Extract from user's response.",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "residence_permit_type",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "Type of residence permit (e.g., 'entrepreneur', 'work', 'family'). Extract from user's response when they mention their permit type.",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "years_in_finland",
+          "type": "number",
+          "value_type": "llm_prompt",
+          "description": "How long the user has been in Finland (integer, e.g., 0, 1, 3, 5). CRITICAL: Extract the NUMBER from text (e.g., 'I've been here for 3 years' → 3, 'I moved here 2 years ago' → 2, 'I just arrived' → 0). Do NOT send the full string - extract only the numeric value.",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "has_business_experience",
+          "type": "boolean",
+          "value_type": "llm_prompt",
+          "description": "Whether the user has previous business experience. true if yes, false if no. Extract from user's response.",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "language",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "Preferred language (e.g., 'en', 'fi', 'sv'). Extract from user's response when they mention language preference.",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "operating_environment_risks",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "Potential risks in the operating environment. Are there changes in the operating environment or larger megatrends in sight that could change buying behaviour?",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "number_of_employees",
+          "type": "number",
+          "value_type": "llm_prompt",
+          "description": "The number of employees",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "company_planned_name",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "The planned name of the company",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "internet_address",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "The company website URL",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "postal_district",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "The postal district",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "swot_analysis",
+          "type": "object",
+          "description": "SWOT analysis - strengths, weaknesses, opportunities, threats",
+          "properties": [
+            {
+              "id": "opportunities",
+              "type": "string",
+              "value_type": "llm_prompt",
+              "description": "External opportunities for the business",
+              "dynamic_variable": "",
+              "constant_value": "",
+              "enum": null,
+              "is_system_provided": false,
+              "required": false
+            },
+            {
+              "id": "weaknesses",
+              "type": "string",
+              "value_type": "llm_prompt",
+              "description": "Internal weaknesses of the business",
+              "dynamic_variable": "",
+              "constant_value": "",
+              "enum": null,
+              "is_system_provided": false,
+              "required": false
+            },
+            {
+              "id": "strengths",
+              "type": "string",
+              "value_type": "llm_prompt",
+              "description": "Internal strengths of the business",
+              "dynamic_variable": "",
+              "constant_value": "",
+              "enum": null,
+              "is_system_provided": false,
+              "required": false
+            },
+            {
+              "id": "threats",
+              "type": "string",
+              "value_type": "llm_prompt",
+              "description": "External threats to the business",
+              "dynamic_variable": "",
+              "constant_value": "",
+              "enum": null,
+              "is_system_provided": false,
+              "required": false
+            }
+          ],
+          "required": false,
+          "value_type": "llm_prompt"
+        },
+        {
+          "id": "third_parties_partners",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "Other third parties and partners important to the company (e.g., subcontractors)",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "permits_notices",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "Do you need a permit or advance notice to start your business?",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "company_type",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "The type of company (e.g., Sole Entrepreneur, LLC, etc.)",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "business_name",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "The name of the business",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "competitors",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "Who are the competitors?",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "insurance_contracts",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "Insurance and contracts information",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "products_services_detailed",
+          "type": "array",
+          "description": "Detailed list of products/services with name, price, benefits, and competitive advantage",
+          "items": {
+            "id": "",
+            "type": "object",
+            "description": "A single product or service",
+            "properties": [
+              {
+                "id": "price",
+                "type": "string",
+                "value_type": "llm_prompt",
+                "description": "Price (hourly rate, contract price, etc.)",
+                "dynamic_variable": "",
+                "constant_value": "",
+                "enum": null,
+                "is_system_provided": false,
+                "required": false
+              },
+              {
+                "id": "competitive_advantage",
+                "type": "string",
+                "value_type": "llm_prompt",
+                "description": "Competitive advantage over other players in the industry",
+                "dynamic_variable": "",
+                "constant_value": "",
+                "enum": null,
+                "is_system_provided": false,
+                "required": false
+              },
+              {
+                "id": "benefits",
+                "type": "string",
+                "value_type": "llm_prompt",
+                "description": "Benefits for the customer",
+                "dynamic_variable": "",
+                "constant_value": "",
+                "enum": null,
+                "is_system_provided": false,
+                "required": false
+              },
+              {
+                "id": "name",
+                "type": "string",
+                "value_type": "llm_prompt",
+                "description": "Name of the product or service",
+                "dynamic_variable": "",
+                "constant_value": "",
+                "enum": null,
+                "is_system_provided": false,
+                "required": false
+              }
+            ],
+            "required": false,
+            "value_type": "llm_prompt"
+          },
+          "required": false,
+          "value_type": "llm_prompt"
+        },
+        {
+          "id": "competitive_situation",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "How do you stand out from other players in the same industry?",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "products_services_general",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "General description of what products or services you offer",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "company_owners_holdings",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "Company owners and holdings as percentage",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "support_network",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "Do you have mentors, business acquaintances etc. in your immediate circle who can help you if needed?",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "company_contact_info",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "Basic contact and information of the company",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "my_business_comprehensive",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "Comprehensive description of your business: What kind of business are you planning to start? What is the name of your business and where does its name come from? Have you already considered the form of your business? What kind of domain are you planning to reserve? Do you need business premises? Do you need employees? Also describe the company's initial financing needs, tools you may already have, and most important investment needs. Provide your own estimate of how long it will take to achieve a profitable business.",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "production_logistics",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "If selling goods, where do they come from and how is logistics handled?",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "competence_skills",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "What kind of training and work background do you have that will help you become an entrepreneur? If your skills are based on hobbies or other skills, describe which skills will help you run a business in this particular industry.",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "business_idea",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "Briefly describe your business idea. Consider telling an outside listener for the first time what kind of business you are starting. What the company sells, who are your customers and how the sale takes place.",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "zip_code",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "The ZIP code",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "industry",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "The industry the business operates in",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "industry_future_prospects",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "Describe the future prospects of your industry (e.g., technology, competition) and the direction of development. Do you have plans for internationalization in the future?",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "business_id",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "The business ID or registration number",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "intellectual_property_rights",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "Intellectual property rights information",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "sales_marketing",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "How are sales made in practice? How do you reach your customer/target group? What marketing channels/tools do you plan to use? How is marketing handled?",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "address",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "The business address",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "distribution_network",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "Market entry and distribution network",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "target_market_groups",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "Who is your customer? Is your product/service a consumer (B2C) or business (B2B) service? How do you reach customers and what would an ideal customer be like?",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "year_of_establishment",
+          "type": "number",
+          "value_type": "llm_prompt",
+          "description": "The year the company was established",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        },
+        {
+          "id": "vision_long_term",
+          "type": "string",
+          "value_type": "llm_prompt",
+          "description": "Long term vision of the company. How do you see the situation of your company within 3-5 years?",
+          "dynamic_variable": "",
+          "constant_value": "",
+          "enum": null,
+          "is_system_provided": false,
+          "required": false
+        }
+      ],
+      "required": true,
+      "value_type": "llm_prompt"
+    }
+  ],
+  "dynamic_variables": {
+    "dynamic_variable_placeholders": {}
+  }
+}
+

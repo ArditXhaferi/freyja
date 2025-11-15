@@ -139,7 +139,7 @@
                     <div class="text-center">
                         <p class="text-sm text-gray-600">
                             Already have an account?
-                            <Link :href="route('login')" class="font-medium text-blue-600 hover:text-blue-500">
+                            <Link href="/login" class="font-medium text-blue-600 hover:text-blue-500">
                                 Sign in
                             </Link>
                         </p>
@@ -148,7 +148,7 @@
             </div>
 
             <div class="text-center">
-                <Link :href="route('home')" class="text-sm text-gray-600 hover:text-gray-900">
+                <Link href="/" class="text-sm text-gray-600 hover:text-gray-900">
                     ← Back to home
                 </Link>
             </div>
@@ -170,7 +170,7 @@ const form = useForm({
 });
 
 const submit = () => {
-    form.post(route('register'));
+    form.post('/register');
 };
 </script>
 
