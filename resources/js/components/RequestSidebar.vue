@@ -1,13 +1,7 @@
 <template>
     <aside class="hidden w-64 flex-col border-r border-[#d6e4dc] bg-white/95 px-6 py-8 lg:flex">
         <div class="flex items-center gap-3">
-            <div class="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-[#205274] to-[#5cc094] text-white font-semibold">
-                EB
-            </div>
-            <div>
-                <p class="text-lg font-semibold text-[#205274]">Espoo Advisor</p>
-                <p class="text-xs text-slate-500">Business Desk</p>
-            </div>
+            <img src="/storage/logo (2).png" alt="App logo" class="h-9 w-auto" />
         </div>
         <nav class="mt-10 space-y-6">
             <div>
@@ -57,14 +51,6 @@
                 </div>
             </div>
         </nav>
-        <div class="mt-auto rounded-2xl bg-gradient-to-br from-[#205274] to-[#5cc094] p-4 text-sm text-white">
-            <p class="text-xs uppercase tracking-widest text-white/80">Mobile app</p>
-            <p class="mt-2 text-base font-semibold">Support on the go</p>
-            <p class="mt-1 text-xs text-white/85">Stay connected to every founder conversation from anywhere.</p>
-            <button class="mt-4 w-full rounded-xl bg-[#205274] border border-[#5cc094] py-2 text-sm font-semibold text-white shadow hover:bg-[#1a425d]">
-                Download
-            </button>
-        </div>
     </aside>
 </template>
 

@@ -2,6 +2,7 @@
     <Head title="Settings" />
     <div class="flex min-h-screen bg-[#f2f7f5] text-slate-700">
         <RequestSidebar :advisor="advisor" active="Settings" />
+        <AdvisorBottomNav active="Settings" />
 
         <main class="flex-1 px-4 pb-12 pt-8 sm:px-10">
             <header class="rounded-3xl bg-white/95 px-6 py-5 shadow-sm shadow-emerald-100/60 border border-[#5cc094]">
@@ -97,6 +98,7 @@
 import { computed, reactive } from 'vue';
 import { Head, router } from '@inertiajs/vue3';
 import RequestSidebar from '../components/RequestSidebar.vue';
+import AdvisorBottomNav from '../components/AdvisorBottomNav.vue';
 
 const props = defineProps({
     advisor: {

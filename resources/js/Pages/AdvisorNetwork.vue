@@ -2,6 +2,7 @@
     <Head title="Advisor Network" />
     <div class="flex min-h-screen bg-[#f2f7f5] text-slate-700">
         <RequestSidebar :advisor="advisor" active="Network" />
+        <AdvisorBottomNav active="Network" />
 
         <main class="flex-1 px-4 pb-12 pt-8 sm:px-10">
             <header class="rounded-3xl bg-white/95 px-6 py-5 shadow-sm shadow-emerald-100/40 border border-[#c3d7de]">
@@ -20,6 +21,7 @@
                 />
             </div>
 
+            <!-- Companies list -->
             <section class="mt-8 grid gap-6 lg:grid-cols-2 xl:grid-cols-3">
                 <article
                     v-for="company in filteredCompanies"
@@ -60,6 +62,28 @@
 
                 <p v-if="!filteredCompanies.length" class="rounded-3xl border border-dashed border-[#c3d7de] bg-white/80 p-6 text-center text-sm text-slate-500">
                     No companies match your current search. Try a different keyword.
+                </p>
+            </section>
+
+            <!-- Network graph -->
+            <section class="mt-8 rounded-3xl border border-[#c3d7de] bg-white p-5 shadow-sm shadow-emerald-100/70">
+                <header class="flex items-center justify-between gap-3">
+                    <div>
+                        <p class="text-xs uppercase tracking-[0.3em] text-slate-400">Advisor network</p>
+                        <h2 class="text-lg font-semibold text-[#205274]">Matches graph</h2>
+                    </div>
+                </header>
+                <div class="mt-4 h-[320px] rounded-2xl bg-[#f2f7f5] p-2">
+                    <v-network-graph
+                        :nodes="graphNodes"
+                        :edges="graphEdges"
+                        :layouts="graphLayouts"
+                        :configs="graphConfig"
+                        class="h-full w-full"
+                    />
+                </div>
+                <p class="mt-2 text-[11px] text-slate-500">
+                    Advisor node appears in the center. Thicker links indicate stronger or mutual matches.
                 </p>
             </section>
         </main>
@@ -122,7 +146,9 @@
 <script setup>
 import { computed, ref } from 'vue';
 import { Head } from '@inertiajs/vue3';
+import { defineConfigs } from 'v-network-graph';
 import RequestSidebar from '../components/RequestSidebar.vue';
+import AdvisorBottomNav from '../components/AdvisorBottomNav.vue';
 import BaseIcon from '../components/BaseIcon.vue';
 
 const props = defineProps({
@@ -131,6 +157,10 @@ const props = defineProps({
         required: true
     },
     companies: {
+        type: Array,
+        default: () => []
+    },
+    networkEdges: {
         type: Array,
         default: () => []
     }
@@ -173,6 +203,121 @@ const formatRelativeTime = (isoString) => {
     const months = Math.floor(days / 30);
     return `${months} month${months > 1 ? 's' : ''} ago`;
 };
+
+// v-network-graph data
+const graphNodes = computed(() => {
+    const nodes = {};
+
+    if (props.advisor?.id) {
+        nodes[String(props.advisor.id)] = {
+            name: props.advisor.name,
+            type: 'advisor'
+        };
+    }
+
+    props.companies.forEach((company) => {
+        nodes[String(company.id)] = {
+            name: company.company || company.name,
+            type: 'company'
+        };
+    });
+
+    return nodes;
+});
+
+const graphEdges = computed(() => {
+    const edges = {};
+    const fromServer = props.networkEdges || [];
+
+    // If we have explicit edges from the backend, use them.
+    if (fromServer.length > 0 && props.advisor?.id) {
+        fromServer.forEach((edge) => {
+            edges[edge.id] = {
+                source: String(edge.from),
+                target: String(edge.to),
+                strength: edge.strength ?? 1
+            };
+        });
+        return edges;
+    }
+
+    // Fallback: connect advisor to every company so edges are always visible.
+    if (props.advisor?.id) {
+        const centerId = String(props.advisor.id);
+        (props.companies || []).forEach((company) => {
+            const toId = String(company.id);
+            const id = `edge-fallback-${centerId}-${toId}`;
+            edges[id] = {
+                source: centerId,
+                target: toId,
+                strength: 1
+            };
+        });
+    }
+
+    return edges;
+});
+
+const graphLayouts = computed(() => {
+    const layouts = { nodes: {} };
+    const centerId = props.advisor?.id ? String(props.advisor.id) : null;
+
+    // Center advisor node
+    if (centerId) {
+        layouts.nodes[centerId] = { x: 0, y: 0 };
+    }
+
+    // Place all companies in a circle around the advisor
+    const companiesForLayout = props.companies || [];
+    const count = companiesForLayout.length;
+    if (count === 0) {
+        return layouts;
+    }
+
+    const radius = 220; // slightly larger radius so nodes are not too close
+
+    companiesForLayout.forEach((company, index) => {
+        const id = String(company.id);
+        const angle = (index / count) * 2 * Math.PI;
+        layouts.nodes[id] = {
+            x: radius * Math.cos(angle),
+            y: radius * Math.sin(angle)
+        };
+    });
+
+    return layouts;
+});
+
+const graphConfig = defineConfigs({
+    view: {
+        zoomMin: 0.5,
+        zoomMax: 1.6
+    },
+    node: {
+        normal: {
+            radius: (node) => (node.type === 'advisor' ? 18 : 12),
+            // Advisor stays solid primary; businesses get a stronger secondary fill so they don't blend into the background
+            color: (node) => (node.type === 'advisor' ? '#205274' : '#5cc094'),
+            borderColor: (node) => (node.type === 'advisor' ? '#5cc094' : '#205274'),
+            borderWidth: 2
+        },
+        label: {
+            visible: true,
+            fontSize: 10,
+            color: '#205274'
+        },
+        draggable: false
+    },
+    edge: {
+        normal: {
+            width: (edge) => 1 + (edge.strength ?? 1) * 1.5,
+            color: '#5cc094'
+        }
+    },
+    layout: {
+        maxIteration: 0
+    }
+});
 </script>
 
 <style scoped>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\NetworkMatch;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
@@ -12,6 +13,8 @@ class AdvisorNetworkController extends Controller
 {
     public function __invoke(Request $request): Response
     {
+        $advisor = $request->user();
+
         $companies = User::query()
             ->where('role', 'entrepreneur')
             ->with(['meetingPreps' => function ($query) {
@@ -36,11 +39,39 @@ class AdvisorNetworkController extends Controller
                 ];
             });
 
+        // Build simple graph data from network_matches table
+        $matches = NetworkMatch::query()
+            ->where(function ($q) use ($advisor) {
+                $q->where('user_id', $advisor->id)
+                    ->orWhere('company_id', $advisor->id);
+            })
+            ->whereIn('action', ['like', 'super_like'])
+            ->get();
+
+        $edges = $matches->map(function (NetworkMatch $match) use ($advisor) {
+            $isAdvisorSource = $match->user_id === $advisor->id;
+            $otherId = $isAdvisorSource ? $match->company_id : $match->user_id;
+
+            $strength = $match->action === 'super_like' ? 1.0 : 0.7;
+            if ($match->is_mutual) {
+                $strength += 0.3;
+            }
+
+            return [
+                'id' => "edge-{$match->id}",
+                'from' => (string) $advisor->id,
+                'to' => (string) $otherId,
+                'strength' => min($strength, 1.5),
+            ];
+        });
+
         return Inertia::render('AdvisorNetwork', [
             'advisor' => [
-                'name' => $request->user()->name,
+                'id' => $advisor->id,
+                'name' => $advisor->name,
             ],
             'companies' => $companies,
+            'networkEdges' => $edges,
         ]);
     }
 }

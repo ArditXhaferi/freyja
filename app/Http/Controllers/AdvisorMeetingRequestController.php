@@ -130,10 +130,12 @@ class AdvisorMeetingRequestController extends Controller
             abort(403, 'Not allowed');
         }
 
+        // Mark as rejected for audit purposes, then remove from the advisor queue
         $meetingRequest->status = 'rejected';
         $meetingRequest->save();
+        $meetingRequest->delete();
 
-        return back()->with('success', 'Request rejected.');
+        return back()->with('success', 'Request rejected and removed from your queue.');
     }
     private function formatRoadmap(?Roadmap $roadmap): ?array
     {
