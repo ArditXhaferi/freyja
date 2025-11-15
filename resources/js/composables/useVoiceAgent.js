@@ -1203,18 +1203,11 @@ export default function useVoiceAgent({
                 // Fallback: For muting, we can't use interrupt() as it stops the conversation
                 // Instead, just update the UI state - the SDK should handle microphone access
                 if (isMuted.value) {
-<<<<<<< Updated upstream
-                    if (typeof conversationRef.value.interrupt === 'function') {
-                        conversationRef.value.interrupt();
-                        console.log('Used interrupt() as fallback for mute');
-                    }
-=======
                     console.log('Muted state set - SDK should handle microphone blocking');
                     // Don't interrupt - just let the mute state be reflected in UI
                 } else {
                     console.log('Unmuted - conversation should resume listening naturally');
                     // Don't force state changes - let SDK handle it
->>>>>>> Stashed changes
                 }
             }
             
