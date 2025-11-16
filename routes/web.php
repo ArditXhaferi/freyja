@@ -24,7 +24,7 @@ Route::get('/privacy-policy', function () {
     return Inertia::render('PrivacyPolicy');
 })->name('privacy-policy');
 
-Route::get('/about-us', function () {
+Route::get('/aboutus', function () {
     return Inertia::render('Features');
 })->name('features');
 
