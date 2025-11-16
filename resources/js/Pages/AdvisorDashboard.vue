@@ -295,7 +295,7 @@ const props = defineProps({
     }
 });
 
-const beerGif = '/storage/beer.gif';
+const beerGif = '/images/beer.gif';
 const beerGifDuration = 2000; // ms
 const showTooltip = ref(false);
 const beerFrameKey = ref(0);

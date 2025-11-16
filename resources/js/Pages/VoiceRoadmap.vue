@@ -231,8 +231,9 @@
                         <div class="flex flex-col items-center">
                             <button
                                 @click="handleMicClick"
+                                :disabled="connectionStatus === 'connecting' || isMicProcessing"
                                 :class="[
-                                    'w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center transition-all',
+                                    'w-12 h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center transition-all disabled:opacity-50 disabled:cursor-not-allowed',
                                     isListening || isSessionActive
                                         ? 'bg-[#5cc094] shadow-lg shadow-[#5cc094]/50 scale-110'
                                         : 'bg-[#5cc094] hover:bg-[#4a9d7a] hover:scale-105 shadow-lg'
@@ -1124,6 +1125,7 @@ const loading = ref(false);
 const error = ref(null);
 const transcripts = ref([]);
 const isSessionActive = ref(false);
+const isMicProcessing = ref(false);
 const businessPlanData = ref(props.initialBusinessPlan);
 const recentlyAnsweredFields = ref(new Set()); // Track fields that were just answered
 const transcriptContainer = ref(null);
@@ -2049,6 +2051,11 @@ const handleCallMode = () => {
 };
 
 const handleMicClick = async () => {
+    // Prevent spamming while a prior action is still being processed or while connecting
+    if (isMicProcessing.value || connectionStatus.value === 'connecting') {
+        return;
+    }
+    isMicProcessing.value = true;
     try {
         // Ensure we're in voice mode
         interactionMode.value = 'voice';
@@ -2076,6 +2083,8 @@ const handleMicClick = async () => {
         console.error('Failed to handle mic click:', err);
         error.value = 'Failed to handle voice session. Please try again.';
         isSessionActive.value = false;
+    } finally {
+        isMicProcessing.value = false;
     }
 };
 
