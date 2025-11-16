@@ -14,7 +14,7 @@
                     </div>
 
                     <div class="flex items-center gap-4">
-                        <img src="./videos/video7.gif" alt="Cheers" class="h-[13.5rem] w-[13.5rem] rounded-2xl object-cover" />
+                        <img src="./videos/video7.gif" alt="Cheers" class="h-[13.5rem] rounded-2xl object-cover" />
                         <div class="relative">
                             <div
                                 class="max-w-[240px] rounded-2xl px-5 py-4 text-sm font-medium text-white/95 backdrop-blur-sm"
