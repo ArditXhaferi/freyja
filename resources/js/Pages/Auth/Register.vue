@@ -15,7 +15,7 @@
 
                     <!-- Beer + tooltip -->
                     <div class="flex items-center gap-4">
-                        <img src="./videos/video4.gif" alt="Cheers" class="h-[13.5rem] rounded-2xl object-cover" />
+                        <img src="/images/beer.gif" alt="Cheers" class="h-[13.5rem] w-[13.5rem] rounded-2xl object-cover" />
                         <div class="relative">
                             <div
                                 class="max-w-[260px] rounded-2xl px-5 py-4 text-sm font-medium text-white/95 backdrop-blur-sm"
@@ -57,7 +57,7 @@
                         @click.prevent="continueWithGoogle"
                         class="flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white py-3 text-sm font-semibold text-slate-600 transition hover:border-[#205274] hover:text-[#205274] cursor-pointer"
                     >
-                        <img src="/storage/google.png" alt="Google" class="h-5 w-5" />
+                        <img src="/images/google.png" alt="Google" class="h-5 w-5" />
                         Continue with Google
                     </button>
                     <div class="flex items-center gap-4 text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-300">
