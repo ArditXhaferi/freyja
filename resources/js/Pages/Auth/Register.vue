@@ -114,7 +114,7 @@
                             </div>
                         </div>
 
-                        <div>
+                        <div ref="roleSectionRef">
                             <label for="role" class="text-xs font-semibold uppercase tracking-widest text-slate-400">Role</label>
                             <div
                                 class="mt-2 rounded-2xl px-4 py-2.5 text-sm focus-within:border-[#205274]"
@@ -180,6 +180,7 @@
                     </label>
 
                     <div
+                        ref="termsSectionRef"
                         class="flex items-start gap-3 rounded-2xl p-4 text-sm"
                         :class="termsFieldError ? 'border border-rose-300 bg-rose-50/70 text-rose-600' : 'border border-slate-200 bg-[#f6f9ff] text-slate-600'"
                     >
@@ -219,7 +220,7 @@
 </template>
 
 <script setup>
-import { computed, ref, watch } from 'vue';
+import { computed, nextTick, ref, watch } from 'vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
 const form = useForm({
@@ -236,25 +237,50 @@ const form = useForm({
 
 const googleRoleError = ref('');
 const googleTermsError = ref('');
+const roleSectionRef = ref(null);
+const termsSectionRef = ref(null);
+
+const scrollToElement = (element) => {
+    if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Add a subtle highlight effect
+        element.style.transition = 'box-shadow 0.3s ease';
+        element.style.boxShadow = '0 0 0 4px rgba(239, 68, 68, 0.2)';
+        setTimeout(() => {
+            element.style.boxShadow = '';
+        }, 2000);
+    }
+};
 
 const submit = () => {
     form.post('/register');
 };
 
-const continueWithGoogle = () => {
+const continueWithGoogle = async () => {
     let hasErrors = false;
+    let firstErrorElement = null;
 
     if (!form.role) {
         googleRoleError.value = 'Choose whether you are an entrepreneur or advisor.';
         hasErrors = true;
+        if (!firstErrorElement) {
+            firstErrorElement = roleSectionRef.value;
+        }
     }
 
     if (!form.accepted_terms) {
         googleTermsError.value = 'Please agree to the terms and privacy policy before using Google sign-in.';
         hasErrors = true;
+        if (!firstErrorElement) {
+            firstErrorElement = termsSectionRef.value;
+        }
     }
 
     if (hasErrors) {
+        await nextTick();
+        if (firstErrorElement) {
+            scrollToElement(firstErrorElement);
+        }
         return;
     }
 
