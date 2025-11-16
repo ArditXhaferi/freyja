@@ -30,20 +30,6 @@
                     <span class="hidden sm:inline text-xs font-semibold truncate w-full text-center">Roadmap</span>
                 </button>
 
-                <!-- Manual Add -->
-                <button
-                    @click="navigate('add')"
-                    :class="[
-                        'flex flex-col items-center justify-center gap-0 sm:gap-1 px-2 sm:px-3 py-2 sm:py-2.5 rounded-lg transition-all duration-300 flex-1 min-w-0',
-                        activeTab === 'add' 
-                            ? 'bg-gray-100 text-gray-900' 
-                            : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                    ]"
-                >
-                    <i :class="activeTab === 'add' ? 'fa-solid fa-plus' : 'fa-solid fa-pen'" class="text-lg sm:text-xl"></i>
-                    <span class="hidden sm:inline text-xs font-semibold truncate w-full text-center">Add</span>
-                </button>
-
                 <!-- Home -->
                 <button
                     @click="navigate('roadmap')"

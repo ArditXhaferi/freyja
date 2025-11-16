@@ -34,6 +34,15 @@
                     >
                         {{ item.label }}
                     </button>
+                    <form method="POST" action="/logout" class="inline">
+                        <input type="hidden" name="_token" :value="page.props.csrf_token" />
+                        <button
+                            type="submit"
+                            class="px-4 py-2 rounded-lg text-sm font-medium transition-all duration-200 text-gray-600 hover:text-gray-900 hover:bg-gray-50"
+                        >
+                            Logout
+                        </button>
+                    </form>
                 </div>
 
                 <!-- Mobile Menu Button - Hidden on mobile, only logo shown -->
@@ -45,6 +54,7 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
+import { usePage } from '@inertiajs/vue3';
 
 const props = defineProps({
     activeTab: {
@@ -54,6 +64,7 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['navigate']);
+const page = usePage();
 
 const mobileMenuOpen = ref(false);
 const isScrolled = ref(false);
@@ -95,10 +106,6 @@ const navigationItems = [
     {
         key: 'network',
         label: 'Network'
-    },
-    {
-        key: 'add',
-        label: 'Add'
     }
 ];
 

@@ -5,12 +5,12 @@
         :active-tab="activeTab"
         @navigate="handleNavigation"
     />
-    <div class="min-h-screen bg-[#fff5f5] pt-12 md:pt-24 pb-24">
+    <div class="min-h-screen bg-[#fff5f5] pt-12 md:pt-24 pb-24 relative">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
             <!-- Opa Animation Section -->
-            <div class="mb-8 sm:mb-12 md:mb-16">
-                <div class="flex flex-col sm:flex-row items-center sm:items-center gap-6 sm:gap-8 md:gap-12 lg:gap-16 mb-8 sm:mb-12">
+            <div class="mb-8 sm:mb-12 md:mb-16 flex justify-center">
+                <div class="flex flex-col items-center gap-6 sm:gap-8 md:gap-12 lg:gap-16 mb-8 sm:mb-12 max-w-4xl">
                     
                     <!-- Bear Animation -->
                     <img
@@ -21,21 +21,211 @@
                     />
 
                     <!-- Text Block -->
-                    <div class="flex flex-col flex-1 w-full sm:w-auto text-center sm:text-left">
+                    <div class="flex flex-col w-full text-center">
                         <h1 class="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold text-gray-900 leading-tight mb-3 sm:mb-4 md:mb-5">
                             One bear.<br />Every language.
                         </h1>
 
-                        <p class="text-[11px] sm:text-xs md:text-sm lg:text-base font-medium text-gray-600 max-w-full sm:max-w-xl md:max-w-2xl lg:max-w-3xl leading-relaxed mx-auto sm:mx-0">
+                        <p class="text-[11px] sm:text-xs md:text-sm lg:text-base font-medium text-gray-600 max-w-full sm:max-w-xl md:max-w-2xl lg:max-w-3xl leading-relaxed mx-auto">
                             Opa the Bear is your voice-powered startup coach, guiding you from idea to action with 
                             smart, friendly support. Start your journey today and build something real.
                         </p>
                     </div>
                 </div>
             </div>
+        </div>
 
+        <!-- Flags Strip Animation - Aligned with navbar -->
+        <!--
+        <div 
+            ref="flagsContainerRef"
+            class="flags-wrapper relative w-full overflow-hidden py-4 mb-8"
+        >
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8" style="width: 80%;">
+                <div 
+                    ref="flagsTrackRef"
+                    class="flags-track flex"
+                    style="will-change: transform; width: max-content;"
+                >
+                    <div 
+                        ref="flagsSequenceRef"
+                        class="flags-list flex gap-6 sm:gap-8 md:gap-10"
+                    >
+                        <div class="flag-item flex-shrink-0">
+                            <svg width="56" height="40" viewBox="0 0 18 11" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="18" height="11" fill="#FFFFFF"/>
+                                <rect x="0" y="4" width="18" height="3" fill="#003580"/>
+                                <rect x="5" y="0" width="3" height="11" fill="#003580"/>
+                            </svg>
+                        </div>
+                        <div class="flag-item flex-shrink-0">
+                            <svg width="56" height="40" viewBox="0 0 5 3" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="5" height="1" fill="#000000"/>
+                                <rect y="1" width="5" height="1" fill="#DD0000"/>
+                                <rect y="2" width="5" height="1" fill="#FFCE00"/>
+                            </svg>
+                        </div>
+                        <div class="flag-item flex-shrink-0">
+                            <svg width="56" height="40" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="3" height="2" fill="#E30A17"/>
+                                <circle cx="1.1" cy="1" r="0.35" fill="#FFFFFF"/>
+                                <circle cx="1.25" cy="1" r="0.3" fill="#E30A17"/>
+                                <path d="M 1.6 0.7 L 1.65 0.85 L 1.8 0.9 L 1.7 1.0 L 1.75 1.15 L 1.6 1.1 L 1.45 1.15 L 1.5 1.0 L 1.4 0.9 L 1.55 0.85 Z" fill="#FFFFFF"/>
+                            </svg>
+                        </div>
+                        <div class="flag-item flex-shrink-0">
+                            <svg width="56" height="40" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="1" height="2" fill="#002654"/>
+                                <rect x="1" width="1" height="2" fill="#FFFFFF"/>
+                                <rect x="2" width="1" height="2" fill="#ED2939"/>
+                            </svg>
+                        </div>
+                        <div class="flag-item flex-shrink-0">
+                            <svg width="56" height="40" viewBox="0 0 16 10" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="16" height="10" fill="#006AA7"/>
+                                <rect x="0" y="4" width="16" height="2" fill="#FECC00"/>
+                                <rect x="5" y="0" width="2" height="10" fill="#FECC00"/>
+                            </svg>
+                        </div>
+                        <div class="flag-item flex-shrink-0">
+                            <svg width="56" height="40" viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="60" height="30" fill="#012169"/>
+                                <path d="M0,0 L60,30 M60,0 L0,30" stroke="#FFFFFF" stroke-width="4"/>
+                                <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="2.5"/>
+                                <path d="M30,0 L30,30 M0,15 L60,15" stroke="#FFFFFF" stroke-width="5"/>
+                                <path d="M30,0 L30,30 M0,15 L60,15" stroke="#C8102E" stroke-width="3"/>
+                            </svg>
+                        </div>
+                        <div class="flag-item flex-shrink-0">
+                            <svg width="56" height="40" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+                                <rect y="0" width="3" height="0.5" fill="#AA151B"/>
+                                <rect y="0.5" width="3" height="0.5" fill="#F1BF00"/>
+                                <rect y="1" width="3" height="0.5" fill="#AA151B"/>
+                                <rect y="1.5" width="3" height="0.5" fill="#F1BF00"/>
+                            </svg>
+                        </div>
+                        <div class="flag-item flex-shrink-0">
+                            <svg width="56" height="40" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="1" height="2" fill="#009246"/>
+                                <rect x="1" width="1" height="2" fill="#FFFFFF"/>
+                                <rect x="2" width="1" height="2" fill="#CE2B37"/>
+                            </svg>
+                        </div>
+                        <div class="flag-item flex-shrink-0">
+                            <svg width="56" height="40" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="3" height="0.67" fill="#AE1C28"/>
+                                <rect y="0.67" width="3" height="0.67" fill="#FFFFFF"/>
+                                <rect y="1.34" width="3" height="0.66" fill="#21468B"/>
+                            </svg>
+                        </div>
+                        <div class="flag-item flex-shrink-0">
+                            <svg width="56" height="40" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="3" height="1" fill="#FFFFFF"/>
+                                <rect y="1" width="3" height="1" fill="#DC143C"/>
+                            </svg>
+                        </div>
+                        <div class="flag-item flex-shrink-0">
+                            <svg width="56" height="40" viewBox="0 0 16 12" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="16" height="12" fill="#BA0C2F"/>
+                                <rect x="0" y="4" width="16" height="4" fill="#FFFFFF"/>
+                                <rect x="5" y="0" width="6" height="12" fill="#FFFFFF"/>
+                                <rect x="0" y="5" width="16" height="2" fill="#00205B"/>
+                                <rect x="6" y="0" width="4" height="12" fill="#00205B"/>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="flags-list flex gap-6 sm:gap-8 md:gap-10">
+                        <div class="flag-item flex-shrink-0">
+                            <svg width="56" height="40" viewBox="0 0 18 11" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="18" height="11" fill="#FFFFFF"/>
+                                <rect x="0" y="4" width="18" height="3" fill="#003580"/>
+                                <rect x="5" y="0" width="3" height="11" fill="#003580"/>
+                            </svg>
+                        </div>
+                        <div class="flag-item flex-shrink-0">
+                            <svg width="56" height="40" viewBox="0 0 5 3" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="5" height="1" fill="#000000"/>
+                                <rect y="1" width="5" height="1" fill="#DD0000"/>
+                                <rect y="2" width="5" height="1" fill="#FFCE00"/>
+                            </svg>
+                        </div>
+                        <div class="flag-item flex-shrink-0">
+                            <svg width="56" height="40" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="3" height="2" fill="#E30A17"/>
+                                <circle cx="1.1" cy="1" r="0.35" fill="#FFFFFF"/>
+                                <circle cx="1.25" cy="1" r="0.3" fill="#E30A17"/>
+                                <path d="M 1.6 0.7 L 1.65 0.85 L 1.8 0.9 L 1.7 1.0 L 1.75 1.15 L 1.6 1.1 L 1.45 1.15 L 1.5 1.0 L 1.4 0.9 L 1.55 0.85 Z" fill="#FFFFFF"/>
+                            </svg>
+                        </div>
+                        <div class="flag-item flex-shrink-0">
+                            <svg width="56" height="40" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="1" height="2" fill="#002654"/>
+                                <rect x="1" width="1" height="2" fill="#FFFFFF"/>
+                                <rect x="2" width="1" height="2" fill="#ED2939"/>
+                            </svg>
+                        </div>
+                        <div class="flag-item flex-shrink-0">
+                            <svg width="56" height="40" viewBox="0 0 16 10" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="16" height="10" fill="#006AA7"/>
+                                <rect x="0" y="4" width="16" height="2" fill="#FECC00"/>
+                                <rect x="5" y="0" width="2" height="10" fill="#FECC00"/>
+                            </svg>
+                        </div>
+                        <div class="flag-item flex-shrink-0">
+                            <svg width="56" height="40" viewBox="0 0 60 30" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="60" height="30" fill="#012169"/>
+                                <path d="M0,0 L60,30 M60,0 L0,30" stroke="#FFFFFF" stroke-width="4"/>
+                                <path d="M0,0 L60,30 M60,0 L0,30" stroke="#C8102E" stroke-width="2.5"/>
+                                <path d="M30,0 L30,30 M0,15 L60,15" stroke="#FFFFFF" stroke-width="5"/>
+                                <path d="M30,0 L30,30 M0,15 L60,15" stroke="#C8102E" stroke-width="3"/>
+                            </svg>
+                        </div>
+                        <div class="flag-item flex-shrink-0">
+                            <svg width="56" height="40" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+                                <rect y="0" width="3" height="0.5" fill="#AA151B"/>
+                                <rect y="0.5" width="3" height="0.5" fill="#F1BF00"/>
+                                <rect y="1" width="3" height="0.5" fill="#AA151B"/>
+                                <rect y="1.5" width="3" height="0.5" fill="#F1BF00"/>
+                            </svg>
+                        </div>
+                        <div class="flag-item flex-shrink-0">
+                            <svg width="56" height="40" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="1" height="2" fill="#009246"/>
+                                <rect x="1" width="1" height="2" fill="#FFFFFF"/>
+                                <rect x="2" width="1" height="2" fill="#CE2B37"/>
+                            </svg>
+                        </div>
+                        <div class="flag-item flex-shrink-0">
+                            <svg width="56" height="40" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="3" height="0.67" fill="#AE1C28"/>
+                                <rect y="0.67" width="3" height="0.67" fill="#FFFFFF"/>
+                                <rect y="1.34" width="3" height="0.66" fill="#21468B"/>
+                            </svg>
+                        </div>
+                        <div class="flag-item flex-shrink-0">
+                            <svg width="56" height="40" viewBox="0 0 3 2" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="3" height="1" fill="#FFFFFF"/>
+                                <rect y="1" width="3" height="1" fill="#DC143C"/>
+                            </svg>
+                        </div>
+                        <div class="flag-item flex-shrink-0">
+                            <svg width="56" height="40" viewBox="0 0 16 12" xmlns="http://www.w3.org/2000/svg">
+                                <rect width="16" height="12" fill="#BA0C2F"/>
+                                <rect x="0" y="4" width="16" height="4" fill="#FFFFFF"/>
+                                <rect x="5" y="0" width="6" height="12" fill="#FFFFFF"/>
+                                <rect x="0" y="5" width="16" height="2" fill="#00205B"/>
+                                <rect x="6" y="0" width="4" height="12" fill="#00205B"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        -->
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <!-- Input Mode Interface -->
-            <div class="space-y-4">
+            <div class="space-y-4 flex flex-col items-center">
                 <Transition name="mode-switch" mode="out-in">
                     <div v-if="interactionMode === 'voice'" key="voice" class="flex justify-center">
                         <div class="flex flex-col items-center">
@@ -67,9 +257,9 @@
                                     </svg>
                                 </template>
                             </button>
-                            <p class="text-[#2E3A45]/70 mt-2 text-sm text-center">
+                            <!-- <p class="text-[#2E3A45]/70 mt-2 text-sm text-center">
                                 {{ isListening ? 'Listening...' : 'Tap to call' }}
-                            </p>
+                            </p> -->
                         </div>
                     </div>
                     <div v-else key="chat" class="w-full max-w-2xl mx-auto">
@@ -91,7 +281,7 @@
                     </div>
                 </Transition>
                 <!-- Toggle Input Mode -->
-                <div class="flex justify-center mt-6">
+                <div class="flex justify-center items-center gap-4 mt-6">
                     <button
                         @click="interactionMode = interactionMode === 'voice' ? 'chat' : 'voice'"
                         class="flex items-center gap-2 text-[#5cc094] hover:text-[#4a9d7a] transition-colors"
@@ -134,160 +324,196 @@
             </div>
 
             <!-- Voice Interface (Full Screen) -->
-            <div v-if="interactionMode === 'voice' && activeTab === 'roadmap'" class="bg-white rounded-lg shadow-lg border border-gray-200 mb-6 min-h-[600px] flex flex-col mt-8">
-                <!-- Call Status -->
-                <div class="flex items-center gap-4 px-6 pt-6 pb-4 border-b border-gray-300">
-                    <div :class="[
-                        'w-3 h-3 rounded-full',
-                        connectionStatus === 'connected' ? 'bg-[#5cc094]' : '',
-                        connectionStatus === 'connecting' ? 'bg-yellow-500 animate-pulse' : '',
-                        connectionStatus === 'disconnected' ? 'bg-gray-400' : ''
-                    ]"></div>
-                    <span class="text-gray-900 font-medium">
-                        {{ connectionStatus === 'connected' ? 'Connected' : '' }}
-                        {{ connectionStatus === 'connecting' ? 'Connecting...' : '' }}
-                        {{ connectionStatus === 'disconnected' ? 'Ready to call' : '' }}
-                    </span>
-                    <span
-                        v-if="isListening && !isMuted" 
-                        class="px-4 py-2 bg-white/15 text-white rounded-full text-sm font-medium animate-pulse flex items-center gap-2"
-                    >
-                        <i class="fa-solid fa-microphone"></i>
-                        <span>Listening...</span>
-                    </span>
-                    <span
-                        v-if="isMuted" 
-                        class="px-4 py-2 bg-red-600 text-white rounded-full text-sm font-semibold flex items-center gap-2 animate-pulse shadow-lg shadow-red-500/50"
-                    >
-                        <i class="fa-solid fa-microphone-slash"></i>
-                        <span>Muted</span>
-                    </span>
-                    <span
-                        v-if="isSpeaking" 
-                        class="px-4 py-2 bg-white/15 text-white rounded-full text-sm font-medium flex items-center gap-2"
-                    >
-                        <i class="fa-solid fa-volume-high"></i>
-                        <span>Speaking...</span>
-                    </span>
-                    <button
-                        v-if="isConnected || isSessionActive"
-                        @click.stop.prevent="toggleMute"
-                        type="button"
-                        :class="[
-                            'ml-auto px-5 py-3 rounded-full text-base font-semibold transition-all flex items-center gap-2 shadow-lg cursor-pointer border-2 bg-white hover:scale-105 active:scale-95',
-                            isMuted
-                                ? 'border-red-600 text-red-600 hover:border-red-700 hover:text-red-700'
-                                : 'border-gray-400 text-gray-600 hover:border-gray-500 hover:text-gray-700'
-                        ]"
-                        :title="isMuted ? 'Click to unmute microphone' : 'Click to mute microphone'"
-                    >
-                        <i v-if="isMuted" class="fa-solid fa-microphone-slash text-xl text-red-600"></i>
-                        <i v-else class="fa-solid fa-microphone text-xl text-gray-600"></i>
-                        <span>{{ isMuted ? 'Unmute' : 'Mute' }}</span>
-                    </button>
-                </div>
-
-                <!-- Transcript Display (Full Screen) -->
-                <div class="flex-1 overflow-y-auto space-y-4 pt-6 px-6 pb-4">
-                    <div v-if="transcripts.length === 0" class="flex items-center justify-center h-full">
-                        <p class="text-gray-500 text-lg">Start a conversation with Opa to see your chat here...</p>
-                    </div>
-                    <div
-                        v-for="(transcript, index) in transcripts"
-                        :key="index"
-                        :class="[
-                            'p-4 rounded-2xl text-base shadow-sm',
-                            transcript.type === 'user' 
-                                ? 'bg-[#e4f0ff] text-gray-900 ml-12 border border-gray-300' 
-                                : 'bg-gray-100 text-gray-900 mr-12 border border-gray-300'
-                        ]"
-                    >
-                        <span class="font-medium text-lg">
-                            {{ transcript.type === 'user' ? 'You: ' : 'Opa: ' }}
+            <Transition name="voice-interface" appear>
+                <div 
+                    v-if="showVoiceInterface && interactionMode === 'voice' && activeTab === 'roadmap'" 
+                    class="bg-white rounded-xl shadow-xl border border-gray-200 mb-6 min-h-[600px] flex flex-col overflow-hidden mt-16"
+                >
+                    <!-- Call Status Header -->
+                    <div class="flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
+                        <div :class="[
+                            'w-2.5 h-2.5 rounded-full shadow-sm',
+                            connectionStatus === 'connected' ? 'bg-[#5cc094] ring-2 ring-[#5cc094]/20' : '',
+                            connectionStatus === 'connecting' ? 'bg-yellow-500 animate-pulse ring-2 ring-yellow-500/20' : '',
+                            connectionStatus === 'disconnected' ? 'bg-gray-400 ring-2 ring-gray-400/20' : ''
+                        ]"></div>
+                        <span class="text-gray-700 font-medium text-sm">
+                            {{ connectionStatus === 'connected' ? 'Connected' : '' }}
+                            {{ connectionStatus === 'connecting' ? 'Connecting...' : '' }}
+                            {{ connectionStatus === 'disconnected' ? 'Ready to call' : '' }}
                         </span>
-                        <span class="text-gray-800">{{ transcript.text }}</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Chat Interface (Full Screen) -->
-            <div v-if="interactionMode === 'chat' && activeTab === 'roadmap'" class="bg-white rounded-xl shadow-xl border border-gray-200 mb-6 min-h-[600px] flex flex-col overflow-hidden">
-                <!-- Chat Status -->
-                <div class="flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
-                    <div :class="[
-                        'w-2.5 h-2.5 rounded-full shadow-sm',
-                        connectionStatus === 'connected' ? 'bg-[#5cc094] ring-2 ring-[#5cc094]/20' : '',
-                        connectionStatus === 'connecting' ? 'bg-yellow-500 animate-pulse ring-2 ring-yellow-500/20' : '',
-                        connectionStatus === 'disconnected' ? 'bg-gray-400 ring-2 ring-gray-400/20' : ''
-                    ]"></div>
-                    <span class="text-gray-700 font-medium text-sm">
-                        {{ connectionStatus === 'connected' ? 'Connected' : '' }}
-                        {{ connectionStatus === 'connecting' ? 'Connecting...' : '' }}
-                        {{ connectionStatus === 'disconnected' ? 'Ready to call' : '' }}
-                    </span>
-                </div>
-                <!-- Chat Messages -->
-                <div class="flex-1 overflow-y-auto space-y-4 pt-8 px-6 pb-6 bg-gray-50/30" ref="chatMessagesContainer">
-                    <div v-if="chatMessages.length === 0" class="flex flex-col items-center justify-center h-full min-h-[400px]">
-                        <div class="bg-white rounded-full p-6 mb-4 shadow-md border border-gray-200">
-                            <i class="fa-solid fa-comments text-4xl text-gray-300"></i>
+                        <div class="flex items-center gap-2 ml-auto">
+                            <span
+                                v-if="isListening && !isMuted" 
+                                class="px-3 py-1.5 bg-[#5cc094]/10 text-[#5cc094] border border-[#5cc094]/20 rounded-full text-xs font-medium flex items-center gap-2"
+                            >
+                                <i class="fa-solid fa-microphone text-xs"></i>
+                                <span>Listening...</span>
+                            </span>
+                            <span
+                                v-if="isMuted" 
+                                class="px-3 py-1.5 bg-red-50 text-red-600 border border-red-200 rounded-full text-xs font-semibold flex items-center gap-2 animate-pulse"
+                            >
+                                <i class="fa-solid fa-microphone-slash text-xs"></i>
+                                <span>Muted</span>
+                            </span>
+                            <span
+                                v-if="isSpeaking" 
+                                class="px-3 py-1.5 bg-[#5cc094]/10 text-[#5cc094] border border-[#5cc094]/20 rounded-full text-xs font-medium flex items-center gap-2"
+                            >
+                                <i class="fa-solid fa-volume-high text-xs"></i>
+                                <span>Speaking...</span>
+                            </span>
+                            <button
+                                v-if="isConnected || isSessionActive"
+                                @click.stop.prevent="toggleMute"
+                                type="button"
+                                :class="[
+                                    'px-4 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2 shadow-sm cursor-pointer border bg-white hover:scale-105 active:scale-95',
+                                    isMuted
+                                        ? 'border-red-300 text-red-600 hover:border-red-400 hover:bg-red-50'
+                                        : 'border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50'
+                                ]"
+                                :title="isMuted ? 'Click to unmute microphone' : 'Click to mute microphone'"
+                            >
+                                <i v-if="isMuted" class="fa-solid fa-microphone-slash text-base text-red-600"></i>
+                                <i v-else class="fa-solid fa-microphone text-base text-gray-600"></i>
+                                <span class="hidden sm:inline">{{ isMuted ? 'Unmute' : 'Mute' }}</span>
+                            </button>
                         </div>
-                        <p class="text-gray-500 text-base font-medium">Start a conversation with Opa to see your chat here...</p>
-                        <p class="text-gray-400 text-sm mt-2">Ask questions, get advice, or start building your roadmap</p>
                     </div>
-                    <div
-                        v-for="(message, index) in chatMessages"
-                        :key="index"
-                        :class="[
-                            'flex',
-                            message.type === 'user' ? 'justify-end' : 'justify-start'
-                        ]"
-                    >
+
+                    <!-- Transcript Display (Full Screen) -->
+                    <div ref="transcriptContainer" class="flex-1 overflow-y-auto space-y-4 pt-8 px-6 pb-6 bg-gray-50/30" style="touch-action: pan-y; -webkit-overflow-scrolling: touch;">
+                        <div v-if="transcripts.length === 0" class="flex flex-col items-center justify-center h-full min-h-[400px]">
+                            <div class="bg-white rounded-full p-6 mb-4 shadow-md border border-gray-200">
+                                <i class="fa-solid fa-microphone-lines text-4xl text-gray-300"></i>
+                            </div>
+                            <p class="text-gray-500 text-base font-medium">Start a conversation with Opa to see your chat here...</p>
+                            <p class="text-gray-400 text-sm mt-2">Click the phone button to begin your voice conversation</p>
+                        </div>
                         <div
+                            v-for="(transcript, index) in transcripts"
+                            :key="index"
                             :class="[
-                                'max-w-[80%] md:max-w-[70%] rounded-2xl px-5 py-3.5 text-base shadow-sm',
-                                message.type === 'user'
-                                    ? 'bg-[#5cc094] text-white rounded-br-md'
-                                    : 'bg-white text-gray-900 border border-gray-200 rounded-bl-md'
+                                'flex',
+                                transcript.type === 'user' ? 'justify-end' : 'justify-start'
                             ]"
                         >
-                            <p class="whitespace-pre-wrap leading-relaxed">{{ message.text }}</p>
-                        </div>
-                    </div>
-                    <div v-if="isLoadingChat" class="flex justify-start">
-                        <div class="bg-white text-gray-900 border border-gray-200 rounded-2xl rounded-bl-md px-5 py-3.5 shadow-sm">
-                            <div class="flex items-center gap-3">
-                                <div class="flex gap-1">
-                                    <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
-                                    <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
-                                    <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
-                                </div>
-                                <span class="text-sm text-gray-600">Opa is thinking...</span>
+                            <div
+                                :class="[
+                                    'max-w-[80%] md:max-w-[70%] rounded-2xl px-5 py-3.5 text-base shadow-sm',
+                                    transcript.type === 'user'
+                                        ? 'bg-[#5cc094] text-white rounded-br-md'
+                                        : 'bg-white text-gray-900 border border-gray-200 rounded-bl-md'
+                                ]"
+                            >
+                                <span class="font-semibold text-sm opacity-90 mb-1 block">
+                                    {{ transcript.type === 'user' ? 'You' : 'Opa' }}
+                                </span>
+                                <p class="whitespace-pre-wrap leading-relaxed">{{ transcript.text }}</p>
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Chat Input -->
-                <div class="flex gap-3 border-t border-gray-200 bg-white px-6 py-4">
-                    <input
-                        v-model="chatInput"
-                        @keyup.enter="sendChatMessage"
-                        type="text"
-                        placeholder="Type your message to Opa..."
-                        class="flex-1 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl px-5 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#5cc094]/50 focus:border-[#5cc094] transition-all placeholder:text-gray-400"
-                        :disabled="isLoadingChat"
-                    />
-                    <button
-                        @click="sendChatMessage"
-                        :disabled="!chatInput.trim() || isLoadingChat"
-                        class="px-6 py-3 bg-[#5cc094] text-white rounded-xl hover:bg-[#4a9d7a] transition-all font-semibold shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-base disabled:hover:shadow-md"
-                    >
-                        <i class="fa-solid fa-paper-plane text-sm"></i>
-                        <span class="hidden sm:inline">Send</span>
-                    </button>
+            </Transition>
+
+            <!-- Chat Interface (Full Screen) -->
+            <Transition name="chat-interface" appear>
+                <div 
+                    v-if="showChatInterface" 
+                    key="chat-interface"
+                    class="bg-white rounded-xl shadow-xl border border-gray-200 mb-6 min-h-[600px] flex flex-col overflow-hidden chat-interface-container"
+                >
+                    <!-- Chat Status -->
+                    <div class="flex items-center gap-3 px-6 py-4 bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
+                        <div :class="[
+                            'w-2.5 h-2.5 rounded-full shadow-sm',
+                            connectionStatus === 'connected' ? 'bg-[#5cc094] ring-2 ring-[#5cc094]/20' : '',
+                            connectionStatus === 'connecting' ? 'bg-yellow-500 animate-pulse ring-2 ring-yellow-500/20' : '',
+                            connectionStatus === 'disconnected' ? 'bg-gray-400 ring-2 ring-gray-400/20' : ''
+                        ]"></div>
+                        <span class="text-gray-700 font-medium text-sm">
+                            {{ connectionStatus === 'connected' ? 'Connected' : '' }}
+                            {{ connectionStatus === 'connecting' ? 'Connecting...' : '' }}
+                            {{ connectionStatus === 'disconnected' ? 'Ready to call' : '' }}
+                        </span>
+                    </div>
+                    <!-- Chat Messages -->
+                    <div class="flex-1 overflow-y-auto space-y-4 pt-8 px-6 pb-6 bg-gray-50/30" ref="chatMessagesContainer">
+                        <div v-if="chatMessages.length === 0" class="flex flex-col items-center justify-center h-full min-h-[400px]">
+                            <div class="bg-white rounded-full p-6 mb-4 shadow-md border border-gray-200">
+                                <i class="fa-solid fa-comments text-4xl text-gray-300"></i>
+                            </div>
+                            <p class="text-gray-500 text-base font-medium">Start a conversation with Opa to see your chat here...</p>
+                            <p class="text-gray-400 text-sm mt-2">Ask questions, get advice, or start building your roadmap</p>
+                        </div>
+                        <div
+                            v-for="(message, index) in chatMessages"
+                            :key="index"
+                            :class="[
+                                'flex',
+                                message.type === 'user' ? 'justify-end' : 'justify-start'
+                            ]"
+                        >
+                            <div
+                                :class="[
+                                    'max-w-[80%] md:max-w-[70%] rounded-2xl px-5 py-3.5 text-base shadow-sm',
+                                    message.type === 'user'
+                                        ? 'bg-[#5cc094] text-white rounded-br-md'
+                                        : 'bg-white text-gray-900 border border-gray-200 rounded-bl-md'
+                                ]"
+                            >
+                                <p class="whitespace-pre-wrap leading-relaxed">{{ message.text }}</p>
+                            </div>
+                        </div>
+                        <div v-if="isLoadingChat" class="flex justify-start">
+                            <div class="bg-white text-gray-900 border border-gray-200 rounded-2xl rounded-bl-md px-5 py-3.5 shadow-sm">
+                                <div class="flex items-center gap-3">
+                                    <div class="flex gap-1">
+                                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 0ms"></div>
+                                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 150ms"></div>
+                                        <div class="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style="animation-delay: 300ms"></div>
+                                    </div>
+                                    <span class="text-sm text-gray-600">Opa is thinking...</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Chat Input -->
+                    <div class="border-t border-gray-200 bg-white px-6 py-4">
+                        <div class="flex gap-3 mb-3">
+                            <input
+                                v-model="chatInput"
+                                @keyup.enter="sendChatMessage"
+                                type="text"
+                                placeholder="Type your message to Opa..."
+                                class="flex-1 bg-gray-50 text-gray-900 border border-gray-200 rounded-xl px-5 py-3 text-base focus:outline-none focus:ring-2 focus:ring-[#5cc094]/50 focus:border-[#5cc094] transition-all placeholder:text-gray-400"
+                                :disabled="isLoadingChat"
+                            />
+                            <button
+                                @click="sendChatMessage"
+                                :disabled="!chatInput.trim() || isLoadingChat"
+                                class="px-6 py-3 bg-[#5cc094] text-white rounded-xl hover:bg-[#4a9d7a] transition-all font-semibold shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 text-base disabled:hover:shadow-md"
+                            >
+                                <i class="fa-solid fa-paper-plane text-sm"></i>
+                                <span class="hidden sm:inline">Send</span>
+                            </button>
+                        </div>
+                        <!-- End the chat button -->
+                        <button
+                            @click="handleEndChat"
+                            type="button"
+                            class="flex items-center gap-2 text-red-600 hover:text-red-700 transition-colors text-sm font-medium cursor-pointer"
+                            title="End the chat"
+                        >
+                            <i class="fa-solid fa-times text-base"></i>
+                            <span>End the chat</span>
+                        </button>
+                    </div>
                 </div>
-            </div>
+            </Transition>
 
 
             <!-- Document Requests Section (shown in business tab) -->
@@ -411,8 +637,10 @@
                                 :ref="el => setContextualFieldRef('is_eu_resident', el)"
                                 :id="'contextual-field-is_eu_resident'"
                                 :class="[
-                                    'bg-white rounded-lg p-3 border transition-all cursor-pointer hover:bg-gray-50',
-                                    isContextualFieldCompleted('is_eu_resident') ? 'border-[#5cc094]' : 'border-gray-200',
+                                    'rounded-lg p-3 border transition-all cursor-pointer',
+                                    isContextualFieldCompleted('is_eu_resident') 
+                                        ? 'bg-white border-[#5cc094] hover:bg-green-50/50' 
+                                        : 'bg-white border-gray-200 hover:bg-gray-50',
                                     fieldToHighlight === 'is_eu_resident' ? 'field-highlight border-[#5cc094]' : '',
                                     editingContextualField === 'is_eu_resident' ? 'border-[#5cc094]' : ''
                                 ]"
@@ -483,8 +711,10 @@
                                 :ref="el => setContextualFieldRef('has_residence_permit', el)"
                                 :id="'contextual-field-has_residence_permit'"
                                 :class="[
-                                    'bg-white rounded-lg p-3 border transition-all cursor-pointer hover:bg-gray-50',
-                                    isContextualFieldCompleted('has_residence_permit') ? 'border-[#5cc094]' : 'border-gray-200',
+                                    'rounded-lg p-3 border transition-all cursor-pointer',
+                                    isContextualFieldCompleted('has_residence_permit') 
+                                        ? 'bg-white border-[#5cc094] hover:bg-green-50/50' 
+                                        : 'bg-white border-gray-200 hover:bg-gray-50',
                                     fieldToHighlight === 'has_residence_permit' ? 'field-highlight border-[#5cc094]' : '',
                                     editingContextualField === 'has_residence_permit' ? 'border-[#5cc094]' : ''
                                 ]"
@@ -883,7 +1113,13 @@ const props = defineProps({
     }
 });
 
-const roadmap = ref(props.initialRoadmap || { steps: [] });
+// Empty roadmap - will be populated by AI based on user's business plan
+const emptyRoadmap = {
+    title: 'My Startup Roadmap',
+    steps: []
+};
+
+const roadmap = ref(props.initialRoadmap || emptyRoadmap);
 const loading = ref(false);
 const error = ref(null);
 const transcripts = ref([]);
@@ -942,11 +1178,24 @@ let businessTabTimeout = null;
 
 // Interaction mode (voice or chat)
 const interactionMode = ref('voice');
+const showVoiceInterface = ref(false); // Control visibility of voice interface
 const chatMessages = ref([]);
 const chatInput = ref('');
 const isLoadingChat = ref(false);
 const chatMessagesContainer = ref(null);
 const chatConversationId = ref(null); // Store conversation ID for ElevenLabs
+
+// Flags animation refs and state
+// const flagsContainerRef = ref(null);
+// const flagsTrackRef = ref(null);
+// const flagsSequenceRef = ref(null);
+// const seqWidth = ref(0);
+// const ANIMATION_CONFIG = { SMOOTH_TAU: 0.25 };
+// const targetVelocity = ref(120); // pixels per second
+// let rafId = null;
+// let lastTimestamp = null;
+// let offset = 0;
+// let velocity = 0;
 
 // Set refs for contextual fields
 const setContextualFieldRef = (fieldKey, el) => {
@@ -974,6 +1223,7 @@ watch(() => fieldToHighlight.value, async (newField) => {
         }, 300);
     }
 }, { immediate: true });
+
 const showManualAdd = ref(false);
 const showAdvisors = ref(false);
 const showCalendar = ref(false);
@@ -1492,12 +1742,12 @@ const getSpecializationLabel = (specialization) => {
 
 const getSpecializationColor = (specialization) => {
     const colors = {
-        'residence_permit': 'from-blue-400 to-blue-600',
-        'business_registration': 'from-purple-400 to-purple-600',
-        'tax': 'from-green-400 to-green-600',
-        'funding': 'from-yellow-400 to-yellow-600',
-        'legal': 'from-red-400 to-red-600',
-        'marketing': 'from-pink-400 to-pink-600',
+        'residence_permit': 'from-[#5cc094] to-[#4a9d7a]',
+        'business_registration': 'from-[#5cc094] to-[#4a9d7a]',
+        'tax': 'from-[#5cc094] to-[#4a9d7a]',
+        'funding': 'from-[#5cc094] to-[#4a9d7a]',
+        'legal': 'from-[#5cc094] to-[#4a9d7a]',
+        'marketing': 'from-[#5cc094] to-[#4a9d7a]',
     };
     return colors[specialization] || 'from-gray-400 to-gray-600';
 };
@@ -1698,6 +1948,31 @@ const {
     onScheduleMeeting: handleScheduleMeeting
 });
 
+// Watch connection status and hide interface when transitioning from connected to disconnected
+watch(() => connectionStatus.value, (newStatus, oldStatus) => {
+    // Only hide if we were previously connected/connecting and now disconnected
+    if (newStatus === 'disconnected' && oldStatus && oldStatus !== 'disconnected' && !isConnected.value && !isSessionActive.value) {
+        showVoiceInterface.value = false;
+    }
+});
+
+// Watch isConnected and hide interface when transitioning from connected to disconnected
+watch(() => isConnected.value, (connected, wasConnected) => {
+    // Only hide if we were previously connected and now disconnected
+    if (!connected && wasConnected && connectionStatus.value === 'disconnected' && !isSessionActive.value) {
+        showVoiceInterface.value = false;
+    }
+});
+
+// Computed property to determine when to show chat interface (after composables are initialized)
+// Only show when explicitly in chat mode, not during voice calls
+const showChatInterface = computed(() => {
+    return interactionMode.value === 'chat' && (activeTab.value === 'roadmap' || activeTab.value === 'roadmap-tab');
+});
+
+// Opa animation state (after composables are initialized)
+const isTalking = computed(() => isListening.value || isSpeaking.value);
+
 // Initialize chat agent (after handler functions are defined)
 const chatAgent = useChatAgent({
     onRoadmapUpdate: handleRoadmapUpdate,
@@ -1762,9 +2037,6 @@ const chatAgent = useChatAgent({
     userName: props.userName
 });
 
-// Opa animation state
-const isTalking = computed(() => isListening.value || isSpeaking.value);
-
 const handleCallMode = () => {
     interactionMode.value = 'voice';
     // If connected, disconnect (cancel call)
@@ -1780,6 +2052,9 @@ const handleMicClick = async () => {
     try {
         // Ensure we're in voice mode
         interactionMode.value = 'voice';
+        
+        // Show the voice interface when phone button is clicked
+        showVoiceInterface.value = true;
         
         // If already connected and listening, stop/disconnect
         if (isConnected.value && (isListening.value || isSessionActive.value)) {
@@ -1821,14 +2096,27 @@ const handleConnect = async () => {
         // The connect() function already starts the session, so mark it as active
         if (isConnected.value) {
             isSessionActive.value = true;
+            showVoiceInterface.value = true; // Keep interface visible when connected
         } else {
             error.value = 'Failed to establish connection. Please try again.';
             isSessionActive.value = false;
+            // Don't hide immediately - let user see the error, hide after a delay
+            setTimeout(() => {
+                if (!isConnected.value && !isSessionActive.value) {
+                    showVoiceInterface.value = false;
+                }
+            }, 3000);
         }
     } catch (err) {
         console.error('Failed to connect:', err);
         error.value = err.message || 'Failed to connect to voice agent. Please check your microphone permissions and try again.';
         isSessionActive.value = false;
+        // Don't hide immediately - let user see the error, hide after a delay
+        setTimeout(() => {
+            if (!isConnected.value && !isSessionActive.value) {
+                showVoiceInterface.value = false;
+            }
+        }, 3000);
     }
 };
 
@@ -1845,7 +2133,21 @@ const handleDisconnect = () => {
     console.log('Disconnecting voice session...');
     disconnect();
     isSessionActive.value = false;
+    showVoiceInterface.value = false; // Hide the interface when disconnecting
     console.log('Voice session disconnected');
+};
+
+const handleEndChat = () => {
+    console.log('Ending chat...');
+    // Disconnect if connected
+    if (isConnected.value || isSessionActive.value) {
+        handleDisconnect();
+    }
+    // Clear chat messages
+    chatMessages.value = [];
+    // Switch back to voice mode to hide chat interface
+    interactionMode.value = 'voice';
+    console.log('Chat ended');
 };
 
 const handleStepUpdate = (step) => {
@@ -2121,6 +2423,63 @@ const saveContextualField = async (fieldKey) => {
     cancelEditingContextual();
 };
 
+// Flags animation functions
+// const updateFlagsDimensions = () => {
+//     const sequenceRect = flagsSequenceRef.value?.getBoundingClientRect?.();
+//     const sequenceWidth = sequenceRect?.width ?? 0;
+//
+//     if (sequenceWidth > 0) {
+//         seqWidth.value = Math.ceil(sequenceWidth);
+//     }
+// };
+//
+// const startFlagsAnimation = () => {
+//     const track = flagsTrackRef.value;
+//     if (!track) return;
+//
+//     // Stop any existing animation
+//     stopFlagsAnimation();
+//
+//     const animate = (timestamp) => {
+//         if (lastTimestamp === null) {
+//             lastTimestamp = timestamp;
+//         }
+//
+//         const deltaTime = Math.max(0, timestamp - lastTimestamp) / 1000;
+//         lastTimestamp = timestamp;
+//
+//         const easingFactor = 1 - Math.exp(-deltaTime / ANIMATION_CONFIG.SMOOTH_TAU);
+//         velocity += (targetVelocity.value - velocity) * easingFactor;
+//
+//         const seqSize = seqWidth.value;
+//         if (seqSize > 0) {
+//             // Continuous scrolling - when it reaches the end of first set, reset to start seamlessly
+//             offset += velocity * deltaTime;
+//             if (offset >= seqSize) {
+//                 offset = offset % seqSize;
+//             }
+//
+//             track.style.transform = `translate3d(${-offset}px, 0, 0)`;
+//         }
+//
+//         rafId = requestAnimationFrame(animate);
+//     };
+//
+//     // Initialize offset
+//     offset = 0;
+//     track.style.transform = `translate3d(0, 0, 0)`;
+//
+//     rafId = requestAnimationFrame(animate);
+// };
+//
+// const stopFlagsAnimation = () => {
+//     if (rafId !== null) {
+//         cancelAnimationFrame(rafId);
+//         rafId = null;
+//     }
+//     lastTimestamp = null;
+// };
+
 onMounted(async () => {
     // Load user progress on mount
     await loadUserProgress();
@@ -2130,9 +2489,49 @@ onMounted(async () => {
     // Roadmap only shows action steps, no question steps
     // Question steps are handled separately in BusinessPlanProgress component
     console.log('Roadmap loaded:', roadmap.value);
+
+    // Initialize flags animation
+    // await nextTick();
+    // updateFlagsDimensions();
+    //
+    // // Setup ResizeObserver for flags container
+    // if (window.ResizeObserver && flagsContainerRef.value && flagsSequenceRef.value) {
+    //     const resizeObserver = new ResizeObserver(() => {
+    //         updateFlagsDimensions();
+    //     });
+    //     resizeObserver.observe(flagsContainerRef.value);
+    //     resizeObserver.observe(flagsSequenceRef.value);
+    //
+    //     // Store observer for cleanup
+    //     flagsContainerRef.value._resizeObserver = resizeObserver;
+    // } else {
+    //     // Fallback for browsers without ResizeObserver
+    //     const handleResize = () => {
+    //         updateFlagsDimensions();
+    //     };
+    //     window.addEventListener('resize', handleResize);
+    //     flagsContainerRef.value._resizeHandler = handleResize;
+    // }
+    //
+    // // Start animation after a short delay to ensure dimensions are calculated
+    // setTimeout(() => {
+    //     updateFlagsDimensions();
+    //     startFlagsAnimation();
+    // }, 100);
 });
 
 onUnmounted(() => {
+    // Clean up flags animation
+    // stopFlagsAnimation();
+    //
+    // // Clean up ResizeObserver
+    // if (flagsContainerRef.value?._resizeObserver) {
+    //     flagsContainerRef.value._resizeObserver.disconnect();
+    // }
+    // if (flagsContainerRef.value?._resizeHandler) {
+    //     window.removeEventListener('resize', flagsContainerRef.value._resizeHandler);
+    // }
+
     // Clean up timeouts to prevent memory leaks
     if (businessTabTimeout) {
         clearTimeout(businessTabTimeout);
@@ -2143,7 +2542,7 @@ onUnmounted(() => {
 
 <style scoped>
 .drawer-overlay {
-    background-color: rgba(1, 17, 53, 0.8);
+    background-color: rgba(247, 250, 248, 0.85);
     animation: fadeIn 0.2s ease-out;
 }
 
@@ -2170,9 +2569,9 @@ onUnmounted(() => {
 /* Field highlight animation */
 .field-highlight {
     animation: highlightPulse 5s ease-in-out;
-    background: #012169 !important;
-    border: 2px solid #ffffff !important;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(255, 255, 255, 0.1);
+    background: white !important;
+    border: 2px solid #5cc094 !important;
+    box-shadow: 0 0 20px rgba(92, 192, 148, 0.3), 0 0 40px rgba(92, 192, 148, 0.1);
     transform: scale(1.02);
     z-index: 10;
     position: relative;
@@ -2180,20 +2579,20 @@ onUnmounted(() => {
 
 @keyframes highlightPulse {
     0% {
-        background: #012169;
-        border-color: #ffffff;
-        box-shadow: 0 0 20px rgba(255, 255, 255, 0.3), 0 0 40px rgba(255, 255, 255, 0.1);
+        background: white;
+        border-color: #5cc094;
+        box-shadow: 0 0 20px rgba(92, 192, 148, 0.3), 0 0 40px rgba(92, 192, 148, 0.1);
         transform: scale(1.02);
     }
     50% {
-        background: #012169;
-        border-color: #ffffff;
-        box-shadow: 0 0 15px rgba(255, 255, 255, 0.2), 0 0 30px rgba(255, 255, 255, 0.05);
+        background: #f0fdf4;
+        border-color: #5cc094;
+        box-shadow: 0 0 15px rgba(92, 192, 148, 0.2), 0 0 30px rgba(92, 192, 148, 0.05);
         transform: scale(1.01);
     }
     100% {
-        background: var(--original-bg, #012169);
-        border-color: var(--original-border, rgba(255, 255, 255, 0.1));
+        background: var(--original-bg, white);
+        border-color: var(--original-border, #5cc094);
         box-shadow: none;
         transform: scale(1);
     }
@@ -2275,6 +2674,196 @@ onUnmounted(() => {
     }
     90% {
         transform: translateX(-1px) rotate(-1deg) scale(1.1);
+    }
+}
+
+/* Flags Strip Animation */
+/*
+.flags-wrapper {
+    user-select: none;
+    position: relative;
+}
+
+.flags-wrapper::before,
+.flags-wrapper::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: clamp(60px, 15%, 120px);
+    pointer-events: none;
+    z-index: 10;
+}
+
+.flags-wrapper::before {
+    left: 0;
+    background: linear-gradient(
+        to right,
+        #fff5f5 0%,
+        rgba(255, 245, 245, 0.8) 50%,
+        rgba(255, 245, 245, 0) 100%
+    );
+}
+
+.flags-wrapper::after {
+    right: 0;
+    background: linear-gradient(
+        to left,
+        #fff5f5 0%,
+        rgba(255, 245, 245, 0.8) 50%,
+        rgba(255, 245, 245, 0) 100%
+    );
+}
+
+.flags-track {
+    display: flex;
+    width: max-content;
+    will-change: transform;
+    user-select: none;
+    position: relative;
+    z-index: 0;
+}
+
+.flags-list {
+    display: flex;
+    align-items: center;
+}
+
+.flag-item {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.flag-item svg {
+    display: block;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+    pointer-events: none;
+    height: 40px;
+    width: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .flags-track {
+        transform: translate3d(0, 0, 0) !important;
+    }
+}
+*/
+
+/* Chat Interface Animations */
+.chat-interface-enter-active {
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 0.5s ease-out;
+}
+
+.chat-interface-leave-active {
+    transition: opacity 0.3s cubic-bezier(0.7, 0, 0.84, 0),
+                transform 0.3s cubic-bezier(0.7, 0, 0.84, 0),
+                filter 0.3s ease-out;
+}
+
+.chat-interface-enter-from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+    filter: blur(4px);
+}
+
+.chat-interface-enter-to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+}
+
+.chat-interface-leave-from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+}
+
+.chat-interface-leave-to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+    filter: blur(2px);
+}
+
+.chat-interface-container {
+    animation: chatContainerPulse 0.6s ease-out 0.1s;
+}
+
+@keyframes chatContainerPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(92, 192, 148, 0);
+    }
+    50% {
+        box-shadow: 0 0 0 8px rgba(92, 192, 148, 0.1);
+    }
+    100% {
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+}
+
+/* Voice Interface Animations */
+.voice-interface-enter-active {
+    transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 0.5s ease-out;
+}
+
+.voice-interface-leave-active {
+    transition: opacity 0.3s cubic-bezier(0.7, 0, 0.84, 0),
+                transform 0.3s cubic-bezier(0.7, 0, 0.84, 0),
+                filter 0.3s ease-out;
+}
+
+.voice-interface-enter-from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+    filter: blur(4px);
+}
+
+.voice-interface-enter-to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+}
+
+.voice-interface-leave-from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+}
+
+.voice-interface-leave-to {
+    opacity: 0;
+    transform: translateY(-10px) scale(0.98);
+    filter: blur(2px);
+}
+
+/* Ensure scrolling works in voice interface even when unmuted */
+.voice-interface .flex-1.overflow-y-auto {
+    touch-action: pan-y pinch-zoom;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .chat-interface-enter-active,
+    .chat-interface-leave-active,
+    .chat-interface-container,
+    .voice-interface-enter-active,
+    .voice-interface-leave-active {
+        animation: none;
+        transition: opacity 0.2s ease;
+    }
+    
+    .chat-interface-enter-from,
+    .chat-interface-leave-to {
+        opacity: 1;
+        transform: none;
     }
 }
 </style>

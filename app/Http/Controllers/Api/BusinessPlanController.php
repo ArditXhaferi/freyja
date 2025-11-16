@@ -144,7 +144,7 @@ class BusinessPlanController extends Controller
             'address' => 'sometimes|string|max:255',
             'zip_code' => 'sometimes|string|max:20',
             'postal_district' => 'sometimes|string|max:255',
-            'year_of_establishment' => 'sometimes|integer|min:1900|max:' . date('Y'),
+            'year_of_establishment' => 'sometimes|nullable|integer|min:1900|max:' . date('Y'),
             'number_of_employees' => 'sometimes|integer|min:0',
             'internet_address' => 'sometimes|string|max:255',
             'business_id' => 'sometimes|string|max:255',

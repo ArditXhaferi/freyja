@@ -6,7 +6,7 @@
                 <div class="flex flex-1 flex-col justify-between space-y-12">
                     <div>
                         <p class="text-xs uppercase tracking-[0.5em] text-white/70">Espoo Launch</p>
-                        <h1 class="mt-6 text-4xl font-semibold leading-tight">Advisor Portal</h1>
+                        <h1 class="mt-6 text-4xl font-semibold leading-tight">Business Portal</h1>
                         <p class="mt-4 text-sm text-white/80">
                             Manage founder requests, review their roadmap context, and keep your calendar in sync —
                             all from a single calm workspace.
@@ -14,7 +14,7 @@
                     </div>
 
                     <div class="flex items-center gap-4">
-                        <img src="/storage/beer.gif" alt="Cheers" class="h-[13.5rem] w-[13.5rem] rounded-2xl object-cover" />
+                        <img src="./videos/video7.gif" alt="Cheers" class="h-[13.5rem] w-[13.5rem] rounded-2xl object-cover" />
                         <div class="relative">
                             <div
                                 class="max-w-[240px] rounded-2xl px-5 py-4 text-sm font-medium text-white/95 backdrop-blur-sm"
@@ -30,15 +30,13 @@
                     </div>
 
                     <div class="space-y-4">
-                        <div class="rounded-3xl border border-white/20 bg-white/10 p-5 backdrop-blur-sm">
-                            <p class="text-sm uppercase tracking-[0.4em] text-white/60">Why advisors use this</p>
+                        <div class="">
+                            <!-- <p class="text-sm uppercase tracking-[0.4em] text-white/60"></p>
                             <p class="mt-2 text-lg font-semibold">One place for all founder conversations</p>
-                            <p class="text-sm text-white/70">See briefs, requests, and roadmaps in a single calm view.</p>
+                            <p class="text-sm text-white/70">See briefs, requests, and roadmaps in a single calm view.</p> -->
                         </div>
                         <div class="flex items-center gap-3 text-xs uppercase tracking-[0.5em] text-white/60">
-                            <span class="h-[2px] flex-1 bg-white/40"></span>
-                            Secure access
-                            <span class="h-[2px] flex-1 bg-white/40"></span>
+                            
                         </div>
                     </div>
                 </div>
@@ -51,21 +49,6 @@
                     <p class="text-sm text-slate-500">Use your Espoo advisor credentials to access the workspace.</p>
                 </div>
 
-                <div class="mt-8 space-y-4">
-                    <button
-                        type="button"
-                        @click.prevent="continueWithGoogle"
-                        class="flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white py-3 text-sm font-semibold text-slate-600 transition hover:border-[#205274] hover:text-[#205274] cursor-pointer"
-                    >
-                        <img src="/storage/google.png" alt="Google" class="h-5 w-5" />
-                        Continue with Google
-                    </button>
-                    <div class="flex items-center gap-4 text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-300">
-                        <span class="h-px flex-1 bg-slate-200"></span>
-                        Or use email
-                        <span class="h-px flex-1 bg-slate-200"></span>
-                    </div>
-                </div>
 
                 <form @submit.prevent="submit" class="mt-6 space-y-6">
                     <div v-if="Object.keys($page.props.errors).length" class="rounded-2xl border border-rose-100 bg-rose-50/80 p-4 text-sm text-rose-600">
@@ -150,4 +133,3 @@ const continueWithGoogle = () => {
     window.location.href = `/auth/google/redirect?role=advisor`;
 };
 </script>
-

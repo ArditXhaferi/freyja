@@ -22,24 +22,23 @@
                 v-for="(step, index) in animatedSteps"
                 :key="step.id || step._stepId || index"
                 :class="[
-                    'rounded-lg p-4 transition-all duration-300 cursor-pointer border',
+                    'rounded-lg p-4 cursor-pointer border',
                     step.status === 'completed' 
                         ? 'bg-white border-[#5cc094]' 
                         : step.status === 'in_progress'
                         ? 'bg-white border-gray-300'
-                        : 'bg-white border-gray-200',
-                    step.isNewlyAdded ? 'animate-pulse border-[#5cc094]' : ''
+                        : 'bg-white border-gray-200'
                 ]"
                 @click="handleStepClick(step)"
             >
                 <div class="flex items-start gap-4">
                     <!-- Step Number Badge -->
                     <div :class="[
-                        'w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 transition-all border',
+                        'w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold flex-shrink-0 border',
                         step.status === 'completed' 
                             ? 'bg-[#5cc094] text-white border-[#5cc094]' 
                             : step.status === 'in_progress'
-                            ? 'bg-blue-500 text-white border-blue-300 animate-pulse'
+                            ? 'bg-blue-500 text-white border-blue-300'
                             : 'bg-gray-300 text-gray-900 border-gray-400'
                     ]">
                         <span v-if="step.status === 'completed'" class="text-lg">✓</span>
@@ -63,9 +62,6 @@
                             ]">
                                 {{ (step.status || 'pending').replace('_', ' ').toUpperCase() }}
                             </span>
-                            <span v-if="step.isNewlyAdded" class="px-3 py-1 rounded-full bg-blue-100 text-blue-700 text-xs font-semibold border border-blue-300">
-                                NEW
-                            </span>
                         </div>
                         
                         <p v-if="step.description" class="text-sm leading-relaxed line-clamp-2 text-gray-700">
@@ -84,7 +80,7 @@
                                     :href="resource.url"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    class="block bg-gray-50 rounded-lg p-2 border border-gray-200 hover:border-gray-400 hover:bg-gray-100 transition-all group"
+                                    class="block bg-gray-50 rounded-lg p-2 border border-gray-200 hover:border-gray-400 hover:bg-gray-100 group"
                                 >
                                     <div class="flex items-start gap-2">
                                         <span class="text-gray-500 text-sm group-hover:text-gray-700">🔗</span>
@@ -109,7 +105,7 @@
                             <div class="flex items-center gap-2">
                                 <div class="flex-1 h-2 bg-gray-200 rounded-full overflow-hidden">
                                     <div 
-                                        class="h-full bg-[#5cc094] rounded-full transition-all duration-500"
+                                        class="h-full bg-[#5cc094] rounded-full"
                                         style="width: 50%"
                                     ></div>
                                 </div>

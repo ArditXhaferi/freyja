@@ -24,6 +24,7 @@ use App\Http\Controllers\Api\MeetingController;
 Route::middleware(['web', 'auth'])->group(function () {
     Route::get('/roadmap', [RoadmapController::class, 'show']);
     Route::post('/roadmap/update', [RoadmapController::class, 'update']);
+    Route::post('/roadmap/generate', [RoadmapController::class, 'generate']);
 });
 
 // Voice session routes (require authentication)
@@ -61,6 +62,8 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::get('/meetings/readiness', [MeetingController::class, 'checkReadiness']);
     Route::get('/meetings', [MeetingController::class, 'index']);
     Route::post('/meetings', [MeetingController::class, 'store']);
+    Route::get('/meeting-requests', [\App\Http\Controllers\Api\NetworkController::class, 'getMeetingRequests']);
+    Route::delete('/meeting-requests/{advisorId}', [\App\Http\Controllers\Api\NetworkController::class, 'deleteMeetingRequest']);
 });
 
 // Network routes (require authentication)
@@ -69,5 +72,7 @@ Route::middleware(['web', 'auth'])->group(function () {
     Route::post('/network/swipe', [\App\Http\Controllers\Api\NetworkController::class, 'swipe']);
     Route::get('/network/matches', [\App\Http\Controllers\Api\NetworkController::class, 'matches']);
     Route::get('/network/liked', [\App\Http\Controllers\Api\NetworkController::class, 'liked']);
+    Route::post('/network/meeting-request', [\App\Http\Controllers\Api\NetworkController::class, 'requestMeeting']);
+    Route::delete('/network/matches/{companyId}', [\App\Http\Controllers\Api\NetworkController::class, 'dislikeMatch']);
 });
 

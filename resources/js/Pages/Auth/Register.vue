@@ -7,7 +7,7 @@
                     <!-- Top copy -->
                     <div>
                         <p class="text-xs uppercase tracking-[0.45em] text-white/70">Espoo launch</p>
-                        <h1 class="mt-6 text-4xl font-semibold leading-tight">Create your advisor workspace</h1>
+                        <h1 class="mt-6 text-4xl font-semibold leading-tight">Create your business workspace</h1>
                         <p class="mt-4 text-sm text-white/80">
                             A focused space to review founders, accept meetings, and keep their roadmap in view.
                         </p>
@@ -15,7 +15,7 @@
 
                     <!-- Beer + tooltip -->
                     <div class="flex items-center gap-4">
-                        <img src="/storage/beer.gif" alt="Cheers" class="h-[13.5rem] w-[13.5rem] rounded-2xl object-cover" />
+                        <img src="./videos/video4.gif" alt="Cheers" class="h-[13.5rem] w-[13.5rem] rounded-2xl object-cover" />
                         <div class="relative">
                             <div
                                 class="max-w-[260px] rounded-2xl px-5 py-4 text-sm font-medium text-white/95 backdrop-blur-sm"
@@ -31,32 +31,14 @@
                     </div>
 
                     <!-- Bottom feature/checklist card -->
-                    <div class="grid gap-4 rounded-3xl border border-white/20 bg-white/10 p-5 backdrop-blur-sm">
+                    <div class="">
                         <div>
-                            <p class="text-xs uppercase tracking-[0.5em] text-white/60">What you get</p>
-                            <ul class="mt-3 space-y-2 text-sm text-white/85">
-                                <li class="flex items-start gap-3">
-                                    <span class="mt-1 h-1.5 w-1.5 rounded-full bg-white/80"></span>
-                                    Clean dashboard with founder briefs and reminders.
-                                </li>
-                                <li class="flex items-start gap-3">
-                                    <span class="mt-1 h-1.5 w-1.5 rounded-full bg-white/80"></span>
-                                    Meeting requests with structured context.
-                                </li>
-                                <li class="flex items-start gap-3">
-                                    <span class="mt-1 h-1.5 w-1.5 rounded-full bg-white/80"></span>
-                                    Roadmap previews for every founder.
-                                </li>
-                            </ul>
+                            
+                           
                         </div>
 
-                        <div class="rounded-2xl border border-white/20 bg-white/5 p-4">
-                            <p class="text-xs uppercase tracking-[0.5em] text-white/60">Advisor checklist</p>
-                            <ol class="mt-3 space-y-2 text-sm text-white/80">
-                                <li>1 · Fill in your basic details.</li>
-                                <li>2 · Choose your role and language.</li>
-                                <li>3 · Start reviewing founder requests.</li>
-                            </ol>
+                        <div class="">
+                         
                         </div>
                     </div>
                 </div>
@@ -67,22 +49,6 @@
                         <p class="text-xs uppercase tracking-[0.45em] text-slate-400">Let’s get started</p>
                         <h2 class="text-3xl font-semibold text-[#205274]">Create your account</h2>
                     <p class="text-sm text-slate-500">Tell us who you are so we can tailor the workspace to your role.</p>
-                </div>
-
-                <div class="mt-8 space-y-4">
-                    <button
-                        type="button"
-                        @click.prevent="continueWithGoogle"
-                        class="flex w-full items-center justify-center gap-3 rounded-2xl border border-slate-200 bg-white py-3 text-sm font-semibold text-slate-600 transition hover:border-[#205274] hover:text-[#205274] cursor-pointer"
-                    >
-                        <img src="/storage/google.png" alt="Google" class="h-5 w-5" />
-                        Continue with Google
-                    </button>
-                    <div class="flex items-center gap-4 text-[11px] font-semibold uppercase tracking-[0.3em] text-slate-300">
-                        <span class="h-px flex-1 bg-slate-200"></span>
-                        Or use email
-                        <span class="h-px flex-1 bg-slate-200"></span>
-                    </div>
                 </div>
 
                 <form @submit.prevent="submit" class="mt-6 space-y-6">

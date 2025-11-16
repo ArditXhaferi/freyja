@@ -78,8 +78,8 @@
                                 isFieldFilled(fieldKey) 
                                     ? 'border-[#5cc094] bg-green-50/50' 
                                     : 'border-gray-200 bg-gray-50/50 hover:bg-gray-100',
-                                fieldToHighlight === fieldKey ? 'field-highlight border-blue-400 bg-blue-50' : '',
-                                editingField === fieldKey ? 'border-[#5cc094] bg-blue-50' : ''
+                                fieldToHighlight === fieldKey ? 'field-highlight border-[#5cc094] bg-green-50' : '',
+                                editingField === fieldKey ? 'border-[#5cc094] bg-green-50' : ''
                             ]"
                             @click.stop="startEditing(fieldKey)"
                         >
@@ -534,24 +534,24 @@ const saveField = async (fieldKey) => {
 /* Field highlight animation */
 .field-highlight {
     animation: highlightPulse 3s ease-in-out;
-    border-left: 4px solid #3b82f6 !important;
-    background: #eff6ff !important;
+    border-left: 4px solid #5cc094 !important;
+    background: #f0fdf4 !important;
     z-index: 10;
     position: relative;
 }
 
 @keyframes highlightPulse {
     0% {
-        background: #dbeafe;
-        border-left-color: #3b82f6;
+        background: #dcfce7;
+        border-left-color: #5cc094;
     }
     50% {
-        background: #eff6ff;
-        border-left-color: #60a5fa;
+        background: #f0fdf4;
+        border-left-color: #4a9d7a;
     }
     100% {
-        background: #eff6ff;
-        border-left-color: #3b82f6;
+        background: #f0fdf4;
+        border-left-color: #5cc094;
     }
 }
 </style>

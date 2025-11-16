@@ -1,5 +1,30 @@
 <template>
-    <div class="flex flex-col h-full">
+    <div class="flex flex-col h-full" :class="{ 'shake': isShaking }">
+        <!-- Notification -->
+        <Notification
+            v-if="notification.message"
+            :message="notification.message"
+            :type="notification.type"
+            @close="notification.message = ''"
+        />
+        
+        <!-- Heart Animation Container -->
+        <div v-if="showHearts" class="fixed inset-0 pointer-events-none z-50">
+            <div
+                v-for="(heart, index) in hearts"
+                :key="index"
+                class="heart-animation absolute"
+                :style="{
+                    left: heart.left + 'px',
+                    top: heart.top + 'px',
+                    animationDelay: heart.delay + 's',
+                    '--end-x': heart.endX + 'px',
+                    '--end-y': heart.endY + 'px'
+                }"
+            >
+                <i class="fa-solid fa-heart text-red-500 text-3xl"></i>
+            </div>
+        </div>
         <!-- Header -->
         <div class="flex items-center justify-between mb-4 px-2">
             <div class="flex gap-4">
@@ -51,23 +76,34 @@
             <div v-else class="relative w-full max-w-md h-[600px]">
                 <transition-group name="swipe" tag="div" class="relative w-full h-full">
                     <div
-                        v-for="(company, index) in displayedCompanies"
+                        v-for="(company, index) in displayedCompanies.slice(0, 3)"
                         :key="company.id"
-                        v-show="index === 0"
                         ref="cardRefs"
                         :style="{
-                            transform: `translate(${cardPosition.x}px, ${cardPosition.y}px) rotate(${cardRotation}deg)`,
-                            opacity: index === 0 ? 1 : 0,
-                            zIndex: displayedCompanies.length - index
+                            transform: index === 0 
+                                ? `translate(${cardPosition.x}px, ${cardPosition.y}px) rotate(${cardRotation}deg) scale(1)`
+                                : index === 1
+                                ? `translate(0px, ${Math.min(10, Math.abs(cardPosition.x) * 0.05)}px) rotate(0deg) scale(${Math.min(1, 0.95 + Math.abs(cardPosition.x) * 0.0005)})`
+                                : `translate(0px, ${Math.min(5, Math.abs(cardPosition.x) * 0.03)}px) rotate(0deg) scale(0.9)`,
+                            opacity: index === 0 
+                                ? 1 
+                                : index === 1 
+                                ? Math.min(1, 0.7 + (Math.abs(cardPosition.x) / 400) * 0.3)
+                                : 0.5,
+                            zIndex: displayedCompanies.length - index,
+                            pointerEvents: index === 0 ? 'auto' : 'none'
                         }"
-                        class="absolute inset-0 bg-[#5cc094] rounded-2xl border border-[#5cc094] overflow-hidden cursor-grab active:cursor-grabbing transition-transform duration-150"
-                        @touchstart="startSwipe($event, company)"
-                        @touchmove="moveSwipe($event)"
-                        @touchend="endSwipe(company)"
-                        @mousedown="startSwipe($event, company)"
-                        @mousemove="moveSwipe($event)"
-                        @mouseup="endSwipe(company)"
-                        @mouseleave="endSwipe(company)"
+                        :class="[
+                            'absolute inset-0 bg-[#5cc094] rounded-2xl border border-[#5cc094] overflow-hidden transition-all duration-150',
+                            index === 0 ? 'cursor-grab active:cursor-grabbing' : ''
+                        ]"
+                        @touchstart="index === 0 ? startSwipe($event, company) : null"
+                        @touchmove="index === 0 ? moveSwipe($event) : null"
+                        @touchend="index === 0 ? endSwipe(company) : null"
+                        @mousedown="index === 0 ? startSwipe($event, company) : null"
+                        @mousemove="index === 0 ? moveSwipe($event) : null"
+                        @mouseup="index === 0 ? endSwipe(company) : null"
+                        @mouseleave="index === 0 ? endSwipe(company) : null"
                     >
                         <!-- Company Card Content -->
                         <div class="h-full flex flex-col">
@@ -138,11 +174,13 @@
                                      'absolute inset-0 flex items-center justify-center pointer-events-none transition-opacity',
                                      swipeDirection === 'right' ? 'bg-[#5cc094]/20' : 'bg-red-500/20'
                                  ]">
-                                <div :class="[
-                                    'text-6xl font-bold',
-                                    swipeDirection === 'right' ? 'text-white' : 'text-red-400'
-                                ]">
-                                    {{ swipeDirection === 'right' ? 'LIKE' : 'PASS' }}
+                                <div v-if="swipeDirection === 'right'" class="flex flex-col items-center gap-2">
+                                    <i class="fa-solid fa-heart text-6xl text-red-400 animate-pulse"></i>
+                                    <span class="text-2xl font-bold text-white">LIKE</span>
+                                </div>
+                                <div v-else class="flex flex-col items-center gap-2">
+                                    <i class="fa-solid fa-times-circle text-6xl text-red-400"></i>
+                                    <span class="text-2xl font-bold text-red-400">PASS</span>
                                 </div>
                             </div>
                         </div>
@@ -193,7 +231,7 @@
                 <div
                     v-for="match in matches"
                     :key="match.id"
-                    class="group bg-[#5cc094] rounded-lg p-5 border border-[#5cc094] hover:bg-[#4a9d7a] transition-all"
+                    class="group bg-[#5cc094] rounded-lg p-5 border border-[#5cc094] hover:bg-[#4a9d7a] transition-all relative"
                 >
                     <div class="flex items-start gap-4">
                         <div class="flex-shrink-0 w-16 h-16 bg-[#4a9d7a] rounded-full flex items-center justify-center text-white text-2xl font-bold border border-white/30">
@@ -205,12 +243,28 @@
                                     <h3 class="text-xl font-bold text-white transition-colors">{{ match.company.business_name }}</h3>
                                     <p class="text-white/90 text-sm transition-colors">{{ match.company.name }}</p>
                                 </div>
-                                <span v-if="match.is_mutual" class="px-3 py-1 bg-white/20 text-white rounded-full text-xs font-semibold border border-white/30">
-                                    MATCH! 🎉
-                                </span>
-                                <span v-else class="px-3 py-1 bg-white/20 text-white rounded-full text-xs font-semibold border border-white/30">
-                                    LIKED
-                                </span>
+                                <div class="flex items-center gap-2">
+                                    <span v-if="match.is_mutual" class="px-3 py-1 bg-white/20 text-white rounded-full text-xs font-semibold border border-white/30">
+                                        MATCH! 🎉
+                                    </span>
+                                    <span v-else class="px-3 py-1 bg-white/20 text-white rounded-full text-xs font-semibold border border-white/30">
+                                        LIKED
+                                    </span>
+                                    <button
+                                        @click="dislikeMatch(match.company.id)"
+                                        :disabled="match.disliking"
+                                        :class="[
+                                            'px-3 py-1 rounded-lg font-semibold text-xs transition-all flex items-center gap-1.5',
+                                            match.disliking
+                                                ? 'bg-red-300/80 text-white cursor-wait'
+                                                : 'bg-red-300/70 text-white hover:bg-red-300/90 hover:scale-105 active:scale-95'
+                                        ]"
+                                        title="Dislike"
+                                    >
+                                        <i v-if="match.disliking" class="fa-solid fa-spinner fa-spin text-xs"></i>
+                                        <i v-else class="fa-solid fa-times text-xs"></i>
+                                    </button>
+                                </div>
                             </div>
                             <div class="flex flex-wrap gap-2 mb-3">
                                 <span class="px-3 py-1 bg-white/20 text-white rounded-full text-xs font-semibold">
@@ -240,6 +294,39 @@
                             </div>
                         </div>
                     </div>
+                    <!-- Action Buttons -->
+                    <div class="mt-4 flex items-center justify-end">
+                        <button
+                            v-if="match.hasPendingRequest"
+                            @click="deleteMeetingRequest(match.company.id)"
+                            :disabled="match.deletingRequest"
+                            :class="[
+                                'px-5 py-2.5 rounded-lg font-semibold text-sm transition-all flex items-center gap-2 shadow-lg',
+                                match.deletingRequest
+                                    ? 'bg-white/20 text-white cursor-wait'
+                                    : 'bg-white/30 text-white hover:bg-white/40 hover:scale-105 active:scale-95'
+                            ]"
+                        >
+                            <i v-if="match.deletingRequest" class="fa-solid fa-spinner fa-spin"></i>
+                            <i v-else class="fa-solid fa-trash"></i>
+                            <span>{{ match.deletingRequest ? 'Cancelling...' : 'Cancel Request' }}</span>
+                        </button>
+                        <button
+                            v-else
+                            @click="requestMeeting(match.company.id)"
+                            :disabled="match.requestingMeeting"
+                            :class="[
+                                'px-5 py-2.5 rounded-lg font-semibold text-sm transition-all flex items-center gap-2 shadow-lg',
+                                match.requestingMeeting
+                                    ? 'bg-white/20 text-white cursor-wait'
+                                    : 'bg-white text-[#5cc094] hover:bg-gray-50 hover:scale-105 active:scale-95'
+                            ]"
+                        >
+                            <i v-if="match.requestingMeeting" class="fa-solid fa-spinner fa-spin"></i>
+                            <i v-else class="fa-solid fa-calendar-plus"></i>
+                            <span>{{ match.requestingMeeting ? 'Sending...' : 'Request Meeting' }}</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -249,6 +336,7 @@
 <script setup>
 import { ref, computed, onMounted, nextTick, watch } from 'vue';
 import axios from 'axios';
+import Notification from './Notification.vue';
 
 const props = defineProps({
     currentView: {
@@ -264,6 +352,7 @@ const matches = ref([]);
 const loading = ref(false);
 const loadingMatches = ref(false);
 const displayedCompanies = ref([]);
+const pendingMeetingRequests = ref(new Set());
 
 // Swipe state
 const cardPosition = ref({ x: 0, y: 0 });
@@ -272,6 +361,21 @@ const startPos = ref({ x: 0, y: 0 });
 const isSwipeActive = ref(false);
 const swipeDirection = ref(null);
 const showSwipeIndicator = ref(false);
+
+// Visual effects
+const showHearts = ref(false);
+const hearts = ref([]);
+const isShaking = ref(false);
+
+// Notification state
+const notification = ref({
+    message: '',
+    type: 'success'
+});
+
+const showNotification = (message, type = 'success') => {
+    notification.value = { message, type };
+};
 
 const matchesCount = computed(() => matches.value.length);
 
@@ -288,15 +392,123 @@ const loadCompanies = async () => {
     }
 };
 
+const loadPendingMeetingRequests = async () => {
+    try {
+        const response = await axios.get('/api/meeting-requests');
+        const advisorIds = response.data.meeting_requests || [];
+        // Add all advisor IDs to the set
+        advisorIds.forEach(advisorId => {
+            pendingMeetingRequests.value.add(advisorId);
+        });
+    } catch (error) {
+        console.error('Error loading pending meeting requests:', error);
+    }
+};
+
 const loadMatches = async () => {
     loadingMatches.value = true;
     try {
+        // Load pending requests first to check status
+        await loadPendingMeetingRequests();
+        
         const response = await axios.get('/api/network/matches');
-        matches.value = response.data.matches || [];
+        const matchesData = response.data.matches || [];
+        // Add requestingMeeting, hasPendingRequest, disliking, and deletingRequest flags to each match
+        matches.value = matchesData.map(match => ({
+            ...match,
+            requestingMeeting: false,
+            hasPendingRequest: pendingMeetingRequests.value.has(match.company.id),
+            disliking: false,
+            deletingRequest: false
+        }));
     } catch (error) {
         console.error('Error loading matches:', error);
     } finally {
         loadingMatches.value = false;
+    }
+};
+
+const requestMeeting = async (advisorId) => {
+    // Find the match and update its requestingMeeting state
+    const matchIndex = matches.value.findIndex(m => m.company.id === advisorId);
+    if (matchIndex === -1) return;
+
+    matches.value[matchIndex].requestingMeeting = true;
+
+    try {
+        const response = await axios.post('/api/network/meeting-request', {
+            advisor_id: advisorId
+        });
+
+        if (response.status === 201) {
+            // Mark as having pending request
+            pendingMeetingRequests.value.add(advisorId);
+            matches.value[matchIndex].hasPendingRequest = true;
+            matches.value[matchIndex].requestingMeeting = false;
+            
+            // Show success notification
+            showNotification('Meeting request sent successfully!', 'success');
+        }
+    } catch (error) {
+        matches.value[matchIndex].requestingMeeting = false;
+        console.error('Error requesting meeting:', error);
+        
+        const errorMessage = error.response?.data?.message || 'Failed to send meeting request. Please try again.';
+        showNotification(errorMessage, 'error');
+    }
+};
+
+const dislikeMatch = async (companyId) => {
+    // Find the match and update its disliking state
+    const matchIndex = matches.value.findIndex(m => m.company.id === companyId);
+    if (matchIndex === -1) return;
+
+    matches.value[matchIndex].disliking = true;
+
+    try {
+        const response = await axios.delete(`/api/network/matches/${companyId}`);
+
+        if (response.status === 200) {
+            // Remove the match from the list (no shake effect)
+            matches.value.splice(matchIndex, 1);
+            
+            // Show success notification
+            showNotification('Match removed successfully', 'success');
+        }
+    } catch (error) {
+        matches.value[matchIndex].disliking = false;
+        console.error('Error disliking match:', error);
+        
+        const errorMessage = error.response?.data?.message || 'Failed to remove match. Please try again.';
+        showNotification(errorMessage, 'error');
+    }
+};
+
+const deleteMeetingRequest = async (advisorId) => {
+    // Find the match and update its deletingRequest state
+    const matchIndex = matches.value.findIndex(m => m.company.id === advisorId);
+    if (matchIndex === -1) return;
+
+    matches.value[matchIndex].deletingRequest = true;
+
+    try {
+        const response = await axios.delete(`/api/meeting-requests/${advisorId}`);
+
+        if (response.status === 200) {
+            // Remove from pending requests set
+            pendingMeetingRequests.value.delete(advisorId);
+            matches.value[matchIndex].hasPendingRequest = false;
+            matches.value[matchIndex].deletingRequest = false;
+            
+            // Show success notification
+            showNotification('Meeting request cancelled successfully', 'success');
+        }
+    } catch (error) {
+        matches.value[matchIndex].deletingRequest = false;
+        console.error('Error deleting meeting request:', error);
+        
+        const errorMessage = error.response?.data?.message || 'Failed to cancel meeting request. Please try again.';
+        showNotification(errorMessage, 'error');
     }
 };
 
@@ -361,8 +573,52 @@ const switchView = (view) => {
     emit('view', view);
 };
 
+const triggerHeartAnimation = () => {
+    showHearts.value = true;
+    hearts.value = [];
+    
+    // Get center of viewport
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    
+    // Create multiple hearts at different positions
+    for (let i = 0; i < 8; i++) {
+        const angle = (Math.PI * 2 * i) / 8;
+        const distance = 150 + Math.random() * 100;
+        const endX = Math.cos(angle) * distance;
+        const endY = Math.sin(angle) * distance;
+        
+        hearts.value.push({
+            left: centerX,
+            top: centerY,
+            endX: endX,
+            endY: endY - 100, // Float upward
+            delay: i * 0.1
+        });
+    }
+    
+    setTimeout(() => {
+        showHearts.value = false;
+        hearts.value = [];
+    }, 2000);
+};
+
+const triggerShake = () => {
+    isShaking.value = true;
+    setTimeout(() => {
+        isShaking.value = false;
+    }, 500);
+};
+
 const performSwipe = async (companyId, action) => {
     try {
+        // Trigger visual effects
+        if (action === 'like' || action === 'super_like') {
+            triggerHeartAnimation();
+        } else if (action === 'pass') {
+            triggerShake();
+        }
+        
         const response = await axios.post('/api/network/swipe', {
             company_id: companyId,
             action: action
@@ -375,8 +631,11 @@ const performSwipe = async (companyId, action) => {
             if (response.data.is_mutual) {
                 // Reload matches if there's a mutual match
                 await loadMatches();
-                // You could show a notification here
-                alert('It\'s a match! 🎉');
+                showNotification('It\'s a match! 🎉', 'success');
+            } else if (action === 'like' || action === 'super_like') {
+                showNotification('Company liked!', 'success');
+            } else {
+                showNotification('Company passed', 'info');
             }
             
             // Remove the swiped company and show next one
@@ -400,11 +659,8 @@ const performSwipe = async (companyId, action) => {
     } catch (error) {
         console.error('Error performing swipe:', error);
         console.error('Error response:', error.response?.data);
-        if (error.response?.data?.message) {
-            alert(error.response.data.message);
-        } else {
-            alert('Failed to save swipe. Please try again.');
-        }
+        const errorMessage = error.response?.data?.message || 'Failed to save swipe. Please try again.';
+        showNotification(errorMessage, 'error');
     }
 };
 
@@ -452,5 +708,38 @@ defineExpose({
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
+}
+
+/* Heart Animation */
+@keyframes heartFloat {
+    0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1) rotate(0deg);
+    }
+    50% {
+        opacity: 0.9;
+        transform: translate(calc(-50% + var(--end-x)), calc(-50% + var(--end-y) * 0.5)) scale(1.3) rotate(180deg);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(calc(-50% + var(--end-x)), calc(-50% + var(--end-y))) scale(0.3) rotate(360deg);
+    }
+}
+
+.heart-animation {
+    animation: heartFloat 2s ease-out forwards;
+    --end-x: 0px;
+    --end-y: -100px;
+}
+
+/* Shake Animation */
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-7px); }
+    20%, 40%, 60%, 80% { transform: translateX(7px); }
+}
+
+.shake {
+    animation: shake 0.5s ease-in-out;
 }
 </style>

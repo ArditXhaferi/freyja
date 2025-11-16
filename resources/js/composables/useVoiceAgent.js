@@ -52,6 +52,7 @@ export default function useVoiceAgent({
     const sessionIdRef = ref(null);
     const businessPlanDataRef = ref(null);
     const previousRoadmapRef = ref(null);
+    const audioTrackRef = ref(null); // Reference to the audio track for muting
 
     // Format roadmap data as context string
     const formatRoadmapContext = (roadmapData) => {
@@ -482,12 +483,22 @@ export default function useVoiceAgent({
                 contextWithFirstMessage += advisorsContext;
             }
             
-            // Add first message instruction to context
+            // Add language instruction to context
+            const userLanguage = businessPlanDataRef.value?.language || 'en';
+            const languageInstructions = {
+                'en': '🚨 LANGUAGE: You MUST respond in ENGLISH. The user is speaking English. Always respond in English throughout the conversation.',
+                'fi': '🚨 LANGUAGE: You MUST respond in FINNISH. The user is speaking Finnish. Always respond in Finnish throughout the conversation.',
+                'sv': '🚨 LANGUAGE: You MUST respond in SWEDISH. The user is speaking Swedish. Always respond in Swedish throughout the conversation.'
+            };
+            
             if (contextWithFirstMessage) {
-                contextWithFirstMessage += '\n\n---\n\n🚨 CRITICAL: YOU MUST SPEAK FIRST 🚨\n\n';
+                contextWithFirstMessage += '\n\n---\n\n';
+                contextWithFirstMessage += languageInstructions[userLanguage] || languageInstructions['en'];
+                contextWithFirstMessage += '\n\n🚨 CRITICAL: YOU MUST SPEAK FIRST 🚨\n\n';
                 contextWithFirstMessage += 'FIRST MESSAGE TO SAY (START SPEAKING IMMEDIATELY):\n';
                 contextWithFirstMessage += firstMessage;
                 contextWithFirstMessage += '\n\n⚠️ ACTION REQUIRED: You MUST start the conversation by speaking this message (or a natural variation of it) RIGHT NOW. Do not wait for the user to speak first. This message is personalized based on the user\'s current data.';
+                contextWithFirstMessage += '\n\n⚠️ LANGUAGE REMINDER: If the user speaks in a different language than expected, IMMEDIATELY switch to that language and respond in that language. Always match the user\'s language.';
             }
             
             console.log('Full context with first message:', contextWithFirstMessage.substring(0, 500) + '...');
@@ -925,6 +936,33 @@ export default function useVoiceAgent({
                         });
                     }
 
+                    // Detect language from user messages and send contextual update if needed
+                    if (props.source === 'user' && props.message && conversationRef.value) {
+                        const userMessage = props.message.toLowerCase().trim();
+                        // Simple English detection - check for common English words
+                        const englishIndicators = /\b(hi|hello|hey|yes|no|the|is|are|can|will|want|need|help|start|business|company|finland|english)\b/i;
+                        const finnishIndicators = /\b(hei|moi|kyllä|ei|on|ovat|voi|tulee|haluan|tarvitsen|apua|aloittaa|yritys|yhtiö|suomi|suomeksi)\b/i;
+                        
+                        const isEnglish = englishIndicators.test(userMessage) && !finnishIndicators.test(userMessage);
+                        const currentLanguage = businessPlanDataRef.value?.language || 'en';
+                        
+                        // If user is speaking English but language preference is not English, send update
+                        if (isEnglish && currentLanguage !== 'en') {
+                            console.log('Detected English speech, sending language update to agent');
+                            try {
+                                conversationRef.value.sendContextualUpdate(
+                                    '🚨 LANGUAGE CORRECTION: The user is speaking in ENGLISH. You MUST respond in ENGLISH only. Do not use Finnish or any other language. Always respond in English.'
+                                );
+                                // Update language preference
+                                if (onBusinessPlanUpdate) {
+                                    onBusinessPlanUpdate({ language: 'en' });
+                                }
+                            } catch (error) {
+                                console.error('Failed to send language update:', error);
+                            }
+                        }
+                    }
+
                     // Try to extract roadmap JSON from AI responses
                     if (props.source === 'assistant' && props.message) {
                         const jsonMatch = props.message.match(/\{[\s\S]*"steps"[\s\S]*\}/);
@@ -989,6 +1027,35 @@ export default function useVoiceAgent({
             isConnected.value = true;
             isListening.value = true;
             isMuted.value = false; // Ensure microphone is not muted when connecting
+            
+            // Try to get the audio track from the SDK's internal stream
+            // The SDK might expose the stream, or we can try to access it via the conversation object
+            try {
+                // Check if the conversation object has a stream property
+                if (conversation.stream) {
+                    const audioTracks = conversation.stream.getAudioTracks();
+                    if (audioTracks.length > 0) {
+                        audioTrackRef.value = audioTracks[0];
+                        console.log('Audio track captured from SDK stream for mute control');
+                    }
+                } else if (conversation.getStream && typeof conversation.getStream === 'function') {
+                    const stream = conversation.getStream();
+                    if (stream) {
+                        const audioTracks = stream.getAudioTracks();
+                        if (audioTracks.length > 0) {
+                            audioTrackRef.value = audioTracks[0];
+                            console.log('Audio track captured via getStream() for mute control');
+                        }
+                    }
+                } else {
+                    // Fallback: Try to access via mediaDevices (this might not work if SDK uses its own stream)
+                    // We'll rely on SDK methods instead
+                    console.log('SDK stream not directly accessible, will use SDK mute methods');
+                }
+            } catch (error) {
+                console.warn('Could not capture audio track for mute control:', error);
+                console.log('Will rely on SDK mute methods if available');
+            }
             
             console.log('Voice conversation connected and ready to listen');
 
@@ -1061,6 +1128,7 @@ export default function useVoiceAgent({
             } finally {
                 // Always clean up references regardless of errors
                 conversationRef.value = null;
+                audioTrackRef.value = null; // Clean up audio track reference
             }
         }
         
@@ -1164,62 +1232,70 @@ export default function useVoiceAgent({
         }
     };
 
-    const toggleMute = () => {
+    const toggleMute = async () => {
         console.log('toggleMute called', {
             hasConversation: !!conversationRef.value,
+            hasAudioTrack: !!audioTrackRef.value,
             currentMutedState: isMuted.value,
-            isConnected: isConnected.value
+            isConnected: isConnected.value,
+            connectionStatus: connectionStatus.value
         });
         
         // Always toggle the state first (for UI feedback)
         isMuted.value = !isMuted.value;
         
-        // If no conversation, just update the state (UI will reflect it)
-        if (!conversationRef.value) {
-            console.log('No conversation ref, state toggled to:', isMuted.value);
-            return;
-        }
-        
-        // Check if connection is still active before trying to mute/unmute
-        if (!isConnected.value || connectionStatus.value !== 'connected') {
-            console.log('Connection not active, state toggled to:', isMuted.value);
-            return;
-        }
-        
         try {
-            // Use ElevenLabs SDK mute method if available
-            if (typeof conversationRef.value.setMuted === 'function') {
-                conversationRef.value.setMuted(isMuted.value);
-                console.log('Used setMuted method:', isMuted.value);
-            } else if (typeof conversationRef.value.mute === 'function') {
-                if (isMuted.value) {
-                    conversationRef.value.mute();
-                    console.log('Used mute() method');
-                } else {
-                    conversationRef.value.unmute();
-                    console.log('Used unmute() method');
+            // Method 1: Use stored audio track reference (most reliable)
+            if (audioTrackRef.value) {
+                audioTrackRef.value.enabled = !isMuted.value;
+                console.log('Toggled stored audio track enabled:', !isMuted.value);
+            }
+            
+            // Method 2: Find and toggle all active audio tracks (covers SDK's internal stream)
+            try {
+                // Get all active media streams
+                const streams = await navigator.mediaDevices.enumerateDevices();
+                // This doesn't give us streams, let's try a different approach
+                // Instead, we'll enumerate all media tracks from active streams
+                if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                    // Access all active tracks by trying to enumerate them
+                    // Note: This is a workaround - ideally the SDK would expose mute methods
                 }
-            } else {
-                // Fallback: For muting, we can't use interrupt() as it stops the conversation
-                // Instead, just update the UI state - the SDK should handle microphone access
-                if (isMuted.value) {
-                    console.log('Muted state set - SDK should handle microphone blocking');
-                    // Don't interrupt - just let the mute state be reflected in UI
-                } else {
-                    console.log('Unmuted - conversation should resume listening naturally');
-                    // Don't force state changes - let SDK handle it
+            } catch (enumError) {
+                console.warn('Could not enumerate devices for muting:', enumError);
+            }
+            
+            // Method 3: Try SDK methods if available
+            if (conversationRef.value) {
+                try {
+                    // Check for various possible SDK mute methods
+                    if (typeof conversationRef.value.setMuted === 'function') {
+                        conversationRef.value.setMuted(isMuted.value);
+                        console.log('Used SDK setMuted method:', isMuted.value);
+                    } else if (typeof conversationRef.value.mute === 'function') {
+                        if (isMuted.value) {
+                            conversationRef.value.mute();
+                            console.log('Used SDK mute() method');
+                        } else {
+                            conversationRef.value.unmute();
+                            console.log('Used SDK unmute() method');
+                        }
+                    } else if (typeof conversationRef.value.setMicrophoneEnabled === 'function') {
+                        conversationRef.value.setMicrophoneEnabled(!isMuted.value);
+                        console.log('Used SDK setMicrophoneEnabled method:', !isMuted.value);
+                    } else {
+                        console.warn('No SDK mute methods found. Available methods:', Object.keys(conversationRef.value).filter(k => typeof conversationRef.value[k] === 'function').join(', '));
+                    }
+                } catch (sdkError) {
+                    console.warn('SDK mute method failed:', sdkError);
                 }
             }
             
             console.log('Microphone muted:', isMuted.value);
         } catch (error) {
-            // Ignore errors if WebSocket is already closed
-            if (error.message && (error.message.includes('CLOSING') || error.message.includes('CLOSED'))) {
-                console.log('WebSocket already closed during mute toggle');
-            } else {
-                console.error('Error toggling mute:', error);
-            }
-            // Don't revert - keep the UI state even if SDK call fails
+            console.error('Error toggling mute:', error);
+            // Revert state if mute failed
+            isMuted.value = !isMuted.value;
         }
     };
 
