@@ -15,7 +15,7 @@
 
                     <!-- Beer + tooltip -->
                     <div class="flex items-center gap-4">
-                        <img src="/images/beer.gif" alt="Cheers" class="h-[13.5rem] w-[13.5rem] rounded-2xl object-cover" />
+                        <img src="/images/beer.gif" alt="Cheers" class="h-[13.5rem] rounded-2xl object-cover" />
                         <div class="relative">
                             <div
                                 class="max-w-[260px] rounded-2xl px-5 py-4 text-sm font-medium text-white/95 backdrop-blur-sm"
